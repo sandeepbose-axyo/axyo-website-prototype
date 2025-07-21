@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Blueprint: Predictive Sales & Demand Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .table-header {
+            background-color: #f3f4f6; /* gray-100 */
+        }
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+        .tag-internal { background-color: #dbeafe; color: #1e40af; }
+        .tag-external { background-color: #d1fae5; color: #065f46; }
+        .tag-axyo { background-color: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+            <!-- Header -->
+            <header class="text-center mb-10 border-b border-gray-200 pb-6">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">Data Blueprint</h1>
+                <p class="mt-2 text-lg font-semibold text-blue-700">AI Decision App: Predictive Sales & Demand Intelligence</p>
+            </header>
+
+            <!-- Introduction -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">1. Introduction</h2>
+                <p class="text-gray-600">This document outlines the data schema required to power the Predictive Sales & Demand Intelligence AI model. A robust feature set, combining internal data with external signals and Axyo's automated feature engineering, is the foundation for building a highly accurate and explainable forecasting solution.</p>
+                <p class="text-gray-600 mt-2">The target variable for this model is <code class="text-sm font-bold bg-gray-200 text-red-700 px-2 py-1 rounded">net_sales_amount</code>, predicted on a weekly basis over a rolling 12-month horizon.</p>
+            </section>
+
+            <!-- Feature Tables -->
+            <div class="space-y-12">
+                <!-- Internal Data -->
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">2. Internal Data Features (Client/Partner Systems)</h3>
+                    <div class="overflow-x-auto rounded-lg border border-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="table-header">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Feature Name</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Description</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Data Type</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">transaction_id</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Unique identifier for each sales transaction.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">String</td></tr>
+                                <tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">timestamp</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Date and time of the transaction.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Timestamp</td></tr>
+                                <tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">sku</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Stock Keeping Unit identifier.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">String</td></tr>
+                                <tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">product_family</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">The product family or category for the SKU.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">String</td></tr>
+                                <tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">sales_region</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">The sales region where the transaction occurred.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">String</td></tr>
+                                <tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">units_sold</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Number of units sold in the transaction.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Integer</td></tr>
+                                <tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">list_price</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">The standard list price per unit at the time of sale.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Float</td></tr>
+                                <tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">promo_flag</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Boolean indicating if the sale was part of a promotion.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Boolean</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- External Data -->
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">3. External Data Signals (Fused by Axyo)</h3>
+                     <div class="overflow-x-auto rounded-lg border border-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="table-header">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Feature Name</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Description</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Data Type</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">pmi_score</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Purchasing Managers' Index, a key economic health indicator.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Float</td></tr>
+                                <tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">copper_index</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Market price index for copper, a critical raw material.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Float</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Axyo Engineered Features -->
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">4. Axyo-Engineered Features (Derived & Aggregated)</h3>
+                    <p class="text-gray-600 mb-4 -mt-2">This is where raw data is transformed into predictive intelligence. These features are automatically generated by the Axyo platform.</p>
+                     <div class="overflow-x-auto rounded-lg border border-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="table-header">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Feature Name</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Description</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Data Type</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">rolling_avg_sales_90d</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">90-day rolling average of sales for a given SKU/region.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Float</td></tr>
+                                <tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">days_since_last_promo</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Number of days since the last promotion for a specific SKU.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Integer</td></tr>
+                                <tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">price_elasticity_coeff</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Calculated coefficient representing how demand reacts to price changes.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Float</td></tr>
+                                <tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-700">lagged_copper_index_6w</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">The value of the copper index from 6 weeks prior to capture delayed impact.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Float</td></tr>
+                                <tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-700">pmi_trend_3m</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">3-month trend (slope) of the PMI score to capture economic momentum.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Float</td></tr>
+                                <tr><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">is_holiday_season</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Boolean flag indicating if the date falls within a key holiday period.</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Boolean</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

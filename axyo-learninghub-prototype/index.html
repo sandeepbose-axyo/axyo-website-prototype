@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axyo Command Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --axyo-iris: #0D0DB7;
+            --axyo-sapphire: #5DC0C0;
+            --axyo-gold: #F68D1A;
+            --axyo-flamingo: #E565AE;
+            --bg-primary: #0A0F1E;
+            --bg-secondary: #1E293B;
+            --glass-bg: rgba(30, 41, 59, 0.6);
+            --text-primary: #F1F5F9;
+            --text-secondary: #94A3B8;
+            /* Axyo Brand Guideline Gradients */
+            --gradient-start: #CFCFF1;
+            --gradient-end-sapphire: #DEF2F2;
+        }
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-secondary);
+        }
+        /* FIXED: Updated gradient to match brand guidelines */
+        .gradient-text {
+            background: linear-gradient(90deg, var(--gradient-start), var(--axyo-sapphire));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-pane {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        .sidebar-link.active {
+            color: var(--axyo-sapphire);
+            background-color: rgba(93, 192, 192, 0.05);
+        }
+        .sidebar-link:hover {
+            color: var(--text-primary);
+            background-color: rgba(93, 192, 192, 0.03);
+        }
+        .fade-in { animation: fadeIn 0.5s ease-in-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .focus-view {
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.4s;
+            transform: translateX(100%);
+            visibility: hidden;
+        }
+        .focus-view.open {
+            transform: translateX(0);
+            visibility: visible;
+        }
+        .feedback-btn:hover svg { stroke: var(--text-primary); }
+        .feedback-btn.active { background-color: var(--axyo-sapphire) !important; }
+        .feedback-btn.active svg { stroke: var(--bg-primary); }
+        
+        /* Custom Prose styles for Focus View */
+        .prose-custom h3 { font-size: 1.875rem; font-weight: 800; color: var(--text-primary); margin-bottom: 1rem; }
+        .prose-custom blockquote { border-left-color: var(--axyo-gold); color: var(--text-secondary); font-style: italic; padding-left: 1rem; margin-top: 2rem; margin-bottom: 2rem; }
+        .prose-custom h4 { font-size: 1.25rem; font-weight: 700; color: var(--axyo-sapphire); margin-top: 2.5rem; margin-bottom: 1rem; }
+        .prose-custom p, .prose-custom li { color: var(--text-secondary); }
+        .prose-custom strong { color: var(--text-primary); }
+        .prose-custom ul, .prose-custom ol { padding-left: 1.5rem; }
+        .prose-custom .cost-section { background-color: rgba(246, 141, 26, 0.05); border: 1px solid rgba(246, 141, 26, 0.1); border-left: 3px solid var(--axyo-gold); padding: 1rem 1.5rem; border-radius: 0.5rem; margin-top: 1rem; }
+        .prose-custom .cost-section h5 { font-weight: 700; color: var(--axyo-gold); margin: 0 0 0.5rem 0; }
+        .prose-custom .cost-section p { margin: 0; font-size: 0.95rem; }
+        
+        /* Thread styles */
+        .thread-item { position: relative; padding-left: 28px; font-size: 0.9rem; }
+        .thread-item:before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background-color: rgba(148, 163, 184, 0.1); }
+        .thread-item:first-child:before { top: 16px; }
+        .thread-item:last-child:before { bottom: calc(100% - 16px); }
+        .thread-item .thread-connector { position: absolute; left: 10px; top: 16px; width: 12px; height: 2px; background-color: rgba(148, 163, 184, 0.1); }
+        
+        /* Carousel styles */
+        .carousel { display: grid; grid-auto-flow: column; grid-auto-columns: 85%; overflow-x: auto; scroll-snap-type: x mandatory; gap: 1rem; padding-bottom: 1rem; scrollbar-width: none; }
+        .carousel::-webkit-scrollbar { display: none; }
+        .carousel.is-showing-all { display: grid; grid-auto-flow: initial; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+        .carousel > * { scroll-snap-align: start; }
+        @media (min-width: 768px) { .carousel { grid-auto-columns: 45%; } }
+        @media (min-width: 1280px) { .carousel { grid-auto-columns: 31%; } }
+        
+        /* Chat Window Styles */
+        .chat-tab.active {
+            color: var(--text-primary);
+            background-color: rgba(148, 163, 184, 0.1);
+            border-bottom-color: var(--axyo-sapphire);
+        }
+
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Main Application Container -->
+    <div id="app-container">
+        <!-- Landing Page View -->
+        <div id="landing-page" class="min-h-screen">
+            <div class="container mx-auto px-6 py-16 md:py-24 text-center">
+                <h1 class="text-4xl md:text-6xl font-black text-white leading-tight">From Rearview Mirror to<br><span class="gradient-text">Forward-Looking GPS</span></h1>
+                <p class="mt-6 max-w-2xl mx-auto text-lg text-slate-400">
+                    This is your living library of financial playbooks, designed to help you conquer the challenges of growing your business. Select your persona to begin.
+                </p>
+
+                <!-- Persona Selection Cards -->
+                <div class="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+                    <!-- Tech Founder Card -->
+                    <div class="persona-card glass-pane rounded-xl p-8 text-left cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-teal-500/10" onclick="showAppForPersona('tech-founder')">
+                        <div class="w-16 h-16 mb-6 flex items-center justify-center rounded-full bg-slate-900 border border-slate-700">
+                            <!-- FIXED: Iconography updated to 2px stroke, round caps/joins -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--axyo-sapphire)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">Tech Founder</h3>
+                        <p class="mt-2 text-slate-400">Navigate burn rate, unit economics, and diligence readiness with confidence.</p>
+                        <span class="mt-6 inline-block font-semibold text-teal-400">Enter Learning Hub &rarr;</span>
+                    </div>
+                    <!-- Other Persona Cards (Styled but not functional for this mockup) -->
+                    <div class="persona-card glass-pane rounded-xl p-8 text-left opacity-50 cursor-not-allowed">
+                        <div class="w-16 h-16 mb-6 flex items-center justify-center rounded-full bg-slate-900 border border-slate-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--axyo-sapphire)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">Services Leader</h3>
+                        <p class="mt-2 text-slate-400">Master project profitability and cash flow in a client-based business.</p>
+                         <span class="mt-6 inline-block font-semibold text-sky-400">Coming Soon</span>
+                    </div>
+                    <div class="persona-card glass-pane rounded-xl p-8 text-left opacity-50 cursor-not-allowed">
+                        <div class="w-16 h-16 mb-6 flex items-center justify-center rounded-full bg-slate-900 border border-slate-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--axyo-sapphire)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">Trades Specialist</h3>
+                        <p class="mt-2 text-slate-400">Conquer job costing, material expenses, and cash flow on the job site.</p>
+                         <span class="mt-6 inline-block font-semibold text-sky-400">Coming Soon</span>
+                    </div>
+                    <div class="persona-card glass-pane rounded-xl p-8 text-left opacity-50 cursor-not-allowed">
+                        <div class="w-16 h-16 mb-6 flex items-center justify-center rounded-full bg-slate-900 border border-slate-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--axyo-sapphire)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white">Family Business</h3>
+                        <p class="mt-2 text-slate-400">Protect your legacy with a focus on stability, risk mitigation, and long-term growth.</p>
+                         <span class="mt-6 inline-block font-semibold text-sky-400">Coming Soon</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main App View (Initially Hidden) -->
+        <div id="app" class="flex min-h-screen w-full hidden">
+            <!-- ===== SIDEBAR ===== -->
+            <aside class="w-20 md:w-64 glass-pane p-4 md:p-6 flex flex-col fixed h-full z-30">
+                <div class="flex items-center justify-center md:justify-start mb-12 h-8 md:h-10">
+                    <span class="text-2xl font-bold tracking-widest text-white md:hidden">A</span>
+                    <span class="hidden md:inline text-2xl font-bold tracking-widest text-white">AXYO</span>
+                </div>
+                <nav class="flex flex-col space-y-2">
+                    <button onclick="switchTab('playbook')" class="sidebar-link active flex items-center p-3 rounded-lg font-semibold text-left transition-colors duration-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v11.494m-9-5.747h18"></path></svg>
+                        <span class="hidden md:inline ml-4">Playbook</span>
+                    </button>
+                    <button onclick="switchTab('events')" class="sidebar-link flex items-center p-3 rounded-lg font-semibold text-left transition-colors duration-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span class="hidden md:inline ml-4">Events</span>
+                    </button>
+                    <button onclick="switchTab('kpi-dictionary')" class="sidebar-link flex items-center p-3 rounded-lg font-semibold text-left transition-colors duration-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <span class="hidden md:inline ml-4">KPI Dictionary</span>
+                    </button>
+                    <button onclick="switchTab('community')" class="sidebar-link flex items-center p-3 rounded-lg font-semibold text-left transition-colors duration-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <span class="hidden md:inline ml-4">Community Hub</span>
+                    </button>
+                    <button onclick="switchTab('history')" class="sidebar-link flex items-center p-3 rounded-lg font-semibold text-left transition-colors duration-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span class="hidden md:inline ml-4">My History</span>
+                    </button>
+                </nav>
+                <div class="mt-auto space-y-4">
+                     <button onclick="openExpertModal()" class="w-full bg-iris-500/10 border border-iris-500/20 text-iris-300 font-bold py-3 px-3 rounded-lg hover:bg-iris-500/20 transition-colors flex items-center justify-center md:justify-start" style="--tw-bg-opacity: 0.1; --tw-border-opacity: 0.2; color: #a5b4fc; background-color: rgba(79, 70, 229, var(--tw-bg-opacity)); border-color: rgba(79, 70, 229, var(--tw-border-opacity));">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span class="hidden md:inline ml-4">Ask an Expert</span>
+                    </button>
+                     <button onclick="showLandingPage()" class="w-full text-slate-400 font-semibold py-3 px-3 rounded-lg hover:bg-slate-700/50 transition-colors flex items-center justify-center md:justify-start">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H3"></path></svg>
+                        <span class="hidden md:inline ml-4">Switch Persona</span>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- ===== MAIN CONTENT AREA ===== -->
+            <main class="w-full ml-20 md:ml-64 p-6 md:p-12 overflow-y-auto h-screen">
+                
+                <!-- Playbook Tab -->
+                <div id="playbook-tab" class="tab-content fade-in">
+                    <h1 class="text-4xl font-black text-white">The Tech Founder's Playbook</h1>
+                    <p class="mt-2 text-lg text-slate-400">A living library of frameworks and insights to help you scale.</p>
+                    
+                    <div class="mt-12">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-full bg-amber-500/10 mr-4"><svg class="w-5 h-5 text-amber-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.49 12.82l-6.12 3.42c-1.1.61-2.38.61-3.48 0L5.77 13.5c-1.1-.62-1.84-1.8-1.84-3.06v-1.3c0-1.26.74-2.44 1.84-3.06l6.12-3.42c1.1-.62 2.38-.62 3.48 0l6.12 3.42c1.1.62 1.84 1.8 1.84 3.06v1.3c0 1.26-.74 2.44-1.84 3.06z"></path><path d="M5.77 6.94L12 10.27l6.23-3.33"></path><path d="M22.06 13.5L12 18.82 1.94 13.5"></path></svg></div>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-white">Founder Challenges</h2>
+                                    <p class="text-slate-400">Real-world complexities faced by Tech Founders. Click a card to explore.</p>
+                                </div>
+                            </div>
+                            <button class="view-all-btn text-sm font-semibold text-sapphire-400 hover:text-white transition-colors" style="color: var(--axyo-sapphire);" onclick="toggleCarousel('pain-cards', this)">View All</button>
+                        </div>
+                        <div id="pain-cards" class="carousel"></div>
+                    </div>
+
+                    <div class="mt-16">
+                         <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-full bg-sky-500/10 mr-4"><svg class="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-white">The Framework for Command</h2>
+                                    <p class="text-slate-400">Your library of strategic plays, contributed by Axyo and our expert network.</p>
+                                </div>
+                            </div>
+                            <button class="view-all-btn text-sm font-semibold text-sapphire-400 hover:text-white transition-colors" style="color: var(--axyo-sapphire);" onclick="toggleCarousel('framework-cards', this)">View All</button>
+                        </div>
+                        <div id="framework-cards" class="carousel"></div>
+                    </div>
+
+                    <div id="cta-section" class="mt-16 pt-12 border-t border-slate-800">
+                        <div class="glass-pane rounded-xl p-8 text-center">
+                            <h2 class="text-3xl font-bold text-white">Become an AI-Powered Business</h2>
+                            <p class="mt-4 max-w-2xl mx-auto text-slate-400">The Financial Command Center is just the beginning. The future belongs to businesses that embed intelligence into their core decisions and products. Talk to our team to explore building custom AI Decision Apps for your unique challenges.</p>
+                            <button class="mt-6 bg-iris-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-iris-500 transition-colors" style="background-color: var(--axyo-iris);">Partner with Axyo</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Events Tab -->
+                <div id="events-tab" class="tab-content hidden fade-in">
+                    <h1 class="text-4xl font-black text-white">Livecasts & AI Clinics</h1>
+                    <p class="mt-2 text-lg text-slate-400">Join live sessions with experts or watch past events on-demand.</p>
+                    <div class="mt-8 relative">
+                        <input type="text" id="events-search" placeholder="Search events by title or topic..." class="w-full bg-slate-900/50 border border-slate-700 rounded-md p-3 pl-10 text-white focus:ring-2 focus:ring-iris-500 focus:border-iris-500 outline-none">
+                        <svg class="w-5 h-5 text-slate-400 absolute top-3.5 left-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <div id="events-container" class="mt-8 space-y-12"></div>
+                </div>
+                
+                <!-- KPI Dictionary Tab -->
+                <div id="kpi-dictionary-tab" class="tab-content hidden fade-in">
+                    <h1 class="text-4xl font-black text-white">KPI Dictionary</h1>
+                    <p class="mt-2 text-lg text-slate-400">Your guide to the metrics that matter for a scaling business.</p>
+                    <div class="mt-8 relative">
+                        <input type="text" id="kpi-search" placeholder="Search for a KPI..." class="w-full bg-slate-900/50 border border-slate-700 rounded-md p-3 pl-10 text-white focus:ring-2 focus:ring-iris-500 focus:border-iris-500 outline-none">
+                        <svg class="w-5 h-5 text-slate-400 absolute top-3.5 left-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <div id="kpi-container" class="mt-8"></div>
+                </div>
+
+                <!-- Community Hub Tab -->
+                <div id="community-tab" class="tab-content hidden fade-in">
+                    <h1 class="text-4xl font-black text-white">Community Hub</h1>
+                    <p class="mt-2 text-lg text-slate-400">Wisdom from the field. Questions from founders, answered by experts and peers.</p>
+                    <div id="community-faqs" class="mt-12 space-y-6"></div>
+                </div>
+
+                <!-- History Tab -->
+                <div id="history-tab" class="tab-content hidden fade-in">
+                    <h1 class="text-4xl font-black text-white">My History</h1>
+                    <p class="mt-2 text-lg text-slate-400">A log of your questions and the insights you've received.</p>
+                    <div id="my-history" class="mt-12 space-y-6"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- ===== Astra AI Sidekick (Floating Chatbot) ===== -->
+    <div id="ai-sidekick" class="fixed bottom-6 right-6 z-40">
+        <button onclick="toggleChat()" class="bg-iris-500 rounded-full w-16 h-16 flex items-center justify-center shadow-lg shadow-iris-500/20 hover:scale-110 transition-transform" style="background-color: var(--axyo-iris);">
+            <svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path fill-rule="evenodd" d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 3.293a.75.75 0 01-1.296 0l-2.755-3.293a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.74c0-1.946 1.37-3.68 3.348-3.97zM6.75 8.25a.75.75 0 01.75-.75h9a.75.75 0 010 1.5h-9a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H7.5z" clip-rule="evenodd" />
+            </svg>
+        </button>
+        <div id="chat-window" class="hidden absolute bottom-20 right-0 w-[26rem] max-w-[calc(100vw-3rem)] glass-pane rounded-xl shadow-2xl overflow-hidden flex flex-col" style="height: 60vh;">
+            <div class="p-4 border-b border-slate-700 flex-shrink-0">
+                <h4 class="font-bold text-white">Axyo Astra</h4>
+                <p class="text-sm text-slate-400">Your personal financial analyst.</p>
+            </div>
+            <div class="flex border-b border-slate-700 text-sm flex-shrink-0">
+                <button onclick="switchChatView('current')" id="chat-tab-current" class="chat-tab active flex-1 p-3 font-semibold text-slate-300 border-b-2 border-transparent hover:bg-slate-700/50 transition-colors">Current Chat</button>
+                <button onclick="switchChatView('history')" id="chat-tab-history" class="chat-tab flex-1 p-3 font-semibold text-slate-300 border-b-2 border-transparent hover:bg-slate-700/50 transition-colors">History</button>
+            </div>
+            <!-- Current Chat View -->
+            <div id="chat-view-current" class="flex-grow p-4 overflow-y-auto space-y-4">
+                <div class="flex items-start gap-3">
+                    <span class="flex-shrink-0 w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center font-bold text-iris-300">A</span>
+                    <div class="bg-slate-700 rounded-lg p-3 text-sm">
+                        <p class="text-white">Hello! How can I help you analyze your business today?</p>
+                    </div>
+                </div>
+            </div>
+            <!-- History View -->
+            <div id="chat-view-history" class="flex-grow p-4 overflow-y-auto space-y-3 hidden">
+                <!-- History will be rendered here by JS -->
+            </div>
+            <!-- Input Area -->
+            <div id="chat-input-container" class="p-3 border-t border-slate-700 flex-shrink-0">
+                <input type="text" id="chat-input-field" placeholder="e.g., What was my burn rate?" class="w-full bg-slate-900 border-slate-700 rounded-md p-2 text-sm outline-none focus:ring-2 focus:ring-iris-500">
+                <p class="text-xs text-slate-500 mt-2 text-center">Astra can make mistakes. Consider checking important information.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Focus View (Sliding panel for content) ===== -->
+    <div id="focus-view" class="focus-view fixed top-0 right-0 w-full h-full bg-black/60 z-50">
+        <div class="absolute top-0 right-0 w-full md:w-3/4 lg:w-2/3 xl:w-1/2 h-full bg-slate-900 shadow-2xl overflow-y-auto">
+            <div id="focus-view-content" class="p-8 md:p-12">
+                <button onclick="closeFocusView()" class="absolute top-8 right-8 text-slate-400 hover:text-white bg-slate-800 rounded-full p-2 z-10">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                <div id="focus-view-body" class="prose-custom max-w-none"></div>
+                
+                <div class="mt-12 pt-8 border-t border-slate-700">
+                    <h4 class="font-semibold text-white mb-4">Additional Resources</h4>
+                    <div id="focus-resources" class="space-y-3"></div>
+                </div>
+
+                <div class="mt-12 pt-8 border-t border-slate-700">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-semibold text-white">Was this helpful?</h4>
+                        <div class="flex space-x-4">
+                            <button class="feedback-btn p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors" onclick="handleFeedback(this, true)">
+                                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9A2 2 0 0020 4h-4"></path></svg>
+                            </button>
+                             <button class="feedback-btn p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors" onclick="handleFeedback(this, false)">
+                                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 15v4a3 3 0 003 3l4-9V2H5.72a2 2 0 00-2 1.7l-1.38 9A2 2 0 004 20h4"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <p id="feedback-thanks" class="text-sm text-teal-400 mt-2 text-right hidden">Thanks for your feedback!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Ask an Expert Modal ===== -->
+    <div id="expert-modal" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center p-4 transition-opacity duration-300 opacity-0" onclick="closeExpertModal()">
+        <div class="glass-pane rounded-xl w-full max-w-lg p-8" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center">
+                <h3 class="text-2xl font-bold text-white">Ask Our Expert Network</h3>
+                <button onclick="closeExpertModal()" class="text-slate-400 hover:text-white text-3xl leading-none">&times;</button>
+            </div>
+            <p class="mt-2 text-slate-400">Your question will be sent to our vetted network of experts.</p>
+            <form id="expert-form" class="mt-6">
+                <div class="mb-4">
+                    <label for="question-type" class="block text-sm font-medium text-slate-300 mb-2">I have a...</label>
+                    <select id="question-type" class="w-full bg-slate-900 border border-slate-700 rounded-md p-3 text-white focus:ring-2 focus:ring-iris-500 focus:border-iris-500 outline-none">
+                        <option value="Strategic Question (for a Mentor/VC)">Strategic Question (for a Mentor/VC)</option>
+                        <option value="Financial Question (for a CFO/CPA)">Financial Question (for a CFO/CPA)</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                     <label for="question" class="block text-sm font-medium text-slate-300 mb-2">My Question</label>
+                     <textarea id="question" rows="4" class="w-full bg-slate-900 border border-slate-700 rounded-md p-3 text-white focus:ring-2 focus:ring-iris-500 focus:border-iris-500 outline-none" placeholder="E.g., What's the best way to model revenue from a usage-based pricing tier?"></textarea>
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" onclick="closeExpertModal()" class="px-6 py-2 rounded-md text-slate-300 hover:bg-slate-700 transition-colors">Cancel</button>
+                    <button type="submit" class="px-6 py-2 rounded-md bg-iris-600 text-white font-bold hover:bg-iris-500 transition-colors" style="background-color: var(--axyo-iris);">Submit Question</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- MOCK DATA ---
+        const playbookData = {
+            pain: [
+                { id: 'p1', title: 'The "Are We Growing?" Guesswork', summary: 'Revenue is up, but profit is flat. Is my marketing spend actually working?', content: { title: 'The "Are We Growing?" Guesswork', quote: `"Our revenue was up 20%, but our profit was flat. I was spending more on marketing, but I had no idea if it was actually working or just bringing in low-value customers."`, explanation: `This is the core challenge of <strong>Unit Economics</strong>. Without a clear understanding of your Customer Acquisition Cost (CAC) versus their Lifetime Value (LTV), you might be scaling a "leaky bucket."`, cost: `You risk spending your way into bankruptcy while chasing top-line revenue growth that doesn't translate to sustainable profit.`}, resources: [{text: 'SaaS Metrics 2.0 – A Guide to Measuring and Improving what Matters', url: 'https://www.forentrepreneurs.com/saas-metrics-2/'}, {text: 'The Pmarca Guide to Startups, part 4: The only thing that matters', url: 'https://pmarchive.com/guide_to_startups_part4.html'}] },
+                { id: 'p2', title: 'The Painful Diligence Request', summary: 'A VC asks for a detailed breakdown, and it takes a frantic week to pull it together.', content: { title: 'The Painful Diligence Request', quote: `"We were in talks with a VC who suddenly asked for a detailed breakdown of our cohort-based revenue retention and our net burn over the last 18 months. It took my co-founder and me a frantic week to pull it all together, by which point we'd lost momentum."`, explanation: `This is the challenge of not being in a constant state of <strong>Diligence Readiness</strong>. In today's market, investors expect a level of financial organization that most early-stage companies don't maintain.`, cost: `Missed opportunities. By the time you get your financial house in order, the loan you needed or the acquisition offer you received may be gone.`}, resources: [{text: 'First Round Review: How to Build a Data Room', url: 'https://review.firstround.com/how-to-build-a-data-room-that-makes-it-easy-for-investors-to-say-yes'}, {text: 'Harvard Business Review: How to Prepare for a VC Meeting', url: 'https://hbr.org/2021/06/how-to-prepare-for-a-vc-meeting'}] },
+                { id: 'p3', title: 'The Runway Problem', summary: 'Profitable on paper, but cash is shrinking. The classic profit vs. cash flow trap.', content: { title: 'The Runway Problem', quote: `"My financial model showed we were profitable... but our cash runway was shrinking faster than I expected. I couldn't figure out why."`, explanation: `This is the classic trap of confusing <strong>Profit with Cash Flow</strong>. Your Profit & Loss statement includes revenue you haven't collected yet and ignores major cash expenses like loan repayments. Cash Flow is the true lifeblood of your business.`, cost: `This is the #1 reason profitable small businesses fail. You can have a brilliant business model but go bankrupt waiting for customers to pay you.`}, resources: [{text: 'Book: "Simple Numbers, Straight Talk, Big Profits!" by Greg Crabtree', url: 'https://www.amazon.com/Simple-Numbers-Straight-Talk-Profits/dp/1608320510'}] },
+            ],
+            framework: [
+                { id: 'f1', title: 'Play #1: The Unit Economics Framework', summary: 'The 3x Rule: A healthy business has an LTV that is at least 3x its CAC.', content: { title: 'Play #1: The Unit Economics Framework (The 3x Rule)', quote: null, explanation: `<p>A healthy, scalable business model typically has an LTV that is at least 3x its CAC. This is your north star for sustainable growth.</p><ul><li><strong>Calculate Your CAC:</strong> Sum up <em>all</em> your sales and marketing expenses in a period and divide by the number of new customers acquired. Be honest and include a portion of salaries and overhead.</li><li><strong>Estimate Your LTV:</strong> Calculate the average revenue per customer per month, multiplied by your gross margin, divided by your monthly customer churn rate.</li></ul>`, cost: null}, resources: [{text: 'a16z: 16 Startup Metrics', url: 'https://a16z.com/2015/08/21/16-metrics/'}] },
+                { id: 'f2', title: 'Play #2: The "Always-On Data Room"', summary: 'Maintain constant readiness with a live dashboard of the 5 metrics that matter most.', content: { title: 'Play #2: The "Always-On Data Room"', quote: null, explanation: `<p>Instead of scrambling, maintain a state of constant readiness. Your "Data Room" isn't a folder you create when a VC asks; it's a live dashboard of the 5 metrics that matter most:</p><ol><li><strong>Monthly Net Burn:</strong> The rate at which you are losing money.</li><li><strong>Cash Runway:</strong> How many months you have left until you run out of cash.</li><li><strong>LTV:CAC Ratio:</strong> The core measure of your business model's health.</li><li><strong>Customer Concentration:</strong> The risk from being over-reliant on a few customers.</li><li><strong>Cohort-Based Retention:</strong> How well you are keeping customers over time.</li></ol>`, cost: null}, resources: [] },
+                // FIXED: Replaced '#' with a valid URL
+                { id: 'f3', title: 'Play #3: The Cash Runway Framework', summary: 'Build a forward-looking cash forecast by mapping real inflows vs. outflows.', content: { title: 'Play #3: The Cash Runway Framework', quote: null, explanation: `<p>Move beyond your P&L and build a simple, forward-looking cash forecast.</p><ul><li><strong>Map Your Inflows:</strong> Map when the cash is <em>actually</em> expected to hit your bank account, not just when you send an invoice.</li><li><strong>Map Your Outflows:</strong> Include <em>all</em> cash expenses: payroll, rent, software subscriptions, and debt repayments.</li><li><strong>Stress-Test It:</strong> Ask "What happens if our biggest new client pays 30 days late?". A robust cash forecast survives these what-if scenarios.</li></ul>`, cost: null}, resources: [{text: 'Guide: How to Stress-Test Your Financial Model', url: 'https://corporatefinanceinstitute.com/resources/financial-modeling/stress-testing/'}] },
+            ]
+        };
+        const communityFAQs = [
+            { id: 'c1', question: 'My burn rate seems high. How do I explain it to my board?', type: 'Expert Answer', expert: 'Jane Doe, Fractional CFO', thread: [{ id: 'c1-a1', type: 'answer', text: "The key is to segment your burn. Separate 'growth spend' from 'core operational spend.' Show your board that the burn is a deliberate investment in acquiring customers." }, { id: 'c1-f1', type: 'follow-up', text: "That makes sense. Is there a standard way to classify an expense as 'growth' vs 'core'?" }, { id: 'c1-p1', type: 'pending', expert: 'Axyo Expert Network', text: "Our experts are reviewing your follow-up..." }] },
+            { id: 'c2', question: 'How can I get the most out of my mentor meetings?', type: 'Community Wisdom', expert: 'John Smith, Founder @ TechCo', thread: [{ id: 'c2-a1', type: 'answer', text: "Come prepared with data, not just feelings. Show them a live dashboard with your LTV:CAC ratio and cash runway. Mentor sessions are twice as productive when centered around a shared, real-time view of the numbers." }] },
+        ];
+        let myHistory = [
+            { id: 'h1', question: "My LTV:CAC is 2.5x, is that bad enough to pivot?", type: "Strategic Question (for a Mentor/VC)", date: "July 10, 2025", thread: [ {id: 'h1-a1', type: 'answer', expert: 'Jane Doe, Mentor', text: "A 2.5x ratio isn't a pivot signal, but an optimization signal. Before considering a pivot, focus on two things: 1) Can you decrease your CAC by optimizing marketing channels? 2) Can you increase LTV by reducing churn or finding small upsell opportunities? Track this for another quarter before making any drastic moves."}, { id: 'h1-f1', type: 'follow-up', text: "Thanks Jane. Which marketing channels have you seen work best for B2B SaaS at our stage?" }, { id: 'h1-p1', type: 'pending', expert: 'Jane Doe, Mentor', text: "Reviewing your follow-up..." } ] },
+            { id: 'h2', question: "What's the best way to calculate CAC for a freemium model?", type: "Financial Question (for a CFO/CPA)", date: "July 15, 2025", thread: [ {id: 'h2-p1', type: 'pending', expert: 'Axyo Expert Network', text: "Our experts are reviewing your question. You will be notified when an answer is ready."} ] },
+        ];
+        const eventsData = {
+            upcoming: [
+                { date: 'Aug 5, 2025', title: 'Livecast: The Unit Economics Masterclass', description: 'A deep dive into the metrics that define a healthy, scalable tech company, from LTV:CAC to cohort analysis.', type: 'Livecast' },
+                { date: 'Aug 12, 2025', title: 'AI Clinic: From CAC to LTV', description: 'A hands-on session to connect your data and build a live, dynamic model of your unit economics.', type: 'AI Clinic' }
+            ],
+            past: [
+                { date: 'July 15, 2025', title: 'Livecast: The Automated Board Deck', description: 'How to stop building decks and start commanding your growth story with automated, investor-grade reporting.', type: 'Livecast' },
+                { date: 'July 22, 2025', title: 'AI Clinic: The Investor-Grade Insights Workshop', description: 'Founders connected their data to automatically generate the key metrics VCs care about.', type: 'AI Clinic' }
+            ]
+        };
+        const kpiData = [
+            { id: 'k1', category: 'Cash Flow', title: 'Cash Runway', summary: 'How many months your company can survive before running out of money.', content: { title: 'KPI Deep Dive: Cash Runway', whatItIs: `Cash Runway is arguably the most critical metric for any startup. It tells you, at your current spending rate (Net Burn), how many months you have until your cash balance hits zero. The formula is: <strong>Total Cash / Monthly Net Burn</strong>.`, whyItMatters: `This metric dictates your timeline for everything: fundraising, achieving profitability, and making key hires. Miscalculating or ignoring your runway is the fastest way to unexpectedly go out of business.`, howToUse: `Use it to set your fundraising timeline. For example, if you have 12 months of runway, you should start fundraising with at least 6-8 months left. It also informs hiring decisions—can you afford that new engineer?`, howToInfluence: [`<strong>Decrease Burn:</strong> Conduct a spending audit to cut non-essential costs (like redundant SaaS).`,`<strong>Increase Cash Inflow:</strong> Shorten your accounts receivable cycle or explore pre-payment options with customers.`,`<strong>Raise Capital:</strong> The most direct, but also most difficult, way to extend runway.`] }, resources: [{text: 'Paul Graham: The Fatal Pinch', url: 'http://www.paulgraham.com/pinch.html'}] },
+            { id: 'k2', category: 'Cash Flow', title: 'Net Burn', summary: 'The rate at which your company is losing money.', content: { title: 'KPI Deep Dive: Net Burn', whatItIs: `Net Burn is the total amount of money your company loses each month. It's calculated as: <strong>(Cash at beginning of month) - (Cash at end of month)</strong>. It's a direct measure of how quickly you are spending your investors' capital.`, whyItMatters: `A consistently increasing net burn without a corresponding increase in growth metrics (like revenue or user acquisition) is a major red flag for investors. It shows a lack of capital efficiency.`, howToUse: `Track it monthly to understand your spending velocity. Segment your burn into "growth spend" (e.g., marketing) vs. "core spend" (e.g., rent) to explain your strategy to the board.`, howToInfluence: [`<strong>Control Hiring:</strong> Payroll is almost always the biggest expense. Delaying hires is the fastest way to reduce burn.`,`<strong>Negotiate with Vendors:</strong> Review your top 10 vendor contracts annually to look for savings.`,`<strong>Optimize Infrastructure:</strong> For tech companies, cloud hosting costs can spiral. Regularly audit and optimize your usage.`] }, resources: [] },
+            { id: 'k3', category: 'Growth', title: 'LTV:CAC Ratio', summary: 'The ultimate measure of your business model\'s health and scalability.', content: { title: 'KPI Deep Dive: LTV:CAC Ratio', whatItIs: `This ratio compares the Lifetime Value (LTV) of a customer to the Cost of Acquiring (CAC) them. A healthy SaaS business typically aims for a ratio of <strong>3:1 or higher</strong>.`, whyItMatters: `It answers the most important question: Is your growth profitable? A ratio below 3x suggests you're paying too much for customers who don't stick around long enough or pay enough to justify the cost.`, howToUse: `Segment this ratio by marketing channel to see which channels are bringing you the most profitable customers. Use it to set your marketing budget and customer acquisition strategy.`, howToInfluence: [`<strong>Increase LTV:</strong> Reduce customer churn, find upsell/cross-sell opportunities, or raise prices.`,`<strong>Decrease CAC:</strong> Focus on more efficient marketing channels (e.g., SEO vs. expensive paid ads) or improve your sales funnel conversion rates.`] }, resources: [{text: 'a16z: 16 Startup Metrics', url: 'https://a16z.com/2015/08/21/16-metrics/'}] },
+            { id: 'k4', category: 'Profitability', title: 'Gross Margin', summary: 'The percentage of revenue left after accounting for the cost of goods sold.', content: { title: 'KPI Deep Dive: Gross Margin', whatItIs: `Gross Margin reveals the profitability of your core product or service, before accounting for overhead like salaries and rent. Formula: <strong>((Total Revenue - Cost of Goods Sold) / Total Revenue) * 100%</strong>.`, whyItMatters: `A high gross margin means you have a healthy, efficient business model and more money available to invest in growth, sales, and marketing. VCs look for high and improving gross margins.`, howToUse: `Track this over time to ensure your core business is becoming more profitable as you scale. Compare it to industry benchmarks.`, howToInfluence: [`<strong>Increase Prices:</strong> The most direct lever.`,`<strong>Decrease COGS:</strong> Negotiate better rates with suppliers, optimize cloud hosting, or streamline support costs.`] }, resources: [] },
+        ];
+
+        // --- DOM Elements ---
+        const painCardsContainer = document.getElementById('pain-cards');
+        const frameworkCardsContainer = document.getElementById('framework-cards');
+        const communityFaqsContainer = document.getElementById('community-faqs');
+        const myHistoryContainer = document.getElementById('my-history');
+        const eventsContainer = document.getElementById('events-container');
+        const kpiContainer = document.getElementById('kpi-container');
+
+        // --- RENDER FUNCTIONS ---
+        function renderCards(container, data, type) {
+            if (!container) return;
+            container.innerHTML = '';
+            const icon = type === 'pain' 
+                ? `<svg class="w-8 h-8 text-amber-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.49 12.82l-6.12 3.42c-1.1.61-2.38.61-3.48 0L5.77 13.5c-1.1-.62-1.84-1.8-1.84-3.06v-1.3c0-1.26.74-2.44 1.84-3.06l6.12-3.42c1.1-.62 2.38-.62 3.48 0l6.12 3.42c1.1.62 1.84 1.8 1.84 3.06v1.3c0 1.26-.74 2.44-1.84 3.06z"></path><path d="M5.77 6.94L12 10.27l6.23-3.33"></path><path d="M22.06 13.5L12 18.82 1.94 13.5"></path></svg>`
+                : `<svg class="w-8 h-8 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>`;
+
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'glass-pane p-6 rounded-xl cursor-pointer transition-all duration-300 hover:border-sapphire-500/50 hover:-translate-y-1 flex flex-col';
+                card.innerHTML = `
+                    <div class="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-full bg-slate-900/50 mb-4">${icon}</div>
+                    <h4 class="font-bold text-lg text-white">${item.title}</h4>
+                    <p class="mt-2 text-sm text-slate-400 flex-grow">${item.summary}</p>
+                    <span class="mt-4 font-semibold text-sm text-sapphire-400" style="color: var(--axyo-sapphire);">Read More &rarr;</span>
+                `;
+                card.onclick = () => openFocusView(item.id);
+                container.appendChild(card);
+            });
+        }
+        
+        function renderThread(container, threadData, parentId) {
+            threadData.forEach(item => {
+                const threadItem = document.createElement('div');
+                threadItem.className = 'mt-4 pt-4 text-sm';
+                
+                let content = '';
+                if (item.type === 'answer') {
+                    content = `<div class="thread-item"><div class="thread-connector"></div><p class="text-slate-300"><strong class="text-sky-400">Answer from ${item.expert}:</strong> "${item.text}"</p></div>`;
+                } else if (item.type === 'pending') {
+                    content = `<div class="thread-item"><div class="thread-connector"></div><p class="text-slate-400 italic"><strong class="text-amber-400">Status:</strong> ${item.text}</p></div>`;
+                } else if (item.type === 'follow-up') {
+                    content = `<div class="thread-item"><div class="thread-connector"></div><p class="font-semibold text-white">Your Follow-up: ${item.text}</p></div>`;
+                }
+
+                threadItem.innerHTML = `
+                    ${content}
+                    <div class="mt-4 flex justify-end items-center space-x-4 pl-6">
+                        ${item.type === 'answer' ? `
+                        <button class="text-xs font-semibold text-slate-300 hover:text-white" onclick="askFollowUp('${parentId}', '${item.id}')">Ask Follow-up</button>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs text-slate-400">Rate this answer:</span>
+                            <button class="feedback-btn p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors" onclick="handleFeedback(this, true)"><svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9A2 2 0 0020 4h-4"></path></svg></button>
+                            <button class="feedback-btn p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors" onclick="handleFeedback(this, false)"><svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 15v4a3 3 0 003 3l4-9V2H5.72a2 2 0 00-2 1.7l-1.38 9A2 2 0 004 20h4"></path></svg></button>
+                        </div>` : ''}
+                    </div>
+                `;
+                container.appendChild(threadItem);
+            });
+        }
+
+        function renderFAQs(container, data) {
+            if (!container) return;
+            container.innerHTML = '';
+            data.forEach(item => {
+                const faq = document.createElement('div');
+                faq.className = 'glass-pane p-6 rounded-lg';
+                faq.innerHTML = `<p class="font-semibold text-white">Q: ${item.question}</p>`;
+                renderThread(faq, item.thread, item.id);
+                container.appendChild(faq);
+            });
+        }
+
+        function renderHistory() {
+            if (!myHistoryContainer) return;
+            myHistoryContainer.innerHTML = '';
+            if (myHistory.length === 0) {
+                myHistoryContainer.innerHTML = `<div class="text-center py-12 glass-pane rounded-lg"><p>You haven't asked any questions yet.</p><p class="text-sm text-slate-400">Your history will appear here.</p></div>`;
+                return;
+            }
+            myHistory.slice().reverse().forEach(item => {
+                const entry = document.createElement('div');
+                entry.className = 'glass-pane p-6 rounded-lg fade-in';
+                const isAnswered = item.thread.some(t => t.type === 'answer');
+                entry.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm text-slate-400">You asked a ${item.type} on ${item.date}:</p>
+                            <p class="font-semibold text-white mt-2">Q: ${item.question}</p>
+                        </div>
+                        <span class="text-xs font-bold py-1 px-3 rounded-full ${isAnswered ? 'bg-teal-500/10 text-teal-400' : 'bg-amber-500/10 text-amber-400'}">${isAnswered ? 'Answered' : 'Pending'}</span>
+                    </div>
+                `;
+                renderThread(entry, item.thread, item.id);
+                myHistoryContainer.appendChild(entry);
+            });
+        }
+        
+        function renderEvents(searchTerm = '') {
+            if (!eventsContainer) return;
+            const filteredUpcoming = eventsData.upcoming.filter(e => e.title.toLowerCase().includes(searchTerm.toLowerCase()));
+            const filteredPast = eventsData.past.filter(e => e.title.toLowerCase().includes(searchTerm.toLowerCase()));
+
+            let html = `
+                <div>
+                    <h2 class="text-2xl font-bold text-white">Upcoming Events</h2>
+                    <div class="mt-4 space-y-4">`;
+            filteredUpcoming.forEach(event => {
+                html += `
+                    <div class="glass-pane p-6 rounded-lg flex items-center">
+                        <div class="text-center mr-6">
+                            <p class="text-sm" style="color: var(--axyo-iris);">${new Date(event.date).toLocaleDateString('en-us', { month: 'short' }).toUpperCase()}</p>
+                            <p class="text-3xl font-bold text-white">${new Date(event.date).getDate()}</p>
+                        </div>
+                        <div class="flex-grow">
+                             <span class="text-xs font-bold py-1 px-2 rounded-full bg-iris-500/10 text-iris-300" style="--tw-bg-opacity: 0.1; color: #a5b4fc; background-color: rgba(79, 70, 229, var(--tw-bg-opacity));">${event.type}</span>
+                            <h4 class="font-bold text-lg text-white mt-1">${event.title}</h4>
+                            <p class="text-sm text-slate-400">${event.description}</p>
+                        </div>
+                        <button class="ml-6 bg-iris-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-iris-500 transition-colors whitespace-nowrap" style="background-color: var(--axyo-iris);">Register Now</button>
+                    </div>`;
+            });
+            if (filteredUpcoming.length === 0) html += `<p class="text-slate-400">No upcoming events match your search.</p>`;
+            html += `</div></div>`;
+            
+            html += `
+                <div class="mt-12">
+                    <h2 class="text-2xl font-bold text-white">Past Events</h2>
+                    <p class="text-slate-400">Excerpts from these sessions are curated into Playbook content over time.</p>
+                    <div class="mt-4 space-y-4">`;
+            filteredPast.forEach(event => {
+                 html += `
+                    <div class="glass-pane p-6 rounded-lg flex items-center opacity-70">
+                        <div class="text-center mr-6">
+                            <p class="text-sm text-slate-500">${new Date(event.date).toLocaleDateString('en-us', { month: 'short' }).toUpperCase()}</p>
+                            <p class="text-3xl font-bold text-slate-300">${new Date(event.date).getDate()}</p>
+                        </div>
+                        <div class="flex-grow">
+                            <span class="text-xs font-bold py-1 px-2 rounded-full bg-slate-700 text-slate-300">${event.type}</span>
+                            <h4 class="font-bold text-lg text-slate-300 mt-1">${event.title}</h4>
+                            <p class="text-sm text-slate-400">${event.description}</p>
+                        </div>
+                        <div class="ml-6 flex space-x-2 whitespace-nowrap">
+                            ${event.type === 'Livecast' ? `
+                            <button class="bg-slate-700 text-slate-300 font-bold py-2 px-4 rounded-lg hover:bg-slate-600">Watch Recording</button>
+                            <button class="bg-slate-700 text-slate-300 font-bold py-2 px-4 rounded-lg hover:bg-slate-600">Transcript</button>
+                            ` : `<span class="text-sm text-slate-500 italic">No assets available</span>`}
+                        </div>
+                    </div>`;
+            });
+             if (filteredPast.length === 0) html += `<p class="text-slate-400">No past events match your search.</p>`;
+            html += `</div></div>`;
+            
+            eventsContainer.innerHTML = html;
+        }
+
+        function renderKpis(searchTerm = '') {
+            if (!kpiContainer) return;
+            const categories = [...new Set(kpiData.map(kpi => kpi.category))];
+            let html = '';
+            let resultsFound = false;
+            categories.forEach(category => {
+                const filteredKpis = kpiData.filter(kpi => kpi.category === category && kpi.title.toLowerCase().includes(searchTerm.toLowerCase()));
+                if (filteredKpis.length > 0) {
+                    resultsFound = true;
+                    html += `
+                        <div class="mb-12">
+                            <h2 class="text-2xl font-bold text-white">${category}</h2>
+                            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">`;
+                    filteredKpis.forEach(item => {
+                        html += `
+                            <div class="glass-pane p-6 rounded-xl cursor-pointer transition-all duration-300 hover:border-sapphire-500/50 hover:-translate-y-1 flex flex-col" onclick="openFocusView('${item.id}')">
+                                <h4 class="font-bold text-lg text-white">${item.title}</h4>
+                                <p class="mt-2 text-sm text-slate-400 flex-grow">${item.summary}</p>
+                                <span class="mt-4 font-semibold text-sm text-sapphire-400" style="color: var(--axyo-sapphire);">Learn More &rarr;</span>
+                            </div>`;
+                    });
+                    html += `</div></div>`;
+                }
+            });
+            kpiContainer.innerHTML = html || `<p class="text-slate-400 text-center mt-8">No KPIs found for your search term.</p>`;
+        }
+
+        // --- UI LOGIC ---
+        function showLandingPage() {
+            document.getElementById('app').classList.add('hidden');
+            document.getElementById('landing-page').classList.remove('hidden');
+        }
+
+        function showAppForPersona(persona) {
+            if (persona === 'tech-founder') {
+                document.getElementById('landing-page').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.getElementById(`${tabId}-tab`).classList.remove('hidden');
+            document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
+            document.querySelector(`button[onclick="switchTab('${tabId}')"]`).classList.add('active');
+        }
+
+        const focusView = document.getElementById('focus-view');
+        const focusViewBody = document.getElementById('focus-view-body');
+        const focusResources = document.getElementById('focus-resources');
+        
+        function openFocusView(itemId) {
+            const allContent = [...playbookData.pain, ...playbookData.framework, ...kpiData];
+            const item = allContent.find(i => i.id === itemId);
+            if (!item) return;
+
+            let contentHTML = '';
+            // Check if it's a KPI or a Playbook item
+            if (item.content.whatItIs) { // KPI Item
+                const { title, whatItIs, whyItMatters, howToUse, howToInfluence } = item.content;
+                contentHTML = `
+                    <h3>${title}</h3>
+                    <h4>What It Is</h4><p>${whatItIs}</p>
+                    <h4>Why It Matters</h4><p>${whyItMatters}</p>
+                    <h4>How to Use It</h4><p>${howToUse}</p>
+                    <h4>How to Influence It</h4><ul>${howToInfluence.map(i => `<li>${i}</li>`).join('')}</ul>
+                `;
+            } else { // Playbook Item
+                const { title, quote, explanation, cost } = item.content;
+                contentHTML = `<h3>${title}</h3>`;
+                if (quote) contentHTML += `<blockquote>${quote}</blockquote>`;
+                if (explanation) contentHTML += `<h4>The Challenge</h4><div>${explanation}</div>`;
+                if (cost) contentHTML += `<div class="cost-section"><h5>The Cost of Inaction</h5><p>${cost}</p></div>`;
+            }
+            
+            focusViewBody.innerHTML = contentHTML;
+            focusResources.innerHTML = '';
+            if (item.resources && item.resources.length > 0) {
+                item.resources.forEach(res => {
+                    focusResources.innerHTML += `<a href="${res.url}" target="_blank" rel="noopener noreferrer" class="block p-4 bg-slate-800 rounded-md hover:bg-slate-700 transition-colors font-medium text-slate-300 hover:text-white">${res.text}</a>`;
+                });
+            } else {
+                focusResources.innerHTML = `<p class="text-sm text-slate-500">No additional resources available for this topic yet.</p>`;
+            }
+            focusView.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeFocusView() {
+            focusView.classList.remove('open');
+            document.body.style.overflow = '';
+            const thanksMessage = document.getElementById('feedback-thanks');
+            if (thanksMessage) {
+                 thanksMessage.classList.add('hidden');
+            }
+            document.querySelectorAll('.feedback-btn').forEach(b => b.classList.remove('active'));
+        }
+
+        const expertModal = document.getElementById('expert-modal');
+        function openExpertModal() {
+            expertModal.style.display = 'flex';
+            setTimeout(() => expertModal.classList.add('opacity-100'), 10);
+        }
+        function closeExpertModal() {
+            expertModal.classList.remove('opacity-100');
+            setTimeout(() => expertModal.style.display = 'none', 300);
+        }
+        
+        const expertForm = document.getElementById('expert-form');
+        expertForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const questionText = document.getElementById('question').value;
+            const questionType = document.getElementById('question-type').value;
+            if (!questionText.trim()) return;
+
+            myHistory.push({
+                id: 'h' + (myHistory.length + 1),
+                question: questionText,
+                type: questionType,
+                date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+                thread: [{ id: 'h' + (myHistory.length + 1) + '-p1', type: 'pending', expert: 'Axyo Expert Network', text: "Our experts are reviewing your question. You will be notified when an answer is ready."}]
+            });
+            
+            renderHistory();
+            expertForm.reset();
+            closeExpertModal();
+            switchTab('history');
+            // Using a custom modal/toast in a real app would be better than alert
+            alert('Thank you! Your question has been submitted and added to your history.');
+        });
+        
+        function askFollowUp(parentId, threadId) {
+            const followUpText = prompt("What is your follow-up question?");
+            if (!followUpText) return;
+
+            const historyItem = myHistory.find(item => item.id === parentId);
+            const communityItem = communityFAQs.find(item => item.id === parentId);
+            const item = historyItem || communityItem;
+
+            if (item) {
+                item.thread.push({ id: `${parentId}-f${item.thread.length}`, type: 'follow-up', text: followUpText });
+                item.thread.push({ id: `${parentId}-p${item.thread.length}`, type: 'pending', expert: 'Axyo Expert Network', text: "Our experts are reviewing your follow-up. You will be notified when an answer is ready."});
+                if (historyItem) renderHistory();
+                if (communityItem) renderFAQs(communityFaqsContainer, communityFAQs);
+            }
+        }
+        
+        const chatWindow = document.getElementById('chat-window');
+        function toggleChat() {
+            chatWindow.classList.toggle('hidden');
+            if(!chatWindow.classList.contains('hidden')){
+                // When opening, ensure the view is correct
+                switchChatView('current');
+            }
+        }
+        
+        function switchChatView(view) {
+            const currentView = document.getElementById('chat-view-current');
+            const historyView = document.getElementById('chat-view-history');
+            const currentTab = document.getElementById('chat-tab-current');
+            const historyTab = document.getElementById('chat-tab-history');
+            const inputContainer = document.getElementById('chat-input-container');
+
+            // Reset tabs
+            currentTab.classList.remove('active');
+            historyTab.classList.remove('active');
+            
+            if (view === 'current') {
+                currentView.classList.remove('hidden');
+                historyView.classList.add('hidden');
+                currentTab.classList.add('active');
+                inputContainer.style.display = 'block';
+            } else { // history
+                currentView.classList.add('hidden');
+                historyView.classList.remove('hidden');
+                historyTab.classList.add('active');
+                inputContainer.style.display = 'none';
+                renderChatHistory(); // Render history when tab is clicked
+            }
+        }
+        
+        function renderChatHistory() {
+            const historyView = document.getElementById('chat-view-history');
+            if (!historyView) return;
+            
+            if (myHistory.length === 0) {
+                historyView.innerHTML = `<p class="text-sm text-slate-400 text-center p-4">No history yet.</p>`;
+                return;
+            }
+
+            let html = myHistory.slice().reverse().map(item => {
+                const isAnswered = item.thread.some(t => t.type === 'answer');
+                return `
+                    <div class="p-3 rounded-md bg-slate-800/50">
+                        <div class="flex justify-between items-center">
+                            <p class="text-xs text-slate-400">${item.date}</p>
+                            <span class="text-xs font-bold py-1 px-2 rounded-full ${isAnswered ? 'bg-teal-500/10 text-teal-400' : 'bg-amber-500/10 text-amber-400'}">${isAnswered ? 'Answered' : 'Pending'}</span>
+                        </div>
+                        <p class="font-semibold text-white mt-1 text-sm">${item.question}</p>
+                    </div>
+                `;
+            }).join('');
+            historyView.innerHTML = html;
+        }
+
+        function handleFeedback(button, isHelpful) {
+            const parent = button.closest('.flex');
+            if (!parent) return;
+            parent.querySelectorAll('.feedback-btn').forEach(b => b.classList.remove('active'));
+            button.classList.add('active');
+            
+            const focusContent = button.closest('#focus-view-content');
+            if (focusContent) {
+                const thanksMessage = focusContent.querySelector('#feedback-thanks');
+                if (thanksMessage) {
+                    thanksMessage.classList.remove('hidden');
+                }
+            } else {
+                 // Fallback for community hub feedback
+                 alert('Thanks for your feedback!');
+            }
+        }
+        
+        function toggleCarousel(containerId, button) {
+            const container = document.getElementById(containerId);
+            container.classList.toggle('is-showing-all');
+            if (container.classList.contains('is-showing-all')) {
+                button.textContent = 'Show Less';
+            } else {
+                button.textContent = 'View All';
+            }
+        }
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCards(painCardsContainer, playbookData.pain, 'pain');
+            renderCards(frameworkCardsContainer, playbookData.framework, 'framework');
+            renderFAQs(communityFaqsContainer, communityFAQs);
+            renderHistory();
+            renderEvents();
+            renderKpis();
+
+            document.getElementById('kpi-search').addEventListener('input', (e) => renderKpis(e.target.value));
+            document.getElementById('events-search').addEventListener('input', (e) => renderEvents(e.target.value));
+            
+            window.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    if (focusView.classList.contains('open')) closeFocusView();
+                    if (expertModal.style.display !== 'none') closeExpertModal();
+                    if (!chatWindow.classList.contains('hidden')) toggleChat();
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>

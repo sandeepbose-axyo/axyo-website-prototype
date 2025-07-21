@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axyo: Automated Data Mapping</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+        }
+        .mapping-line {
+            stroke-width: 2.5;
+            transition: all 0.8s ease-in-out;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+        .mapping-line.draw {
+            stroke-dashoffset: 0;
+        }
+        .dot {
+            transition: opacity 0.5s ease, background-color 0.5s ease;
+        }
+        .list-item {
+            transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+        }
+        details > summary {
+            list-style: none;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-6xl bg-white rounded-xl shadow-2xl border border-gray-200">
+        <header class="p-6 border-b border-gray-200">
+            <h1 class="text-xl font-bold text-gray-800">Automated Data Mapping</h1>
+            <p class="text-sm text-gray-500 mt-1">Use Case: Predictive Sales & Demand Intelligence</p>
+        </header>
+
+        <div class="p-6 md:p-8">
+            <div class="flex flex-col md:flex-row items-center justify-between mb-6">
+                <div class="flex items-center space-x-4 mb-4 md:mb-0">
+                    <div class="bg-blue-100 text-blue-700 font-medium px-4 py-2 rounded-full text-sm flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" /><path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" /><path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" /></svg>
+                        Source Dataset: Historical Sales Data (24 Mo.)
+                    </div>
+                </div>
+                <button id="mapButton" class="bg-blue-600 text-white font-semibold px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-colors duration-300 flex items-center shadow-sm w-full md:w-auto justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" /></svg>
+                    Generate Mappings
+                </button>
+            </div>
+
+            <div id="loader" class="hidden text-center my-8">
+                <div class="flex items-center justify-center text-gray-600">
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    <span class="font-semibold">Generating optimal column mappings...</span>
+                </div>
+            </div>
+
+            <div class="relative grid grid-cols-2 gap-8">
+                <!-- Source Panel -->
+                <div>
+                    <h3 class="font-semibold text-gray-700 mb-2 text-center">Source Columns</h3>
+                    <div id="source-panel" class="bg-gray-50 border border-gray-200 rounded-lg p-3 space-y-2"></div>
+                </div>
+                <!-- Target Panel -->
+                <div>
+                    <h3 class="font-semibold text-gray-700 mb-2 text-center">Target Schema</h3>
+                    <div id="target-panel" class="bg-gray-50 border border-gray-200 rounded-lg p-3 space-y-2"></div>
+                </div>
+                <svg id="svg-container" class="absolute top-0 left-0 w-full h-full" style="pointer-events: none;"></svg>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sourceFields = [
+            { id: 's1', name: 'order_id' }, { id: 's2', name: 'order_date' }, { id: 's3', name: 'sku_id' },
+            { id: 's4', name: 'product_cat' }, { id: 's5', name: 'region' }, { id: 's6', name: 'qty' },
+            { id: 's7', name: 'price' }, { id: 's8', name: 'promo_active' }, { id: 's9', name: 'returns' }
+        ];
+
+        const targetSchema = [
+            {
+                group: 'Mandatory Fields',
+                fields: [
+                    { id: 't1', name: 'transaction_id' }, { id: 't2', name: 'timestamp' },
+                    { id: 't3', name: 'sku' }, { id: 't4', name: 'net_sales' }
+                ]
+            },
+            {
+                group: 'Sales Analysis',
+                fields: [
+                    { id: 't5', name: 'units_sold' }, { id: 't6', name: 'list_price' }
+                ]
+            },
+            {
+                group: 'Seasonal Analysis',
+                fields: [{ id: 't7', name: 'promo_flag' }]
+            },
+            {
+                group: 'Product Analysis',
+                fields: [{ id: 't8', name: 'product_family' }]
+            },
+            {
+                group: 'Customer Analysis',
+                fields: [{ id: 't9', name: 'customer_lifetime_value' }]
+            }
+        ];
+
+        const mappings = [
+            { source: 's1', target: 't1', score: 1.0 }, { source: 's2', target: 't2', score: 1.0 },
+            { source: 's3', target: 't3', score: 1.0 }, { source: 's4', target: 't8', score: 0.8 },
+            { source: 's6', target: 't5', score: 1.0 }, { source: 's7', target: 't6', score: 1.0 },
+            { source: 's8', target: 't7', score: 1.0 },
+            { source: ['s6', 's7', 's9'], target: 't4', score: 'derived' }
+        ];
+        
+        const ConfidenceColors = { HIGH: '#16a34a', MEDIUM: '#f59e0b', DERIVED: '#8b5cf6', GAP: '#ef4444' };
+
+        const sourcePanel = document.getElementById('source-panel');
+        const targetPanel = document.getElementById('target-panel');
+        const svgContainer = document.getElementById('svg-container');
+        const mapButton = document.getElementById('mapButton');
+        const loader = document.getElementById('loader');
+
+        function initializePanels() {
+            sourcePanel.innerHTML = sourceFields.map(field => 
+                `<div id="${field.id}" class="list-item bg-white p-2.5 rounded-md shadow-sm border border-gray-200 text-sm font-medium text-gray-700 flex items-center justify-between"><span>${field.name}</span><div class="dot h-2.5 w-2.5 rounded-full bg-gray-300 opacity-0"></div></div>`
+            ).join('');
+
+            targetPanel.innerHTML = targetSchema.map(group => `
+                <details class="bg-white rounded-md border border-gray-200" open>
+                    <summary class="p-2.5 cursor-pointer font-semibold text-sm text-gray-800 flex justify-between items-center">
+                        ${group.group}
+                        <svg class="w-4 h-4 transition-transform transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                    </summary>
+                    <div class="p-2 space-y-2 border-t border-gray-200">
+                        ${group.fields.map(field => `<div id="${field.id}" class="list-item p-2.5 rounded-md text-sm font-medium text-gray-700 flex items-center"><div class="dot h-2.5 w-2.5 rounded-full bg-gray-300 mr-3 opacity-0"></div><span>${field.name}</span></div>`).join('')}
+                    </div>
+                </details>
+            `).join('');
+            
+            document.querySelectorAll('details').forEach(el => {
+                el.addEventListener('toggle', e => {
+                    const icon = e.target.querySelector('svg');
+                    if (e.target.open) {
+                        icon.style.transform = 'rotate(0deg)';
+                    } else {
+                        icon.style.transform = 'rotate(-90deg)';
+                    }
+                });
+            });
+        }
+
+        function drawLine(sourceId, targetId, color, delay) {
+             const sourceIds = Array.isArray(sourceId) ? sourceId : [sourceId];
+             const targetEl = document.getElementById(targetId);
+             const targetDot = targetEl.querySelector('.dot');
+
+             setTimeout(() => {
+                sourceIds.forEach(sId => {
+                    const sourceEl = document.getElementById(sId);
+                    const sourceDot = sourceEl.querySelector('.dot');
+                    
+                    const sourceRect = sourceEl.getBoundingClientRect();
+                    const targetRect = targetEl.getBoundingClientRect();
+                    const containerRect = svgContainer.getBoundingClientRect();
+
+                    const x1 = sourceRect.right - containerRect.left;
+                    const y1 = sourceRect.top + sourceRect.height / 2 - containerRect.top;
+                    const x2 = targetRect.left - containerRect.left;
+                    const y2 = targetRect.top + targetRect.height / 2 - containerRect.top;
+
+                    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    path.setAttribute('d', `M ${x1} ${y1} C ${x1 + 60} ${y1}, ${x2 - 60} ${y2}, ${x2} ${y2}`);
+                    path.setAttribute('stroke', color);
+                    path.setAttribute('fill', 'none');
+                    path.classList.add('mapping-line');
+                    svgContainer.appendChild(path);
+
+                    setTimeout(() => {
+                        path.classList.add('draw');
+                        sourceDot.style.opacity = '1';
+                        sourceDot.style.backgroundColor = color;
+                        sourceEl.style.borderColor = color;
+                    }, 50);
+                });
+
+                targetDot.style.opacity = '1';
+                targetDot.style.backgroundColor = color;
+                targetEl.style.borderColor = color;
+             }, delay);
+        }
+        
+        function highlightGaps(delay) {
+            setTimeout(() => {
+                const gapEl = document.getElementById('t9');
+                const gapDot = gapEl.querySelector('.dot');
+                gapDot.style.opacity = '1';
+                gapDot.style.backgroundColor = ConfidenceColors.GAP;
+                gapEl.style.borderColor = ConfidenceColors.GAP;
+            }, delay);
+        }
+
+        mapButton.addEventListener('click', () => {
+            mapButton.disabled = true;
+            mapButton.classList.add('opacity-50', 'cursor-not-allowed');
+            loader.classList.remove('hidden');
+            svgContainer.innerHTML = '';
+
+            document.querySelectorAll('.list-item, details').forEach(el => el.style.borderColor = '#e5e7eb');
+            document.querySelectorAll('.dot').forEach(el => el.style.opacity = '0');
+
+            setTimeout(() => {
+                loader.classList.add('hidden');
+                mappings.forEach((map, index) => {
+                    let color;
+                    if (map.score === 'derived') color = ConfidenceColors.DERIVED;
+                    else if (map.score >= 0.9) color = ConfidenceColors.HIGH;
+                    else color = ConfidenceColors.MEDIUM;
+                    drawLine(map.source, map.target, color, index * 150);
+                });
+                highlightGaps(mappings.length * 150);
+                
+                setTimeout(() => {
+                    mapButton.disabled = false;
+                    mapButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                }, mappings.length * 150 + 500);
+            }, 1500);
+        });
+
+        window.onload = initializePanels;
+    </script>
+</body>
+</html>
