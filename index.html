@@ -1,39 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Axyo | Plug-and-Play AI. Every KPI.</title>
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Google Fonts: Manrope -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
+
     <style>
         /* Custom styles to align with brand guidelines */
         html {
             scroll-behavior: smooth;
         }
+
         body {
             font-family: 'Manrope', sans-serif;
             background-color: #FFFFFF;
         }
-        
+
         /* Primary brand color */
-        .bg-brand-iris { background-color: #0D0DB7; }
-        .text-brand-iris { color: #0D0DB7; }
-        .border-brand-iris { border-color: #0D0DB7; }
+        .bg-brand-iris {
+            background-color: #0D0DB7;
+        }
+
+        .text-brand-iris {
+            color: #0D0DB7;
+        }
+
+        .border-brand-iris {
+            border-color: #0D0DB7;
+        }
 
         /* Gradient backgrounds from brand guidelines */
-        .gradient-bg-1 { background-image: linear-gradient(135deg, #CFCFF1, #FAEFEE); }
-        .gradient-bg-2 { background-image: linear-gradient(135deg, #CFCFF1, #FCE8D1); }
-        .gradient-bg-3 { background-image: linear-gradient(135deg, #CFCFF1, #EFF5E3); }
-        .gradient-bg-main { background: linear-gradient(180deg, #FFFFFF 0%, #F4F7FF 100%);}
-        .gradient-bg-page { background: linear-gradient(180deg, #F9FAFB 0%, #FFFFFF 100%); }
+        .gradient-bg-1 {
+            background-image: linear-gradient(135deg, #CFCFF1, #FAEFEE);
+        }
+
+        .gradient-bg-2 {
+            background-image: linear-gradient(135deg, #CFCFF1, #FCE8D1);
+        }
+
+        .gradient-bg-3 {
+            background-image: linear-gradient(135deg, #CFCFF1, #EFF5E3);
+        }
+
+        .gradient-bg-main {
+            background: linear-gradient(180deg, #FFFFFF 0%, #F4F7FF 100%);
+        }
+
+        .gradient-bg-page {
+            background: linear-gradient(180deg, #F9FAFB 0%, #FFFFFF 100%);
+        }
 
         /* Smooth transitions for view switching */
         .view {
@@ -42,36 +66,56 @@
             width: 100%;
             top: 0;
             left: 0;
-            padding-top: 80px; /* Header height */
+            padding-top: 80px;
+            /* Header height */
         }
+
         .view.hidden {
             opacity: 0;
             transform: translateY(20px);
             pointer-events: none;
         }
+
         #home.view {
-            padding-top: 0; /* Home view hero starts at top */
+            padding-top: 0;
+            /* Home view hero starts at top */
         }
-        
+
         /* Interactive card styles */
-        .journey-card, .pricing-card, .resource-card, .feature-card {
+        .journey-card,
+        .pricing-card,
+        .resource-card,
+        .feature-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .journey-card:hover, .pricing-card:hover, .resource-card:hover, .feature-card:hover {
+
+        .journey-card:hover,
+        .pricing-card:hover,
+        .resource-card:hover,
+        .feature-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         }
 
         /* Custom animation for hero text */
         @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         .animate-fadeInDown {
             animation: fadeInDown 0.8s ease-out forwards;
         }
     </style>
 </head>
+
 <body class="bg-white text-gray-800 antialiased">
 
     <!-- Header -->
@@ -83,20 +127,31 @@
             </a>
             <!-- Desktop Navigation -->
             <div class="hidden md:flex items-center space-x-8">
-                <a href="#" class="text-gray-600 hover:text-brand-iris transition-colors duration-300" onclick="navigateTo('products-view')">Products</a>
-                <a href="#" class="text-gray-600 hover:text-brand-iris transition-colors duration-300" onclick="navigateTo('studio-view')">Studio</a>
-                <a href="#" class="text-gray-600 hover:text-brand-iris transition-colors duration-300" onclick="navigateTo('pricing-view')">Pricing</a>
-                <a href="#" class="text-gray-600 hover:text-brand-iris transition-colors duration-300" onclick="navigateTo('resources-view')">Resources</a>
+                <a href="#" class="text-gray-600 hover:text-brand-iris transition-colors duration-300"
+                    onclick="navigateTo('products-view')">Products</a>
+                <a href="#" class="text-gray-600 hover:text-brand-iris transition-colors duration-300"
+                    onclick="navigateTo('studio-view')">Studio</a>
+                <a href="#" class="text-gray-600 hover:text-brand-iris transition-colors duration-300"
+                    onclick="navigateTo('pricing-view')">Pricing</a>
+                <a href="#" class="text-gray-600 hover:text-brand-iris transition-colors duration-300"
+                    onclick="navigateTo('resources-view')">Resources</a>
             </div>
             <!-- CTA Buttons -->
             <div class="hidden md:flex items-center space-x-6">
-                <a href="#" class="text-gray-600 hover:text-brand-iris transition-colors duration-300 font-semibold" onclick="showLoginModal()">Login</a>
-                <a href="#" class="bg-brand-iris text-white px-5 py-2 rounded-full hover:opacity-90 transition-opacity duration-300 font-semibold" onclick="navigateTo('pricing-view')">Start for Free</a>
+                <a href="#" class="text-gray-600 hover:text-brand-iris transition-colors duration-300 font-semibold"
+                    onclick="showLoginModal()">Login</a>
+                <a href="#"
+                    class="bg-brand-iris text-white px-5 py-2 rounded-full hover:opacity-90 transition-opacity duration-300 font-semibold"
+                    onclick="navigateTo('pricing-view')">Start for Free</a>
             </div>
             <!-- Mobile Menu Button -->
             <div class="md:hidden">
                 <button>
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
                 </button>
             </div>
         </nav>
@@ -112,29 +167,45 @@
                     <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 leading-tight animate-fadeInDown">
                         Plug-and-Play AI. Every KPI.
                     </h1>
-                    <p class="mt-4 text-lg md:text-xl text-gray-600 max-w-3xl mx-auto animate-fadeInDown" style="animation-delay: 0.2s;">
-                        Axyo empowers organizations to achieve transformative decision intelligence. Select the path that best describes your objective.
+                    <p class="mt-4 text-lg md:text-xl text-gray-600 max-w-3xl mx-auto animate-fadeInDown"
+                        style="animation-delay: 0.2s;">
+                        Axyo empowers organizations to achieve transformative decision intelligence. Select the path
+                        that best describes your objective.
                     </p>
-                    
-                    <div class="mt-12 grid md:grid-cols-2 gap-8 max-w-4xl mx-auto animate-fadeInDown" style="animation-delay: 0.4s;">
-                        <div class="journey-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100 cursor-pointer" onclick="navigateTo('smb-view')">
+
+                    <div class="mt-12 grid md:grid-cols-2 gap-8 max-w-4xl mx-auto animate-fadeInDown"
+                        style="animation-delay: 0.4s;">
+                        <div class="journey-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100 cursor-pointer"
+                            onclick="navigateTo('smb-view')">
                             <div class="flex justify-center mb-4">
                                 <div class="w-16 h-16 rounded-full gradient-bg-1 flex items-center justify-center">
-                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    </svg>
                                 </div>
                             </div>
                             <h3 class="text-xl font-bold text-gray-800">For Small & Medium Businesses</h3>
-                            <p class="mt-2 text-gray-500">Establish financial clarity and control to accelerate growth.</p>
+                            <p class="mt-2 text-gray-500">Establish financial clarity and control to accelerate growth.
+                            </p>
                         </div>
-                        
-                        <div class="journey-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100 cursor-pointer" onclick="navigateTo('studio-view')">
+
+                        <div class="journey-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100 cursor-pointer"
+                            onclick="navigateTo('studio-view')">
                             <div class="flex justify-center mb-4">
                                 <div class="w-16 h-16 rounded-full gradient-bg-2 flex items-center justify-center">
-                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                                        </path>
+                                    </svg>
                                 </div>
                             </div>
                             <h3 class="text-xl font-bold text-gray-800">For Enterprises</h3>
-                            <p class="mt-2 text-gray-500">Deploy a sophisticated AI Decision App for a complex operational challenge.</p>
+                            <p class="mt-2 text-gray-500">Deploy a sophisticated AI Decision App for a complex
+                                operational challenge.</p>
                         </div>
                     </div>
                 </div>
@@ -145,32 +216,70 @@
         <div id="smb-view" class="view hidden gradient-bg-page">
             <div class="container mx-auto px-6 py-16">
                 <button class="mb-8 text-brand-iris font-semibold flex items-center" onclick="navigateTo('home')">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
                     Back
                 </button>
-                <h2 class="text-3xl md:text-5xl font-extrabold text-gray-900 text-center">Welcome to the Axyo Financial Command Center</h2>
-                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto text-center">Your integrated ecosystem for financial clarity and growth. Choose your destination.</p>
-                
+                <h2 class="text-3xl md:text-5xl font-extrabold text-gray-900 text-center">Welcome to the Axyo Financial
+                    Command Center</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto text-center">Your integrated ecosystem for
+                    financial clarity and growth. Choose your destination.</p>
+
                 <div class="mt-12 grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-                    <div class="journey-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100 cursor-pointer" onclick="showModal('Full-Access Trial', 'You are being redirected to app.axyo.ai to start your full-access trial, including the Financial Command Center and premium Axyo Learn features.')">
+                    <div class="journey-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100 cursor-pointer"
+                        onclick="showModal('Full-Access Trial', 'You are being redirected to app.axyo.ai to start your full-access trial, including the Financial Command Center and premium Axyo Learn features.')">
                         <h3 class="text-3xl font-bold text-gray-800 text-center">Enter the Cockpit</h3>
                         <p class="mt-2 text-brand-iris font-semibold text-center">The Financial Command Center</p>
                         <ul class="mt-6 space-y-3 text-gray-700">
-                            <li class="flex items-start"><svg class="w-5 h-5 text-green-500 mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>AI-driven insights and cash flow forecasting.</span></li>
-                            <li class="flex items-start"><svg class="w-5 h-5 text-green-500 mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Real-time anomaly detection.</span></li>
-                            <li class="flex items-start"><svg class="w-5 h-5 text-green-500 mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Interactive "what-if" scenario planning.</span></li>
+                            <li class="flex items-start"><svg class="w-5 h-5 text-green-500 mr-3 mt-1 flex-shrink-0"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg><span>AI-driven insights and cash flow forecasting.</span></li>
+                            <li class="flex items-start"><svg class="w-5 h-5 text-green-500 mr-3 mt-1 flex-shrink-0"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg><span>Real-time anomaly detection.</span></li>
+                            <li class="flex items-start"><svg class="w-5 h-5 text-green-500 mr-3 mt-1 flex-shrink-0"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg><span>Interactive "what-if" scenario planning.</span></li>
                         </ul>
                         <p class="mt-4 text-center text-sm text-gray-500">Click to learn more and start trial.</p>
                     </div>
-                    <div class="journey-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100 cursor-pointer" onclick="location.href='axyo-learninghub-prototype/index.html';">
+                    <div class="journey-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100 cursor-pointer"
+                        onclick="location.href='axyo-learninghub-prototype/index.html';">
                         <h3 class="text-3xl font-bold text-gray-800 text-center">Go to Flight School</h3>
                         <p class="mt-2 text-brand-iris font-semibold text-center">Axyo Learning Hub</p>
-                         <ul class="mt-6 space-y-3 text-gray-700">
-                            <li class="flex items-start"><svg class="w-5 h-5 text-green-500 mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Interactive community and resource hub.</span></li>
-                            <li class="flex items-start"><svg class="w-5 h-5 text-green-500 mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Connect with peers and our AI mentor.</span></li>
-                            <li class="flex items-start"><svg class="w-5 h-5 text-green-500 mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Consult with real-world financial experts.</span></li>
+                        <ul class="mt-6 space-y-3 text-gray-700">
+                            <li class="flex items-start"><svg class="w-5 h-5 text-green-500 mr-3 mt-1 flex-shrink-0"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg><span>Interactive community and resource hub.</span></li>
+                            <li class="flex items-start"><svg class="w-5 h-5 text-green-500 mr-3 mt-1 flex-shrink-0"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg><span>Connect with peers and our AI mentor.</span></li>
+                            <li class="flex items-start"><svg class="w-5 h-5 text-green-500 mr-3 mt-1 flex-shrink-0"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg><span>Consult with real-world financial experts.</span></li>
                         </ul>
-                         <p class="mt-4 text-center text-sm text-gray-500">Click to learn more and join for free.</p>
+                        <p class="mt-4 text-center text-sm text-gray-500">Click to learn more and join for free.</p>
                     </div>
                 </div>
             </div>
@@ -182,7 +291,8 @@
                 <button class="mb-8 text-brand-iris font-semibold" onclick="navigateTo('home')">Back</button>
                 <div class="text-center">
                     <h1 class="text-4xl font-bold">Axyo AI Decision Apps</h1>
-                    <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">Turnkey AI Decision Apps that solve critical business functions immediately.</p>
+                    <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">Turnkey AI Decision Apps that solve critical
+                        business functions immediately.</p>
                 </div>
 
                 <!-- Financial Command Center Feature Section -->
@@ -191,30 +301,46 @@
                         <div>
                             <span class="text-brand-iris font-semibold">FLAGSHIP PRODUCT</span>
                             <h2 class="text-3xl font-extrabold mt-2">Financial Command Center</h2>
-                            <p class="mt-4 text-gray-600">The complete, AI-powered ecosystem for SMBs to achieve financial clarity and control. Go from reactive reporting to proactive decision-making.</p>
+                            <p class="mt-4 text-gray-600">The complete, AI-powered ecosystem for SMBs to achieve
+                                financial clarity and control. Go from reactive reporting to proactive decision-making.
+                            </p>
                             <div class="mt-8 space-y-6">
                                 <div class="flex items-start">
-                                    <div class="w-12 h-12 rounded-xl gradient-bg-1 flex items-center justify-center flex-shrink-0">
-                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                                    <div
+                                        class="w-12 h-12 rounded-xl gradient-bg-1 flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                        </svg>
                                     </div>
                                     <div class="ml-4">
                                         <h4 class="font-bold">Predictive Forecasting</h4>
-                                        <p class="text-gray-500 text-sm">See your 13-week cash flow before it happens.</p>
+                                        <p class="text-gray-500 text-sm">See your 13-week cash flow before it happens.
+                                        </p>
                                     </div>
                                 </div>
                                 <div class="flex items-start">
-                                    <div class="w-12 h-12 rounded-xl gradient-bg-2 flex items-center justify-center flex-shrink-0">
-                                       <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                                    <div
+                                        class="w-12 h-12 rounded-xl gradient-bg-2 flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
+                                            </path>
+                                        </svg>
                                     </div>
                                     <div class="ml-4">
                                         <h4 class="font-bold">Intelligent What-Ifs</h4>
-                                        <p class="text-gray-500 text-sm">Model the impact of decisions before you make them.</p>
+                                        <p class="text-gray-500 text-sm">Model the impact of decisions before you make
+                                            them.</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="flex items-center justify-center">
-                             <img src="https://placehold.co/500x500/F4F7FF/0D0DB7?text=FCC+UI" alt="Financial Command Center UI" class="rounded-2xl shadow-2xl">
+                            <img src="https://placehold.co/500x500/F4F7FF/0D0DB7?text=FCC+UI"
+                                alt="Financial Command Center UI" class="rounded-2xl shadow-2xl">
                         </div>
                     </div>
                 </div>
@@ -229,30 +355,42 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Studio View -->
         <div id="studio-view" class="view hidden gradient-bg-page">
             <div class="container mx-auto px-6 py-16">
-                 <button class="mb-8 text-brand-iris font-semibold flex items-center" onclick="navigateTo('home')">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                <button class="mb-8 text-brand-iris font-semibold flex items-center" onclick="navigateTo('home')">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
                     Back
                 </button>
                 <div class="text-center">
                     <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900">The Axyo Studio</h1>
-                    <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Deploy sophisticated AI decisioning applications with unprecedented velocity. Choose your path to innovation.</p>
+                    <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Deploy sophisticated AI decisioning
+                        applications with unprecedented velocity. Choose your path to innovation.</p>
                 </div>
                 <div class="mt-12 grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                     <div class="journey-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100 flex flex-col">
                         <h3 class="text-xl font-bold text-gray-800">Deploy a Pre-Built AI Decision App Instantly</h3>
-                        <p class="mt-2 text-gray-600 flex-grow">Browse our library of pre-built app templates and deploy one in minutes with our famous 3-click process.</p>
-                        <button class="mt-6 w-full bg-brand-iris text-white px-8 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity duration-300" onclick="showModal('Explore Templates', 'You are being redirected to the Axyo Studio to explore our templates and launch your application.')">
+                        <p class="mt-2 text-gray-600 flex-grow">Browse our library of pre-built app templates and deploy
+                            one in minutes with our famous 3-click process.</p>
+                        <button
+                            class="mt-6 w-full bg-brand-iris text-white px-8 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity duration-300"
+                            onclick="showModal('Explore Templates', 'You are being redirected to the Axyo Studio to explore our templates and launch your application.')">
                             Explore App Templates
                         </button>
                     </div>
                     <div class="journey-card bg-white p-8 rounded-2xl shadow-lg border border-gray-100 flex flex-col">
                         <h3 class="text-xl font-bold text-gray-800">Co-Create a Custom AI Decision App</h3>
-                        <p class="mt-2 text-gray-600 flex-grow">Partner with our Customer Success team to design and deploy a fully custom AI application from idea to production in just weeks.</p>
-                        <button class="mt-6 w-full bg-white border-2 border-brand-iris text-brand-iris px-8 py-3 rounded-full font-semibold hover:bg-brand-iris hover:text-white transition-all duration-300" onclick="location.href='/axyo-engagement-blueprint/';">
+                        <p class="mt-2 text-gray-600 flex-grow">Partner with our Customer Success team to design and
+                            deploy a fully custom AI application from idea to production in just weeks.</p>
+                        <button class="mt-6 w-full bg-white border-2 px-8 py-3 rounded-full font-semibold
+         text-[#0D0DB7] border-[#0D0DB7]
+         hover:bg-[#0D0DB7] hover:text-white transition-all duration-300"
+                            onclick="location.href='/axyo-engagement-blueprint/';">
                             Explore Our Process
                         </button>
                     </div>
@@ -265,7 +403,8 @@
             <div class="container mx-auto px-6 py-16">
                 <button class="mb-8 text-brand-iris font-semibold" onclick="navigateTo('home')">Back</button>
                 <h1 class="text-4xl font-bold text-center">Simple, Transparent Pricing</h1>
-                <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto text-center">Choose the plan that's right for your organization's journey.</p>
+                <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto text-center">Choose the plan that's right for
+                    your organization's journey.</p>
                 <div class="mt-12 grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                     <!-- Free Tier -->
                     <div class="pricing-card bg-white p-8 rounded-2xl shadow-lg border flex flex-col">
@@ -274,46 +413,87 @@
                         <p class="mt-4 text-4xl font-extrabold">$0</p>
                         <p class="text-gray-500">Free forever</p>
                         <ul class="mt-6 space-y-3 flex-grow text-sm">
-                            <li class="flex items-start font-semibold"><svg class="w-4 h-4 text-green-500 mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Free Executive Dashboard</span></li>
-                            <li class="flex items-start ml-7 text-gray-500">A core module of the Financial Command Center. Connect your QuickBooks to see live financial health and AI-powered insights.</li>
-                            <li class="flex items-start mt-4"><svg class="w-4 h-4 text-green-500 mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Axyo Learn (Community Access)</span></li>
+                            <li class="flex items-start font-semibold"><svg
+                                    class="w-4 h-4 text-green-500 mr-3 mt-1 flex-shrink-0" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg><span>Free Executive Dashboard</span></li>
+                            <li class="flex items-start ml-7 text-gray-500">A core module of the Financial Command
+                                Center. Connect your QuickBooks to see live financial health and AI-powered insights.
+                            </li>
+                            <li class="flex items-start mt-4"><svg
+                                    class="w-4 h-4 text-green-500 mr-3 mt-1 flex-shrink-0" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg><span>Axyo Learn (Community Access)</span></li>
                         </ul>
-                        <button class="mt-8 w-full bg-gray-100 text-gray-800 py-3 rounded-full font-semibold">Get Started for Free</button>
+                        <button class="mt-8 w-full bg-gray-100 text-gray-800 py-3 rounded-full font-semibold">Get
+                            Started for Free</button>
                     </div>
                     <!-- SMB Tier -->
-                    <div class="pricing-card bg-brand-iris text-white p-8 rounded-2xl shadow-2xl flex flex-col ring-4 ring-indigo-300">
+                    <div
+                        class="pricing-card bg-brand-iris text-white p-8 rounded-2xl shadow-2xl flex flex-col ring-4 ring-indigo-300">
                         <h3 class="text-2xl font-bold">SMB Suite</h3>
                         <p class="mt-2 text-indigo-200">Full Access</p>
                         <p class="mt-4 text-4xl font-extrabold">$199<span class="text-xl font-normal">/mo</span></p>
                         <p class="text-indigo-200">Billed annually</p>
                         <ul class="mt-6 space-y-3 flex-grow">
-                            <li class="flex items-center"><svg class="w-5 h-5 text-white mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Everything in Starter, plus:</li>
-                            <li class="flex items-center font-semibold"><svg class="w-5 h-5 text-white mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Full Financial Command Center</li>
-                            <li class="flex items-center font-semibold"><svg class="w-5 h-5 text-white mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Premium Axyo Learn Features</li>
+                            <li class="flex items-center"><svg class="w-5 h-5 text-white mr-3" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>Everything in Starter, plus:</li>
+                            <li class="flex items-center font-semibold"><svg class="w-5 h-5 text-white mr-3" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>Full Financial Command Center</li>
+                            <li class="flex items-center font-semibold"><svg class="w-5 h-5 text-white mr-3" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>Premium Axyo Learn Features</li>
                         </ul>
-                        <button class="mt-8 w-full bg-white text-brand-iris py-3 rounded-full font-semibold">Start Full-Access Trial</button>
+                        <button class="mt-8 w-full bg-white text-brand-iris py-3 rounded-full font-semibold">Start
+                            Full-Access Trial</button>
                     </div>
-                     <!-- Enterprise Tier -->
+                    <!-- Enterprise Tier -->
                     <div class="pricing-card bg-white p-8 rounded-2xl shadow-lg border flex flex-col">
                         <h3 class="text-2xl font-bold">Enterprise</h3>
                         <p class="mt-2 text-gray-500">Custom Solutions</p>
                         <p class="mt-4 text-4xl font-extrabold">Custom</p>
                         <p class="text-gray-500">For complex, large-scale challenges.</p>
                         <ul class="mt-6 space-y-3 flex-grow">
-                             <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Full Axyo Studio Access</li>
-                             <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Dedicated Customer Success</li>
-                             <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Custom AI Decision App Co-Creation</li>
+                            <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>Full Axyo Studio Access</li>
+                            <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>Dedicated Customer Success</li>
+                            <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-3" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>Custom AI Decision App Co-Creation</li>
                         </ul>
-                        <button class="mt-8 w-full bg-gray-800 text-white py-3 rounded-full font-semibold">Contact Sales</button>
+                        <button class="mt-8 w-full bg-gray-800 text-white py-3 rounded-full font-semibold">Contact
+                            Sales</button>
                     </div>
                 </div>
             </div>
         </div>
         <div id="resources-view" class="view hidden gradient-bg-page">
-             <div class="container mx-auto p-8">
+            <div class="container mx-auto p-8">
                 <button class="mb-8 text-brand-iris font-semibold" onclick="navigateTo('home')">Back</button>
                 <h1 class="text-4xl font-bold text-center">Resources</h1>
-                <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto text-center">Explore our library of content to learn more about decision intelligence and how Axyo can help.</p>
+                <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto text-center">Explore our library of content to
+                    learn more about decision intelligence and how Axyo can help.</p>
                 <div class="mt-12 grid md:grid-cols-3 gap-8">
                     <div class="resource-card bg-white p-6 rounded-xl shadow-lg border">Axyo Learn</div>
                     <div class="resource-card bg-white p-6 rounded-xl shadow-lg border">Blog / Articles</div>
@@ -328,19 +508,23 @@
         <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
             <h3 id="redirect-modal-title" class="text-2xl font-bold text-gray-800"></h3>
             <p id="redirect-modal-body" class="mt-4 text-gray-600"></p>
-            <button class="mt-8 bg-brand-iris text-white px-6 py-2 rounded-full font-semibold hover:opacity-90" onclick="closeModal('redirect-modal')">Close</button>
+            <button class="mt-8 bg-brand-iris text-white px-6 py-2 rounded-full font-semibold hover:opacity-90"
+                onclick="closeModal('redirect-modal')">Close</button>
         </div>
     </div>
-    
+
     <div id="login-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
             <h3 class="text-2xl font-bold text-gray-800 text-center">Login</h3>
             <p class="mt-2 text-gray-600 text-center">Which application would you like to log into?</p>
             <div class="mt-6 space-y-4">
-                <button class="w-full text-left p-4 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">SMB Suite (app.axyo.ai)</button>
-                <button class="w-full text-left p-4 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">Axyo Studio (studio.axyo.ai)</button>
+                <button class="w-full text-left p-4 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">SMB
+                    Suite (app.axyo.ai)</button>
+                <button class="w-full text-left p-4 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">Axyo
+                    Studio (studio.axyo.ai)</button>
             </div>
-            <button class="mt-6 w-full text-brand-iris font-semibold" onclick="closeModal('login-modal')">Cancel</button>
+            <button class="mt-6 w-full text-brand-iris font-semibold"
+                onclick="closeModal('login-modal')">Cancel</button>
         </div>
     </div>
 
@@ -367,7 +551,7 @@
             document.getElementById('redirect-modal-body').textContent = body;
             document.getElementById('redirect-modal').classList.remove('hidden');
         }
-        
+
         function showLoginModal() {
             document.getElementById('login-modal').classList.remove('hidden');
         }
@@ -382,4 +566,5 @@
     </script>
 
 </body>
+
 </html>
