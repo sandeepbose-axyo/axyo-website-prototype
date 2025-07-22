@@ -70,7 +70,7 @@
 
     <!-- Modal Structure -->
     <div id="insight-modal" class="modal fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden opacity-0">
-        <div id="modal-content" class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-2xl transform scale-95">
+        <div id="modal-content" class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-3xl transform scale-95">
             <div class="p-6 border-b border-slate-200 flex justify-between items-start">
                 <h2 id="modal-title" class="text-2xl font-bold text-slate-900"></h2>
                 <button id="close-modal-btn" class="text-slate-400 hover:text-slate-600 transition">
@@ -86,66 +86,290 @@
     <script>
         const roadmapData = [
             {
-                module: "Module 1: The Command Center",
-                purpose: "The SBO's morning coffee view. A narrative dashboard that tells the story of the business's health—past performance, present status, and immediate future outlook—in under 60 seconds.",
+                module: "Module 1: Executive Dashboard",
+                purpose: "Your business's story in 60 seconds. This is your morning coffee view—a curated, narrative dashboard that instantly tells you where your business stands, how you got here, and where you're headed.",
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" /></svg>`,
                 insights: [
-                    { title: "Core Financials Trendline", ml: false, what: "A single, interactive line chart showing the last 6 months of three critical, related metrics: Accrual Revenue, Total Expenses, and Cash Balance.", why: "This is the master narrative of the business. QBO forces you to run separate reports, making it hard to see the connections. This unified view instantly reveals the fundamental dynamics: Are sales actually turning into cash? Is spending growing faster than revenue? Is profitability improving?", drilldown: "When an SBO sees a spike or dip and asks 'Why?', clicking on that data point opens a pop-up showing the 'Top 5 Drivers' for that period (e.g., 'Top Expense Drivers in May: 1. New Equipment Purchase: $15k, 2. Annual Insurance: $8k...'). This provides instant context without leaving the dashboard.", secret: "While QBO has the raw data, Axyo's Intelligent GL ensures that revenue and expenses are categorized cleanly and consistently, making the trendlines a reliable and meaningful source of truth.", personas: ["Tech Founder", "Professional Services company", "Trades and Contracts", "Other Family Owned Business"] },
-                    { title: "Live Cash Balance", ml: false, what: "The real-time, aggregated cash total from all connected bank accounts.", why: "The foundational metric. It answers the immediate, foundational question: 'How much money do I have to work with right now?'", drilldown: "Clicking the number opens a simple, clean pop-up listing the balances of each individual connected cash account.", secret: null, personas: ["Tech Founder", "Professional Services company", "Trades and Contracts", "Other Family Owned Business"] },
-                    { title: "90-Day Forecast Balance", ml: true, what: "A data-driven projection of the cash balance at the end of the next 90 days, derived from the Cash Forecast Model.", why: "This provides a single, concrete number that summarizes the future cash trajectory. It's a quick-glance answer to 'Where am I headed?'", drilldown: "Clicking this metric navigates the user directly to Module 2: The Cash Forecast Center, where they can see the full interactive forecast graph and perform what-if analysis.", secret: null, personas: ["Tech Founder", "Professional Services company", "Trades and Contracts", "Other Family Owned Business"] },
-                    { title: "Cash Runway", ml: true, what: "A data-driven estimate of how many months the business can operate on its current path, calculated directly from the full Cash Forecast Model.", why: "This translates the forecast into the most critical survival metric. It answers, 'How long can my business last?' Placing it on the main dashboard highlights its urgency.", drilldown: "Clicking on the runway number navigates the user to the Cash Forecast Center (Module 2) and automatically highlights the 'Burn Rate Analysis' section, showing exactly what spending assumptions are driving this runway calculation.", secret: null, personas: ["Tech Founder", "Professional Services company", "Trades and Contracts", "Other Family Owned Business"] },
-                    { title: "Net Liquid Position", ml: false, what: "A powerful health metric calculated as Live Cash Balance + Total A/R - Bills Due (Next 30 Days).", why: "This moves beyond the simple cash balance to provide a true stress test of short-term health. It answers, 'If I collected everything I'm owed and paid all my near-term bills, would I be okay?'", drilldown: "Clicking breaks the number down into its three core components, showing the total for each and providing one-click links to the A/R Action Center and A/P Action Center in Module 3.", secret: null, personas: ["Professional Services company", "Trades and Contracts", "Other Family Owned Business", "Tech Founder"] },
-                    { title: "A/R at Risk", ml: true, what: "The total dollar amount of overdue A/R that our A/R at Risk Model has flagged as having a high probability of default or significant further delay.", why: "QBO's % Overdue A/R is a vanity metric. This insight ignores the noise and pinpoints the real, material risk in your receivables.", drilldown: "Clicking this metric takes the user directly to the A/R Action Center (Module 3), with the view pre-filtered to show only these high-risk invoices, so they can take immediate collection action.", secret: null, personas: ["Professional Services company", "Trades and Contracts", "Other Family Owned Business"] },
-                    { title: "Top Expense Growth", ml: false, what: "Identifies the single expense category (e.g., 'Software,' 'Marketing') that has grown the most in spending over the last 90 days.", why: "This is a powerful, proactive insight into 'cost creep.' It automatically flags the area of spending that is changing the fastest, allowing an SBO to investigate before it becomes a major problem.", drilldown: "Clicking this metric navigates the user to Module 3: The Working Capital Hub and opens a detailed 'Vendor Report Card' view, filtered for that specific expense category, showing exactly which vendors are driving the increased spending.", secret: null, personas: ["Tech Founder", "Professional Services company", "Trades and Contracts", "Other Family Owned Business"] },
+                    { 
+                        title: "Core Financials Trendline", 
+                        what: "A single, unified chart showing the relationship between your Revenue, Expenses, and Cash Balance over the last six months.", 
+                        why: "This is the master narrative of your business's health. It moves beyond isolated numbers to answer the fundamental questions: Are my sales actually turning into cash? Is my spending outpacing my revenue? Is my business becoming more or less profitable over time?", 
+                        insight: "Instead of forcing you to piece together the story from separate reports, Axyo provide one clear, dynamic view. Clicking on any spike or dip instantly reveals the 'Top 5 Drivers' for that period—like a major sale or a new equipment purchase—giving you immediate context without ever leaving your dashboard.", 
+                        advantage: "The reliability of this trendline comes from Axyo's Intelligent General Ledger, which ensures every transaction is categorized with clean, consistent logic. This creates a source of truth you can trust to make critical decisions.", 
+                        ml_req: "Yes. ML models are used to automatically and accurately categorize transactions within the Intelligent GL, ensuring the trendlines are meaningful.",
+                        personas: ["Tech Founder", "Professional Services", "Trades and Contracts", "Family-Owned Business"] 
+                    },
+                    { 
+                        title: "Live Cash Balance", 
+                        what: "The real-time, aggregated cash total from all your connected bank accounts.", 
+                        why: "It's the most fundamental number in your business. It answers the immediate, foundational question: 'How much money do I have to work with right now?'", 
+                        insight: "One number, one click. Clicking the total instantly shows you the balance of each individual connected account, giving you full transparency with zero effort.", 
+                        advantage: null, 
+                        ml_req: "No. This is a direct aggregation of real-time data.",
+                        personas: ["Tech Founder", "Professional Services", "Trades and Contracts", "Family-Owned Business"] 
+                    },
+                    { 
+                        title: "90-Day Forecast Balance", 
+                        what: "A data-driven projection of your cash balance at the end of the next 90 days.", 
+                        why: "This single number summarizes your immediate future, transforming uncertainty into a concrete projection. It’s the quickest way to answer, 'Where am I headed?' and spot potential cash crunches before they happen.", 
+                        insight: "This isn't a static guess. It's a dynamic forecast based on your scheduled payments, expected receivables, and historical patterns. Clicking it takes you directly to the full Cash Forecast Center, where you can see exactly how we got this number and model your own scenarios.", 
+                        advantage: null, 
+                        ml_req: "Yes. The forecast uses ML to project recurring transactions and to predict the most likely payment dates for open invoices based on historical customer behavior.",
+                        personas: ["Tech Founder", "Professional Services", "Trades and Contracts", "Family-Owned Business"] 
+                    },
+                    { 
+                        title: "Cash Runway", 
+                        what: "A clear, data-driven estimate of how many months your business can operate on its current path before running out of cash.", 
+                        why: "This translates your forecast into the ultimate survival metric. It answers the most critical question for any founder or owner: 'How long can my business last?' Placing it on the dashboard highlights its urgency and importance.", 
+                        insight: "Clicking on your runway number doesn't just show you a number; it takes you to the 'Burn Rate Analysis' in the forecast module. You'll see the exact spending assumptions driving the calculation, empowering you to make changes that directly extend your runway.", 
+                        advantage: null, 
+                        ml_req: "Yes. This insight is a direct output of the cash forecast, which uses ML to project future inflows and outflows that determine the net burn rate.",
+                        personas: ["Tech Founder", "Professional Services", "Trades and Contracts", "Family-Owned Business"] 
+                    },
+                    { 
+                        title: "Net Liquid Position", 
+                        what: "A powerful health metric calculated as: `Live Cash Balance + Total Money Owed to You - Bills Due in the Next 30 Days`.", 
+                        why: "This is a true stress test of your short-term financial health. It moves beyond a simple cash balance to answer a more telling question: 'If I collected everything I'm owed and paid all my near-term bills today, would I be okay?'", 
+                        insight: "Clicking the number instantly breaks it down into its three core components. From there, you get one-click links to the A/R and A/P Action Centers, turning this powerful insight directly into an action plan.", 
+                        advantage: null, 
+                        ml_req: "No. This is a direct calculation based on current receivables and payables.",
+                        personas: ["Professional Services", "Trades and Contracts", "Family-Owned Business", "Tech Founder"] 
+                    },
+                    { 
+                        title: "A/R at Risk", 
+                        what: "The total dollar amount of overdue payments that Axyo's model has flagged as having a high probability of default or significant further delay.", 
+                        why: "Standard overdue reports are full of noise. This insight pinpoints the real, material risk in your receivables, allowing you to focus your collection efforts where they have the greatest impact on your cash flow.", 
+                        insight: "Our A/R at Risk Model analyzes factors beyond just age, like a customer's payment history and recent invoice patterns. Clicking this metric takes you to a pre-filtered list in the A/R Action Center showing only these high-risk invoices, so you can take immediate, prioritized action.", 
+                        advantage: null, 
+                        ml_req: "Yes. A core ML model analyzes customer payment behavior, invoice characteristics, and other signals to generate a risk score for each overdue invoice.",
+                        personas: ["Professional Services", "Trades and Contracts", "Family-Owned Business"] 
+                    },
+                    { 
+                        title: "Top Expense Growth", 
+                        what: "An alert that automatically identifies the single expense category (e.g., 'Software,' 'Marketing') that has grown the most in spending over the last 90 days.", 
+                        why: "This is your early warning system for 'cost creep.' It proactively flags the area of your spending that is changing the fastest, allowing you to investigate and gain control before it becomes a major problem.", 
+                        insight: "Clicking this alert navigates you to a detailed 'Vendor Report Card' view, pre-filtered for that specific expense category. You can see in seconds exactly which vendors are driving the increased spending.", 
+                        advantage: "This is only possible because Axyo's system intelligently cleans and identifies all your vendors, ensuring the analysis is accurate and meaningful in a way that is difficult to achieve with standard accounting reports.", 
+                        ml_req: "Yes. ML is used in the background to clean, merge, and accurately identify vendors (Entity ID) and to ensure expense transactions are categorized correctly, which are prerequisites for this analysis.",
+                        personas: ["Tech Founder", "Professional Services", "Trades and Contracts", "Family-Owned Business"] 
+                    },
                 ]
             },
             {
                 module: "Module 2: The Cash Forecast Center",
-                purpose: "A dedicated, interactive workspace that answers the question, 'Where is my cash headed and how can I change its course?' This is where an SBO moves from observing to planning.",
+                purpose: "Move from observing to planning. This is your dedicated, interactive workspace for answering, 'Where is my cash headed, and how can I change its course?'",
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>`,
                 insights: [
-                    { title: "90-Day Rolling Cash Forecast", ml: true, what: "An interactive, data-driven forecast of the cash balance over the next 90 days.", why: "This is the core of the module. It moves the SBO from guessing to seeing, providing a clear visual of their future cash position and potential shortfalls, enabling proactive decisions instead of reactive panic.", drilldown: "Hovering over any point on the forecast line reveals the key projected inflows and outflows for that week. Clicking on a week opens a detailed pop-up listing the specific transactions that make up the projection (e.g., 'Outflow: Bill #123 to Acme Corp ($5k), Payroll Run ($12k)... Inflow: Invoice #789 from Smith Co ($8k)...'). This provides complete transparency and builds trust in the forecast.", secret: null, personas: ["Tech Founder", "Professional Services company", "Trades and Contracts", "Other Family Owned Business"] },
-                    { title: "Burn Rate Analysis", ml: false, what: "A detailed breakdown of the company's spending velocity. The primary metric displayed is the Average Monthly Burn (trailing 90 days) to provide a stable, reliable figure.", why: "This is the 'why' behind the forecast. It shows what's driving the cash outflow, enabling the SBO to understand which costs are fixed and which are levers they can pull to affect their runway.", drilldown: "Clicking on the insight opens a more detailed view. This includes a bar chart showing the actual burn for each of the last 6 months, allowing the SBO to see trends. It also features a deconstruction of the average burn into its strategic components, using our Intelligent GL tags: By Cost Type (Core vs. Variable Burn) and By Spending Intent (Growth vs. Overhead Spending).", secret: "This strategic deconstruction is only possible with Axyo's Fixed/Variable and Run/Grow tags from the Intelligent GL.", personas: ["Tech Founder", "Professional Services company", "Trades and Contracts", "Other Family Owned Business"] },
-                    { title: "Intelligent What-if Analysis", ml: true, what: "An interactive tool that allows an SBO to model the impact of specific business decisions on their cash forecast. The 'intelligence' lies not in a complex, black-box forecast, but in the pre-defined, action-oriented levers that reflect real-world choices.", why: "This makes scenario planning tangible, accessible, and trustworthy. Instead of complex spreadsheets or abstract variables, the SBO can directly model decisions like 'What if I hire a new employee?' or 'What if I delay a large payment?' and see the immediate impact on their cash flow and runway.", drilldown: "This is the drill-down. As the SBO uses a lever, the main forecast graph and runway number change instantly, providing immediate, clear feedback on their decisions.", secret: null, personas: ["Tech Founder", "Professional Services company", "Trades and Contracts", "Other Family Owned Business"] },
-                    { title: "Expense Volatility", ml: false, what: "An analysis that pinpoints which expense categories have the most fluctuation month-to-month, sorted by the degree of unpredictability.", why: "While you track total burn, this insight identifies your most unpredictable costs (e.g., materials, contract labor). This is crucial for creating more accurate forecasts and highlights areas needing better cost control or vendor negotiations.", drilldown: "Clicking on the insight opens a ranked list of expense categories sorted by their volatility (standard deviation of monthly spend). Clicking a specific category (e.g., 'Materials') shows a line chart of its spend over the last 12 months, clearly visualizing the peaks and valleys.", secret: "QBO can show you monthly spend, but it won't calculate the volatility or rank categories by their unpredictability. Axyo's engine does this automatically, surfacing a risk that is normally hidden in the raw numbers.", personas: ["Trades and Contracts", "Other Family Owned Business", "Professional Services company", "Tech Founder"] },
+                    { 
+                        title: "90-Day Rolling Cash Forecast", 
+                        what: "An interactive, data-driven line chart of your projected cash balance over the next 90 days.", 
+                        why: "This is the heart of proactive financial management. It moves you from guessing to seeing, providing a clear visual of your future cash position and potential shortfalls. It empowers you to make decisions today to avoid panic tomorrow.", 
+                        insight: "This forecast is built on a foundation of trust and transparency. Hovering over any week shows you the key inflows and outflows, and a single click reveals every single transaction—from scheduled bills to predicted invoice payments—that make up the projection.", 
+                        advantage: null, 
+                        ml_req: "Yes. ML models forecast recurring revenues and expenses and, crucially, predict the most likely payment dates for open invoices based on individual customer histories, adding a layer of realism to the forecast.",
+                        personas: ["Tech Founder", "Professional Services", "Trades and Contracts", "Family-Owned Business"] 
+                    },
+                    { 
+                        title: "Burn Rate Analysis", 
+                        what: "A detailed breakdown of your company's spending velocity, centered on your `Average Monthly Burn` from the last 90 days.", 
+                        why: "This is the 'why' behind your forecast. It shows you exactly what's driving your cash outflow and helps you understand which costs are fixed and which are levers you can actually pull to extend your runway.", 
+                        insight: "We deconstruct your burn rate into strategic components. A single click breaks down your spending by `Cost Type` (Core vs. Variable Burn) and by `Spending Intent` (Growth vs. Overhead). This reframes your spending around strategic goals, not just accounting categories.", 
+                        advantage: "This strategic deconstruction is only possible with Axyo's `Fixed/Variable` and `Run/Grow` tags from our Intelligent GL. We automatically add a layer of business context to your spending that you can't get anywhere else.", 
+                        ml_req: "Yes. The underlying transaction categorization that powers the `Fixed/Variable` and `Run/Grow` tags is enabled by ML.",
+                        personas: ["Tech Founder", "Professional Services", "Trades and Contracts", "Family-Owned Business"] 
+                    },
+                    { 
+                        title: "Intelligent What-if Analysis", 
+                        what: "An interactive tool that lets you model the real-time impact of business decisions on your cash forecast and runway.", 
+                        why: "This makes scenario planning tangible and trustworthy. Instead of wrestling with complex spreadsheets, you can directly model real-world choices—like hiring a new employee, delaying a large payment, or landing a new client—and see the impact instantly.", 
+                        insight: "The 'intelligence' is in the action-oriented levers. As you adjust a scenario, the main forecast graph and your runway number change immediately, providing a clear, instantaneous feedback loop that connects your decisions to your future cash position.", 
+                        advantage: null, 
+                        ml_req: "Yes. The scenarios are applied to the ML-driven baseline forecast, ensuring the 'what-if' analysis is grounded in a realistic projection of the future.",
+                        personas: ["Tech Founder", "Professional Services", "Trades and Contracts", "Family-Owned Business"] 
+                    },
+                    { 
+                        title: "Expense Volatility", 
+                        what: "An analysis that automatically pinpoints which of your expense categories fluctuate the most from month to month, ranked by their unpredictability.", 
+                        why: "While you track your total spending, this insight identifies your most unpredictable costs, like materials or contract labor. Knowing this is crucial for building a more accurate forecast and highlights areas where you may need better cost controls or vendor negotiations.", 
+                        insight: "We automatically calculate and rank expense categories by their volatility. Clicking on any category (e.g., 'Materials') instantly shows you a 12-month chart of its spending, clearly visualizing the peaks and valleys and turning a hidden risk into a manageable insight.", 
+                        advantage: "Standard reports can show you monthly spending, but they won't automatically perform the analysis to calculate volatility and surface this risk. Axyo's engine does this for you, proactively identifying an area of financial uncertainty.", 
+                        ml_req: "No. This is a statistical analysis (calculating standard deviation) performed on top of cleanly categorized data.",
+                        personas: ["Trades and Contracts", "Family-Owned Business", "Professional Services", "Tech Founder"] 
+                    },
                 ]
             },
             {
                 module: "Module 3: The Working Capital Hub",
-                purpose: "A clear, prioritized action center to directly improve cash flow by managing receivables, payables, and inventory more intelligently.",
+                purpose: "Your action center for improving cash flow. This module provides smart, prioritized to-do lists to help you manage money coming in and going out more intelligently.",
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>`,
                 insights: [
-                    { title: "A/R Action Center", ml: true, what: "A smart, prioritized to-do list for collections. It moves beyond a simple aging report to tell the SBO who to contact and why, grouped by AI-driven categories like 'Top Priority (At Risk)' and 'Easy Wins'.", why: "QBO's 'Invoice Reminders' are generic and inefficient. This is a smart system that focuses the SBO's limited time and energy on the collection activities with the highest ROI, getting cash in the door faster.", drilldown: "Clicking on any invoice in the list opens a 'Collections View' workspace for that specific invoice, containing contact info, a bulleted list of risk factors, and pre-composed action buttons like [Send Polite Reminder].", secret: null, personas: ["Professional Services company", "Trades and Contracts", "Other Family Owned Business"] },
-                    { title: "A/P Action Center", ml: true, what: "An optimized payment schedule that turns a simple list of bills into a strategic plan for preserving cash, grouped by recommendations like 'Pay Now' or 'Safe to Delay'.", why: "QBO's 'Bill Pay' is a dumb payment tool. This is a strategic advisor. It removes the daily anxiety of juggling due dates and cash balances by providing a clear, justified plan that optimizes working capital.", drilldown: "Clicking on a bill in the list opens the Vendor Report Card, providing full context on the vendor relationship and spending history. The recommendation itself includes a clear justification.", secret: null, personas: ["Trades and Contracts", "Other Family Owned Business", "Professional Services company", "Tech Founder"] },
-                    { title: "Vendor Report Card", ml: true, what: "A comprehensive, 360-degree view of the relationship with any single vendor.", why: "This insight consolidates all vendor-related data into one place, highlighting 'cost creep' and providing the context needed for better negotiations and expense management.", drilldown: "This is the drill-down. The report card includes header KPIs (Vendor Criticality Score, Total Spend YTD), a spend trendline chart, and a list of recent transactions with any detected price hikes clearly flagged.", secret: "QBO's vendor data is often messy. Axyo's clean Entity_ID reveals the true total spend and enables accurate trend analysis. The Criticality Score is a heuristic model based on spend consistency, magnitude, and category uniqueness.", personas: ["Trades and Contracts", "Other Family Owned Business", "Tech Founder", "Professional Services company"] },
-                    { title: "Cash Conversion Cycle (CCC)", ml: false, what: "The standard DSO + DIO - DPO calculation, presented as a single number and a trendline.", why: "Serves as a single, high-level score for the overall efficiency of the hub's actions. As the SBO takes action, they will see their CCC number improve over time, validating their efforts.", drilldown: "Clicking on the CCC number reveals its components (DSO, DIO, DPO) and how they have trended over the last 6 months, showing which part of the cycle is improving or worsening.", secret: null, personas: ["Other Family Owned Business", "Trades and Contracts", "Tech Founder"] },
-                    { title: "Inventory Turnover Ratio", ml: false, what: "A ratio showing how many times a company has sold and replaced its inventory over a given period.", why: "This is a critical efficiency metric for any business holding physical goods. A low turnover means cash is tied up in unsold stock and risking obsolescence. A high turnover indicates strong sales but can risk stockouts if not managed well.", drilldown: "Clicking on the ratio shows the underlying calculation: Cost of Goods Sold / Average Inventory. It also displays a trendline of the ratio over the last 4-6 quarters, showing if efficiency is improving or declining.", secret: "QBO requires running separate P&L and Balance Sheet reports to get the components. Axyo calculates this key ratio automatically and trends it, turning a manual calculation into an ongoing insight.", personas: ["Other Family Owned Business", "Trades and Contracts"] },
+                    { 
+                        title: "A/R Action Center", 
+                        what: "A smart, prioritized to-do list for collecting your money. It goes beyond a simple aging report to tell you who to contact, when, and why.", 
+                        why: "It focuses your limited time on the collection activities with the highest and fastest return. Instead of chasing everything that's overdue, you can focus on what's most important, getting cash in the door faster.", 
+                        insight: "Invoices are automatically grouped into actionable categories like `Top Priority (At Risk)` and `Easy Wins`. Clicking an invoice opens a full 'Collections Workspace' with contact info, risk factors, and pre-composed reminders, turning insight into action in one click.", 
+                        advantage: null, 
+                        ml_req: "Yes. The prioritization engine uses the `A/R at Risk` model to identify and elevate the most critical invoices that need immediate attention.",
+                        personas: ["Professional Services", "Trades and Contracts", "Family-Owned Business"] 
+                    },
+                    { 
+                        title: "A/P Action Center", 
+                        what: "An optimized payment schedule that transforms your bills into a strategic plan for preserving cash.", 
+                        why: "This is your strategic advisor for payments, not just a payment tool. It removes the daily anxiety of juggling due dates and cash balances by providing a clear, justified plan that optimizes your cash on hand.", 
+                        insight: "Bills are automatically grouped into recommendations like `Pay Now` (to capture a discount) or `Safe to Delay` (to preserve cash for payroll). Each recommendation is justified and links directly to the `Vendor Report Card` for full context.", 
+                        advantage: null, 
+                        ml_req: "Yes. The optimization engine analyzes your payables against the ML-powered cash forecast to recommend the ideal payment date for each bill, balancing discounts against your future cash needs.",
+                        personas: ["Trades and Contracts", "Family-Owned Business", "Professional Services", "Tech Founder"] 
+                    },
+                    { 
+                        title: "Vendor Report Card", 
+                        what: "A comprehensive, 360-degree view of your financial relationship with any single vendor.", 
+                        why: "It consolidates all vendor-related data into one place, instantly highlighting 'cost creep' and giving you the data you need for smarter negotiations and expense management.", 
+                        insight: "The report card includes a spend trendline, a `Vendor Criticality Score`, and a list of recent transactions with any price hikes automatically flagged. This gives you a complete picture of the relationship's history and health.", 
+                        advantage: "This is powered by Axyo's clean `Entity_ID` system, which merges messy data (e.g., 'AWS,' 'Amazon Web Services') into a single vendor profile. This provides a true picture of total spend and trends that is often obscured in standard reports.", 
+                        ml_req: "Yes. ML is used to clean and merge vendor data into a single `Entity_ID` and to detect anomalous price hikes in your transaction history.",
+                        personas: ["Trades and Contracts", "Family-Owned Business", "Tech Founder", "Professional Services"] 
+                    },
+                    { 
+                        title: "Cash Conversion Cycle (CCC)", 
+                        what: "A single number and trendline that measures how long it takes for your company to convert its investments in inventory and other resources into cash from sales.", 
+                        why: "This is your high-level scorecard for working capital efficiency. As you take action in the A/R and A/P centers, you will see this number improve, giving you direct feedback that your efforts are paying off.", 
+                        insight: "Clicking the CCC number instantly reveals its three components (Days Sales Outstanding, Days Inventory Outstanding, Days Payables Outstanding) and how each has trended over time. This shows you exactly which part of your cash cycle is improving or worsening.", 
+                        advantage: "Axyo automates this complex, multi-report calculation and, more importantly, trends it over time. This turns a static accounting metric into a dynamic performance indicator.", 
+                        ml_req: "No. This is a direct calculation based on financial statement data.",
+                        personas: ["Other Family-Owned Business", "Trades and Contracts", "Tech Founder"] 
+                    },
+                    { 
+                        title: "Inventory Turnover Ratio", 
+                        what: "A ratio showing how many times your company has sold and replaced its inventory over a given period.", 
+                        why: "This is a critical efficiency metric for any business holding physical goods. A low turnover means your cash is tied up in unsold stock; a high turnover indicates strong sales.", 
+                        insight: "Clicking the ratio not only shows you the underlying calculation but also displays a trendline of the ratio over the last 4-6 quarters, showing if your inventory management is becoming more or less efficient over time.", 
+                        advantage: "Axyo automatically calculates this key ratio and trends it, turning what is often a manual, periodic task into an ongoing, easily digestible insight.", 
+                        ml_req: "No. This is a direct calculation based on financial statement data.",
+                        personas: ["Other Family-Owned Business", "Trades and Contracts"] 
+                    },
                 ]
             },
             {
                 module: "Module 4: The Strategic Finance Center",
-                purpose: "To focus on longer-term, strategic decisions that drive profitability, efficiency, and business value.",
+                purpose: "Go beyond day-to-day operations. This is your center for making the longer-term, strategic decisions that drive profitability, efficiency, and enterprise value.",
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>`,
                 insights: [
-                    { title: "True Project/Client Profitability", ml: false, what: "A ranked list of all projects or clients by their net profit, with alerts for 'Hidden Loss' projects.", why: "Native QBO cannot easily link multiple costs to a single project's revenue. This insight reveals which parts of the business are truly creating value and which are draining resources.", drilldown: "Clicking on any project/client opens a full, detailed P&L for that specific entity. It lists every single revenue and expense transaction tagged to that Project_ID or Entity_ID, so the SBO can see exactly what drove the profit or loss.", secret: null, personas: ["Professional Services company", "Trades and Contracts"] },
-                    { title: "Growth vs. Overhead Spending Ratio", ml: false, what: "A ratio showing the mix of spending on 'Grow the Business' vs. 'Run the Business' activities.", why: "Impossible without our proprietary tags. It reframes spending from an accounting view to a strategic view, allowing an SBO to see if their spending allocation matches their business goals.", drilldown: "Clicking on either part of the ratio opens a list of the top 5 expense categories contributing to that type of spending.", secret: null, personas: ["Tech Founder", "Professional Services company"] },
-                    { title: "Recurring vs. One-Time Revenue Mix", ml: false, what: "A ratio showing the mix of revenue from stable, recurring sources versus new, one-off projects.", why: "A crucial measure of business health and quality of revenue, especially for predicting future performance.", drilldown: "Clicking on a segment (e.g., 'Recurring Revenue') shows a list of the customers and revenue streams that make up that total.", secret: null, personas: ["Tech Founder", "Professional Services company"] },
-                    { title: "Customer Cohort Retention", ml: false, what: "A visualization showing what percentage of customers acquired in a given period (e.g., Q1 2024) are still actively paying in subsequent periods.", why: "This is a powerful measure of product-market fit and customer loyalty. A strong retention cohort chart shows that the business is delivering lasting value.", drilldown: "Hovering over any cohort in the chart reveals the absolute number of customers and the total revenue from that group for the selected period.", secret: null, personas: ["Tech Founder"] },
-                    { title: "LTV:CAC Ratio", ml: true, what: "The ratio of Customer Lifetime Value (LTV) to Customer Acquisition Cost (CAC), trended over time.", why: "A powerful indicator of business model viability for subscription businesses. Showing the trend answers, 'Is my method of acquiring customers becoming more or less profitable over time?'", drilldown: "Clicking on a point in the trendline breaks down the ratio for that period, showing the calculated LTV, CAC, and the 'Payback Period' – how many months it took to earn back the cost of acquiring a customer.", secret: null, personas: ["Tech Founder"] },
-                    { title: "Revenue per Billable Employee", ml: false, what: "A calculation of total revenue divided by the number of billable (revenue-generating) employees.", why: "For service businesses, this is the ultimate productivity metric. It cuts through the noise of administrative or non-billable staff to show how effectively the core delivery team is generating revenue. A rising trend is a strong sign of increasing efficiency and pricing power.", drilldown: "Clicking on the metric shows its trendline over the last 4-6 quarters. For comparison, it can be displayed alongside 'Revenue per *Total* Employee' to see how administrative overhead is impacting overall productivity.", secret: "This requires tagging employees as 'Billable' vs. 'Non-Billable', a dimension QBO payroll lacks. Axyo adds this layer of intelligence to provide a metric that is far more meaningful for service-based businesses.", personas: ["Professional Services company", "Trades and Contracts"] },
-                    { title: "Operating Leverage", ml: false, what: "A ratio of the company's fixed costs to its variable costs.", why: "This is a classic measure of a business's scalability and risk profile. A high operating leverage (high fixed costs) means that once those costs are covered, each additional sale is highly profitable. However, it also means the business is more vulnerable during downturns. This insight helps an SBO understand their cost structure's strategic implications.", drilldown: "Clicking the ratio shows the two components (Total Fixed Costs, Total Variable Costs). A second view shows the 'Break-Even Revenue' point calculated from this cost structure, answering 'What's the minimum revenue I need to cover my fixed costs?'", secret: "This is powered by the Intelligent GL's 'Fixed' and 'Variable' tags, which are applied to every expense account to automate a calculation that would otherwise require a manual spreadsheet export and analysis.", personas: ["Other Family Owned Business", "Tech Founder", "Trades and Contracts"] },
+                    { 
+                        title: "True Project/Client Profitability", 
+                        what: "A ranked list of all your projects or clients by their true net profit, with automatic alerts for 'Hidden Loss' projects.", 
+                        why: "It's easy to see revenue, but much harder to see true profit. This insight reveals which parts of your business are actually creating value and which are quietly draining resources, allowing you to focus your efforts on what works.", 
+                        insight: "Clicking on any project or client opens a full, detailed P&L for that specific entity. It lists every single revenue and expense transaction we've tagged to them, so you can see exactly what drove the profit or loss with complete clarity.", 
+                        advantage: "This is only possible because Axyo can intelligently link multiple costs—including allocated employee time from payroll—to a single project's revenue. This provides a true profitability picture that is nearly impossible to get otherwise.", 
+                        ml_req: "Yes. ML models help allocate shared costs and employee time across multiple projects, and ensure all related revenues and expenses are correctly tagged to the right project or client.",
+                        personas: ["Professional Services", "Trades and Contracts"] 
+                    },
+                    { 
+                        title: "Growth vs. Overhead Spending Ratio", 
+                        what: "A simple ratio that shows the mix of your spending on 'Grow the Business' activities versus 'Run the Business' activities.", 
+                        why: "This reframes your spending from a simple accounting view to a strategic one. It allows you to instantly see if your capital allocation matches your business goals and answers the question, 'Am I investing in my future or just maintaining the status quo?'", 
+                        insight: "Clicking on either part of the ratio opens a list of the top 5 expense categories contributing to that type of spending. A trendline also shows how this strategic mix has evolved over time.", 
+                        advantage: "This insight is uniquely powered by Axyo's `Run/Grow` tags. We add a layer of strategic intent to every expense, transforming your P&L into a roadmap for future growth.", 
+                        ml_req: "Yes. The underlying transaction categorization that powers the `Run/Grow` tags is enabled by ML.",
+                        personas: ["Tech Founder", "Professional Services"] 
+                    },
+                    { 
+                        title: "Recurring vs. One-Time Revenue Mix", 
+                        what: "A ratio showing the mix of your revenue from stable, recurring sources versus new, one-off projects.", 
+                        why: "This is a crucial measure of your business's health and the quality of your revenue. A higher mix of recurring revenue makes your future performance more predictable and your business more valuable.", 
+                        insight: "Clicking on a segment (e.g., 'Recurring Revenue') instantly shows you a list of the customers and specific revenue streams that make up that total, giving you a clear picture of your revenue foundation.", 
+                        advantage: "Axyo's engine analyzes transaction descriptions and history to automatically identify and tag revenue streams as `Recurring` or `One-Time`, automating a classification that is manual and error-prone in standard systems.", 
+                        ml_req: "Yes. ML models are used to analyze transaction patterns and descriptions to automatically classify revenue as recurring or one-time.",
+                        personas: ["Tech Founder", "Professional Services"] 
+                    },
+                    { 
+                        title: "Customer Cohort Retention", 
+                        what: "A chart showing what percentage of customers acquired in a specific period (e.g., Q1 2024) are still actively paying you in the following months and quarters.", 
+                        why: "This is one of the most powerful measures of product-market fit and customer loyalty. A strong retention chart proves that your business is delivering lasting value, not just acquiring customers who quickly churn.", 
+                        insight: "The chart is fully interactive. Hovering over any cohort reveals the absolute number of customers and the total revenue from that group for that period, giving you deeper context beyond just the percentages.", 
+                        advantage: null, 
+                        ml_req: "No. This is a direct analysis of customer revenue data over time.",
+                        personas: ["Tech Founder"] 
+                    },
+                    { 
+                        title: "LTV:CAC Ratio", 
+                        what: "The ratio of your Customer Lifetime Value (LTV) to your Customer Acquisition Cost (CAC), trended over time.", 
+                        why: "This is a critical indicator of your business model's viability and scalability. It answers the ultimate question: 'Is my method of acquiring customers profitable in the long run?' A ratio of 3:1 or higher is considered a strong benchmark.", 
+                        insight: "Clicking on any point in the trendline breaks down the ratio for that period, showing you the calculated LTV, CAC, and the 'Payback Period' – exactly how many months it took to earn back the cost of acquiring those customers.", 
+                        advantage: "Axyo makes this complex calculation possible by combining different data sets: customer revenue history for LTV and strategically tagged marketing and sales expenses for CAC. We automate what would otherwise be a major spreadsheet exercise.", 
+                        ml_req: "Yes. ML models are used to predict the LTV of newer customer cohorts and to accurately attribute acquisition costs from various marketing and sales channels.",
+                        personas: ["Tech Founder"] 
+                    },
+                    { 
+                        title: "Revenue per Billable Employee", 
+                        what: "A simple calculation of your total revenue divided by the number of your billable, revenue-generating employees.", 
+                        why: "For any service business, this is the ultimate productivity metric. It cuts through the noise of administrative overhead to show exactly how effectively your core delivery team is generating revenue. A rising trend is a powerful sign of increasing efficiency and pricing power.", 
+                        insight: "The drill-down view displays the 'Revenue per Billable Employee' trendline alongside 'Revenue per *Total* Employee,' visually demonstrating how changes in overhead staff impact overall productivity.", 
+                        advantage: "This metric is impossible to get without Axyo's intelligent tagging. We add a `Billable` vs. `Non-Billable` dimension to your employee data, unlocking a far more meaningful productivity metric for your service business.", 
+                        ml_req: "No. This is a direct calculation based on Axyo's employee tags.",
+                        personas: ["Professional Services", "Trades and Contracts"] 
+                    },
+                    { 
+                        title: "Operating Leverage", 
+                        what: "A ratio of your company's fixed costs to its variable costs.", 
+                        why: "This is a classic measure of your business's scalability and risk profile. High operating leverage (high fixed costs) means that once those costs are covered, each additional sale is highly profitable. However, it also means the business is more vulnerable during downturns.", 
+                        insight: "Clicking the ratio not only shows you the fixed and variable cost totals but also calculates your 'Break-Even Revenue' point, answering the critical question, 'What's the minimum revenue I need to cover my fixed costs?'", 
+                        advantage: "This is powered entirely by the Intelligent GL's `Fixed` and `Variable` tags. Axyo automates a calculation that would otherwise require a manual spreadsheet export and analysis, making strategic cost structure analysis an ongoing, accessible insight.", 
+                        ml_req: "Yes. The underlying transaction categorization that powers the `Fixed/Variable` tags is enabled by ML.",
+                        personas: ["Other Family-Owned Business", "Tech Founder", "Trades and Contracts"] 
+                    },
                 ]
             },
             {
-                module: "Module 5: Solvency & Risk Center",
-                purpose: "A clear, consolidated view of the company's financial risk, leverage, and ability to meet its long-term obligations. This is the 'sleep at night' module.",
+                module: "Module 5: The Solvency & Risk Center",
+                purpose: "Your 'sleep at night' module. This provides a clear, consolidated view of your company's financial risk, leverage, and ability to meet its long-term obligations.",
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>`,
                 insights: [
-                    { title: "Debt-to-Equity Ratio", ml: false, what: "A ratio calculated as Total Liabilities / Total Shareholder Equity.", why: "This is a fundamental solvency ratio used by banks and investors to gauge how much a company is relying on debt to finance its assets versus its own equity. A high ratio can indicate higher risk and may make it harder to secure future financing.", drilldown: "Clicking the ratio displays a trendline over the last 4-6 quarters. It also shows the raw numbers for Total Liabilities and Total Equity from the Balance Sheet that were used in the calculation.", secret: null, personas: ["Other Family Owned Business", "Tech Founder", "Trades and Contracts"] },
-                    { title: "Interest Coverage Ratio", ml: false, what: "A ratio calculated as Earnings Before Interest and Taxes (EBIT) / Interest Expense.", why: "This ratio measures a company's ability to make its interest payments on outstanding debt. A low number (e.g., below 2) is a red flag for lenders, indicating that a small dip in earnings could make it difficult to service its debt obligations.", drilldown: "Clicking the ratio shows its trend over time. It also breaks down the EBIT calculation (Net Income + Interest + Taxes) and shows the total Interest Expense for the period, providing full transparency.", secret: null, personas: ["Other Family Owned Business", "Trades and Contracts", "Tech Founder"] },
-                    { title: "Customer Concentration Risk", ml: false, what: "The percentage of total revenue that comes from your top 3 customers over the last 12 months.", why: "This metric makes a key strategic risk tangible. It answers the question, 'How much trouble am I in if my biggest customer leaves?'", drilldown: "Clicking opens a list of the top 5 customers by revenue, showing the total dollar amount and percentage of revenue for each.", secret: "QBO struggles with inconsistent customer naming. Axyo's persistent Entity_ID provides a true, reliable measure of dependency.", personas: ["Professional Services company", "Tech Founder", "Other Family Owned Business"] },
-                    { title: "Vendor Concentration Risk", ml: false, what: "The percentage of your total spend that goes to your top 1 or 3 vendors.", why: "This is the flip side of customer concentration. It highlights a critical operational risk: your dependency on a single supplier for materials, software, or services. It prompts you to find backup suppliers or negotiate better terms.", drilldown: "Clicking the metric opens a pie chart showing the spend distribution across your top 5 vendors. A list next to it shows the vendor name, total spend (YTD), and their percentage of total spend.", secret: "QBO vendor data can be messy (e.g., 'AWS,' 'Amazon Web Services'). Axyo's clean Entity_ID merges these, providing a true, reliable measure of dependency that is often understated in native QBO reports.", personas: ["Other Family Owned Business", "Trades and Contracts", "Tech Founder"] },
-                    { title: "Return on Assets (ROA)", ml: false, what: "A ratio calculated as Net Income / Total Assets.", why: "ROA measures how efficiently a company is using its assets (cash, equipment, buildings) to generate profit. A higher ROA indicates better asset efficiency. It's especially important for asset-heavy businesses.", drilldown: "Clicking the ratio shows its trend over time. It can be compared against industry benchmarks to provide context. The drill-down also shows the source numbers: Net Income from the P&L and Total Assets from the Balance Sheet.", secret: null, personas: ["Other Family Owned Business", "Trades and Contracts"] },
+                    { 
+                        title: "Debt-to-Equity Ratio", 
+                        what: "A ratio of your company's total liabilities to its total shareholder equity.", 
+                        why: "This is a fundamental solvency ratio used by banks and investors to gauge how much your company relies on debt versus its own equity. A high ratio can indicate higher risk and make it harder to secure future financing.", 
+                        insight: "We present this ratio not as a static number, but as a trendline over the last 4-6 quarters. This allows you to see if your reliance on debt is increasing or decreasing over time. A single click shows you the raw numbers from the balance sheet used in the calculation.", 
+                        advantage: null, 
+                        ml_req: "No. This is a direct calculation from the balance sheet.",
+                        personas: ["Other Family-Owned Business", "Tech Founder", "Trades and Contracts"] 
+                    },
+                    { 
+                        title: "Interest Coverage Ratio", 
+                        what: "A ratio of your Earnings Before Interest and Taxes (EBIT) to your Interest Expense.", 
+                        why: "This ratio measures your company's ability to make its interest payments. A low number is a red flag for lenders, indicating that a small dip in earnings could put you at risk of default.", 
+                        insight: "We trend this ratio over time so you can spot any negative changes in your ability to service your debt. Clicking the ratio provides full transparency by breaking down the EBIT calculation for you.", 
+                        advantage: null, 
+                        ml_req: "No. This is a direct calculation from the P&L and balance sheet.",
+                        personas: ["Other Family-Owned Business", "Trades and Contracts", "Tech Founder"] 
+                    },
+                    { 
+                        title: "Customer Concentration Risk", 
+                        what: "The percentage of your total revenue that comes from your top 3 customers over the last 12 months.", 
+                        why: "This insight makes a critical strategic risk tangible. It immediately answers the question, 'How much trouble am I in if my biggest customer leaves?'", 
+                        insight: "Clicking the metric opens a clear list of your top 5 customers by revenue, showing the total dollar amount and percentage of revenue for each. We also trend this concentration percentage over time so you can see if you are successfully diversifying.", 
+                        advantage: "This provides a true, reliable measure of dependency because Axyo's `Entity_ID` system automatically cleans and merges inconsistent customer names, which can often hide the full extent of concentration risk in standard reports.", 
+                        ml_req: "Yes. The underlying `Entity_ID` system that cleans and merges customer data uses ML.",
+                        personas: ["Professional Services", "Tech Founder", "Other Family-Owned Business"] 
+                    },
+                    { 
+                        title: "Vendor Concentration Risk", 
+                        what: "The percentage of your total spending that goes to your top 1 or 3 vendors.", 
+                        why: "This is the flip side of customer concentration and highlights a critical operational risk. An over-reliance on a single supplier can be disastrous if they have a disruption, raising the need for backup suppliers or better negotiations.", 
+                        insight: "Clicking the metric opens a pie chart showing your spend distribution across your top 5 vendors. A trendline shows if this dependency is growing or shrinking.", 
+                        advantage: "Just like with customers, Axyo's clean `Entity_ID` provides a true measure of dependency on a single vendor, even if their name is recorded differently across transactions. This uncovers risks that are often understated in native reports.", 
+                        ml_req: "Yes. The underlying `Entity_ID` system that cleans and merges vendor data uses ML.",
+                        personas: ["Other Family-Owned Business", "Trades and Contracts", "Tech Founder"] 
+                    },
+                    { 
+                        title: "Return on Assets (ROA)", 
+                        what: "A ratio of your Net Income to your Total Assets.", 
+                        why: "ROA measures how efficiently your company is using its assets—like cash, equipment, and buildings—to generate profit. A higher ROA indicates better asset efficiency, which is especially important for asset-heavy businesses.", 
+                        insight: "We trend your ROA over time and, where available, can compare it against industry benchmarks to give you critical context on your performance. A single click shows you the source numbers from your P&L and Balance Sheet.", 
+                        advantage: null, 
+                        ml_req: "No. This is a direct calculation from financial statements.",
+                        personas: ["Other Family-Owned Business", "Trades and Contracts"] 
+                    },
                 ]
             }
         ];
@@ -158,6 +382,9 @@
         const closeModalBtn = document.getElementById('close-modal-btn');
         
         const mlIcon = `<svg class="h-5 w-5 text-purple-500 ml-2 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>`;
+        const advantageIcon = `<svg class="h-6 w-6 text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.21 3.03-1.742 3.03H4.42c-1.532 0-2.492-1.696-1.742-3.03l5.58-9.92zM10 5a1 1 0 011 1v3a1 1 0 01-2 0V6a1 1 0 011-1zm1 5a1 1 0 10-2 0v2a1 1 0 102 0v-2z" clip-rule="evenodd" /></svg>`;
+        const insightIcon = `<svg class="h-6 w-6 text-cyan-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" /></svg>`;
+        const mlReqIcon = `<svg class="h-6 w-6 text-purple-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3.5a.75.75 0 01.75.75V9a.75.75 0 01-1.5 0V4.25A.75.75 0 0110 3.5zM10 6.5a.75.75 0 01.75.75v8.5a.75.75 0 01-1.5 0V7.25A.75.75 0 0110 6.5zM6.5 10a.75.75 0 01.75-.75h8.5a.75.75 0 010 1.5H7.25a.75.75 0 01-.75-.75z" /></svg>`;
 
         // Function to generate the HTML for each module
         function createModule(moduleData, index) {
@@ -165,7 +392,7 @@
                 <div class="insight-item border-t border-slate-200 hover:bg-slate-50 cursor-pointer" data-module-index="${index}" data-insight-index="${insightIndex}">
                     <div class="py-3 px-6 flex justify-between items-center">
                         <p class="text-slate-700">${insight.title}</p>
-                        ${insight.ml ? mlIcon : ''}
+                        ${insight.ml_req.startsWith('Yes') ? mlIcon : ''}
                     </div>
                 </div>
             `).join('');
@@ -176,7 +403,7 @@
                         ${moduleData.icon}
                         <div class="mt-4">
                             <h2 class="text-xl font-semibold text-slate-900">${moduleData.module}</h2>
-                            <p class="text-slate-500 mt-1">${moduleData.purpose}</p>
+                            <p class="text-slate-500 mt-1 text-sm">${moduleData.purpose}</p>
                         </div>
                     </div>
                     <div class="flex-grow"></div>
@@ -190,42 +417,49 @@
             `;
         }
 
-        // Function to populate and show the modal
-        function showModal(insight) {
-            modalTitle.textContent = insight.title;
-            
-            let personasHtml = insight.personas.map(p => `<span class="inline-block bg-blue-100 text-blue-800 text-xs font-medium mr-2 mb-2 px-2.5 py-0.5 rounded-full">${p}</span>`).join('');
-            
-            let secretSauceHtml = insight.secret ? `
-                <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg">
+        // Function to create a content section in the modal
+        function createModalSection(title, content, icon, bgColor, borderColor, titleColor, textColor) {
+            if (!content) return '';
+            return `
+                <div class="${bgColor} border-l-4 ${borderColor} p-4 rounded-r-lg">
                     <div class="flex">
                         <div class="flex-shrink-0">
-                             <svg class="h-6 w-6 text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.21 3.03-1.742 3.03H4.42c-1.532 0-2.492-1.696-1.742-3.03l5.58-9.92zM10 5a1 1 0 011 1v3a1 1 0 01-2 0V6a1 1 0 011-1zm1 5a1 1 0 10-2 0v2a1 1 0 102 0v-2z" clip-rule="evenodd" /></svg>
+                            ${icon}
                         </div>
                         <div class="ml-3">
-                            <h3 class="text-sm font-semibold text-amber-800">Axyo's Secret Sauce</h3>
-                            <div class="mt-2 text-sm text-amber-700">
-                                <p>${insight.secret}</p>
+                            <h3 class="text-sm font-semibold ${titleColor}">${title}</h3>
+                            <div class="mt-2 text-sm ${textColor}">
+                                <p>${content}</p>
                             </div>
                         </div>
                     </div>
                 </div>
-            ` : '';
+            `;
+        }
+
+        // Function to populate and show the modal
+        function showModal(insight) {
+            modalTitle.textContent = insight.title;
+            
+            let personasHtml = insight.personas.map(p => `<span class="inline-block bg-slate-200 text-slate-700 text-xs font-semibold mr-2 mb-2 px-2.5 py-1 rounded-full">${p}</span>`).join('');
 
             modalBody.innerHTML = `
                 <div class="space-y-2">
                     <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider">What it is</h3>
                     <p class="text-slate-700">${insight.what}</p>
                 </div>
+                
                 <div class="space-y-2">
                     <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Why it Matters</h3>
-                    <p class="text-lg text-slate-800 bg-green-50 p-4 rounded-lg">${insight.why}</p>
+                    <p class="text-lg text-slate-800 bg-green-50 p-4 rounded-lg border border-green-200">${insight.why}</p>
                 </div>
-                <div class="space-y-2">
-                    <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider">The Drill-Down Experience</h3>
-                    <p class="text-slate-700">${insight.drilldown}</p>
-                </div>
-                ${secretSauceHtml}
+
+                ${createModalSection("Axyo's Unique Insight", insight.insight, insightIcon, 'bg-cyan-50', 'border-cyan-400', 'text-cyan-800', 'text-cyan-700')}
+                
+                ${createModalSection("The Axyo Advantage", insight.advantage, advantageIcon, 'bg-amber-50', 'border-amber-400', 'text-amber-800', 'text-amber-700')}
+
+                ${createModalSection("ML Requirement", insight.ml_req, mlReqIcon, 'bg-purple-50', 'border-purple-400', 'text-purple-800', 'text-purple-700')}
+
                 <div class="space-y-2 pt-4">
                     <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Most Relevant Personas</h3>
                     <div>${personasHtml}</div>
@@ -258,7 +492,6 @@
                 const insightsList = toggleButton.nextElementSibling;
                 const isOpen = insightsList.classList.contains('open');
                 
-                // Close all other open lists first
                 document.querySelectorAll('.insights-list.open').forEach(list => {
                     if (list !== insightsList) {
                         list.classList.remove('open');
@@ -266,7 +499,6 @@
                     }
                 });
 
-                // Toggle the clicked one
                 if (!isOpen) {
                     insightsList.classList.add('open');
                     toggleButton.textContent = 'Hide Insights';
@@ -295,3 +527,4 @@
 
 </body>
 </html>
+
