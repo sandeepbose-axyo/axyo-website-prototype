@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axyo.ai & Sciata: A Strategic Conversation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0A0A0A;
+            color: #E2E8F0;
+            scroll-behavior: smooth;
+        }
+        .slide {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem 2rem;
+            position: relative;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .slide-content {
+            max-width: 1200px;
+            width: 100%;
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #60A5FA, #A78BFA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+        .kpi-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(51, 65, 85, 1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.5s ease-in-out;
+            backdrop-filter: blur(10px);
+        }
+        .control-panel-item {
+            transition: opacity 0.5s ease-in-out;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+        }
+        .control-panel-item.active {
+            opacity: 1;
+            max-height: 500px;
+        }
+        .visual-panel-item {
+            transition: opacity 0.7s ease-in-out, transform 0.7s ease-in-out;
+            opacity: 0;
+            transform: translateY(20px);
+            display: none;
+        }
+        .visual-panel-item.active {
+            opacity: 1;
+            transform: translateY(0);
+            display: block;
+        }
+        .dashed-line {
+            stroke-dasharray: 8, 8;
+        }
+        .task-tag {
+            display: inline-block;
+            background-color: #334155;
+            color: #cbd5e1;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            line-height: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Slide 1: Title -->
+    <section class="slide">
+        <div class="slide-content text-center">
+            <h2 class="text-2xl text-slate-400 mb-2">A Strategic Conversation</h2>
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tight leading-tight mb-4">
+                From Watching the Score <br> to <span class="gradient-text">Rewriting It</span>.
+            </h1>
+            <p class="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto">
+                Axyo.ai & Sciata
+            </p>
+        </div>
+    </section>
+
+    <!-- Slide 2: Mission Statement -->
+    <section class="slide">
+        <div class="slide-content text-center">
+            <h2 class="text-5xl md:text-6xl font-bold tracking-tight">Plug-and-Play AI. Every KPI.</h2>
+            <p class="text-2xl text-slate-400 mt-4 mb-12">No-Code AI for Core Business Decisions that drive your P&L.</p>
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div class="kpi-card p-8 text-center border-blue-500/50 border-2">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    <h3 class="text-2xl font-bold mb-2">Understand the Past</h3>
+                    <p class="text-slate-400">Automatically analyze historical trends, seasonality, and anomalies.</p>
+                </div>
+                <div class="kpi-card p-8 text-center border-purple-500/50 border-2">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                    <h3 class="text-2xl font-bold mb-2">Predict the Future</h3>
+                    <p class="text-slate-400">Generate transparent forecasts with rank-ordered drivers. No data science effort required.</p>
+                </div>
+                <div class="kpi-card p-8 text-center border-pink-500/50 border-2">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                    <h3 class="text-2xl font-bold mb-2">Take Charge</h3>
+                    <p class="text-slate-400">Use interactive what-if analysis to find the optimal path and change the outcome.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 3: Pain Points -->
+    <section class="slide">
+        <div class="slide-content">
+            <div class="text-center">
+                <h2 class="text-4xl md:text-5xl font-bold">The Reality of Enterprise AI: <span class="gradient-text">A Tale of Two Failures</span></h2>
+                <p class="text-xl text-slate-400 mt-4">Most projects get stuck in gridlock before they start, or get lost on a long, expensive road to nowhere.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 mt-12 items-start">
+                <div class="kpi-card p-8 text-center h-full lg:col-span-2">
+                    <h3 class="text-3xl font-bold mb-4">1. The AI Development Gridlock</h3>
+                    <p class="text-slate-400 mb-8">Before you even start, there's too much friction between the three critical elements.</p>
+                    <div class="relative w-full max-w-sm mx-auto h-64">
+                        <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
+                            <line x1="50" y1="10" x2="15" y2="85" stroke="#475569" stroke-width="1" class="dashed-line"/>
+                            <line x1="15" y1="85" x2="85" y2="85" stroke="#475569" stroke-width="1" class="dashed-line"/>
+                            <line x1="85" y1="85" x2="50" y2="10" stroke="#475569" stroke-width="1" class="dashed-line"/>
+                        </svg>
+                        <div class="absolute top-0 left-1/2 -translate-x-1/2 text-center">
+                            <div class="bg-slate-800 p-3 rounded-full inline-block"><svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg></div>
+                            <p class="font-bold mt-2">Idea</p>
+                        </div>
+                        <div class="absolute bottom-0 left-0 text-center">
+                            <div class="bg-slate-800 p-3 rounded-full inline-block"><svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>
+                            <p class="font-bold mt-2">Talent</p>
+                        </div>
+                        <div class="absolute bottom-0 right-0 text-center">
+                            <div class="bg-slate-800 p-3 rounded-full inline-block"><svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4M4 7v10M12 11v10M20 7v10"></path></svg></div>
+                            <p class="font-bold mt-2">Data</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="kpi-card p-6 text-center h-full lg:col-span-3">
+                    <h3 class="text-3xl font-bold mb-4">2. The Long, Expensive Road</h3>
+                    <p class="text-slate-400 mb-6">If you get started, the process is painfully slow, requiring multiple teams, tools, and handoffs.</p>
+                    <div class="flex items-center space-x-2">
+                        <!-- Stage 1 -->
+                        <div class="flex-1 space-y-2">
+                            <p class="font-bold text-white text-sm">Data Prep</p>
+                            <div class="bg-slate-800/50 p-2 rounded-lg text-xs"><p class="font-semibold">Data Engineers</p></div>
+                            <div class="space-y-1 mt-2">
+                                <span class="task-tag">Ingestion</span> <span class="task-tag">Quality</span>
+                            </div>
+                        </div>
+                        <svg class="w-6 h-6 text-red-500/50 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                        <!-- Stage 2 -->
+                        <div class="flex-1 space-y-2">
+                            <p class="font-bold text-white text-sm">Feature Eng.</p>
+                            <div class="bg-slate-800/50 p-2 rounded-lg text-xs"><p class="font-semibold">Data Scientists</p></div>
+                            <div class="space-y-1 mt-2">
+                                <span class="task-tag">Labeling</span> <span class="task-tag">Creation</span>
+                            </div>
+                        </div>
+                        <svg class="w-6 h-6 text-red-500/50 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                        <!-- Stage 3 -->
+                        <div class="flex-1 space-y-2">
+                            <p class="font-bold text-white text-sm">Model Dev.</p>
+                            <div class="bg-slate-800/50 p-2 rounded-lg text-xs"><p class="font-semibold">ML Engineers</p></div>
+                             <div class="space-y-1 mt-2">
+                                <span class="task-tag">Training</span> <span class="task-tag">Validation</span>
+                            </div>
+                        </div>
+                         <svg class="w-6 h-6 text-red-500/50 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                        <!-- Stage 4 -->
+                        <div class="flex-1 space-y-2">
+                            <p class="font-bold text-white text-sm">Deployment</p>
+                            <div class="bg-slate-800/50 p-2 rounded-lg text-xs"><p class="font-semibold">BI / MLOps</p></div>
+                             <div class="space-y-1 mt-2">
+                                <span class="task-tag">Monitoring</span> <span class="task-tag">Delivery</span>
+                            </div>
+                        </div>
+                    </div>
+                     <p class="text-xs text-slate-500 mt-6 mb-2">Fragmented & Expensive Toolchain:</p>
+                     <div class="flex flex-wrap gap-3 justify-center items-center opacity-75">
+                        <div class="bg-slate-700 p-2 rounded-md"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4M4 7v10M12 11v10M20 7v10"></path></svg></div>
+                        <div class="bg-slate-700 p-2 rounded-md"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg></div>
+                        <div class="bg-slate-700 p-2 rounded-md"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg></div>
+                        <div class="bg-slate-700 p-2 rounded-md"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg></div>
+                        <div class="bg-slate-700 p-2 rounded-md"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m3 6V7m-9 4h6M5 21h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg></div>
+                        <div class="bg-slate-700 p-2 rounded-md"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
+                        <div class="bg-slate-700 p-2 rounded-md"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"></path><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-5.998 12.078 12.078 0 01.665-6.479L12 14z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-5.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222 4 2.222V20M12 14L8 12"></path></svg></div>
+                        <div class="bg-slate-700 p-2 rounded-md"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 4: The Axyo OS Intro -->
+    <section class="slide">
+        <div class="slide-content text-center">
+            <h2 class="text-4xl md:text-5xl font-bold">The Axyo AI <span class="gradient-text">Decision-Intelligence OS</span></h2>
+            <p class="text-xl text-slate-400 mt-4 mb-12 max-w-4xl mx-auto">Our OS breaks the gridlock, transforming every KPI into a Super-KPI and giving you the power to take charge.</p>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div class="kpi-card p-8 text-center border-blue-500/50 border-2">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M12 19c-3.866 0-7-3.134-7-7s3.134-7 7-7 7 3.134 7 7-3.134 7-7 7z"></path></svg>
+                    <h3 class="text-2xl font-bold mb-2">Super KPI</h3>
+                    <p class="text-slate-400">Go beyond static dashboards. Understand the past, predict the future, and get prescriptive actions to take charge.</p>
+                </div>
+                <div class="kpi-card p-8 text-center border-purple-500/50 border-2">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h3 class="text-2xl font-bold mb-2">Zero-Code & Zero Data Science Effort</h3>
+                    <p class="text-slate-400">An intuitive, no-code environment empowers business and data analysts to build sophisticated AI applications with unprecedented speed.</p>
+                </div>
+                <div class="kpi-card p-8 text-center border-pink-500/50 border-2">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    <h3 class="text-2xl font-bold mb-2">ML in Hours, Not Months</h3>
+                    <p class="text-slate-400">Leverage our No-Code AutoML engine to build and deploy powerful models without needing a team of specialized engineers.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 5: The Super KPI Concept -->
+    <section class="slide">
+        <div class="slide-content">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Introducing the <span class="gradient-text">Super KPI</span></h2>
+                <p class="text-lg text-slate-400 max-w-3xl mx-auto">Let's see the evolution in action. A standard KPI only tells you what happened. A Super KPI is a living command center that lets you rewrite the future.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16">
+                <!-- Left Column: Control Panel -->
+                <div class="md:col-span-1 flex flex-col justify-center">
+                    <div class="space-y-6">
+                        <div>
+                            <button id="next-level-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 mb-8">
+                                Begin Evolution
+                            </button>
+                        </div>
+                        
+                        <div id="control-level-1" class="control-panel-item">
+                            <span class="text-sm font-semibold text-blue-400">LEVEL 1: THE PAST</span>
+                            <h3 class="text-2xl font-bold text-white mt-1">Standard KPI</h3>
+                            <p class="text-slate-300 mt-2"><strong class="gradient-text">The Axyo Difference:</strong> We automatically integrate historical data to reveal trends, seasonality, and anomalies. <br><em class="text-slate-400">"Sales were $10.2M, but we're seeing a seasonal dip in the Northeast 15% steeper than the last three years."</em></p>
+                        </div>
+                        <div id="control-level-2" class="control-panel-item">
+                            <span class="text-sm font-semibold text-purple-400">LEVEL 2: THE PRESENT</span>
+                            <h3 class="text-2xl font-bold text-white mt-1">Contextual KPI</h3>
+                            <p class="text-slate-300 mt-2"><strong class="gradient-text">The Axyo Difference:</strong> We seamlessly fuse internal data (like CRM and sales numbers) with external signals (like macroeconomic indicators) to explain the 'why'.</p>
+                        </div>
+                        <div id="control-level-3" class="control-panel-item">
+                            <span class="text-sm font-semibold text-indigo-400">LEVEL 3: THE FUTURE</span>
+                            <h3 class="text-2xl font-bold text-white mt-1">Predictive KPI</h3>
+                            <p class="text-slate-300 mt-2"><strong class="gradient-text">The Axyo Difference:</strong> We generate hierarchical forecasts for any time horizon (e.g., rolling 3 months vs. fiscal year), with transparent, rank-ordered drivers.</p>
+                        </div>
+                        <div id="control-level-4" class="control-panel-item">
+                            <span class="text-sm font-semibold text-pink-400">LEVEL 4: THE ACTION</span>
+                            <h3 class="text-2xl font-bold text-white mt-1">Super KPI</h3>
+                            <p class="text-slate-300 mt-2"><strong class="gradient-text">The Axyo Difference:</strong> Move beyond simple what-if analysis with intelligent, automated scenario planning and sensitivity analysis to find the optimal path forward.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Visual Panel -->
+                <div class="md:col-span-2 space-y-6">
+                    <div id="visual-level-1" class="visual-panel-item kpi-card">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-bold text-white">Historical Sales</h4>
+                            <div class="text-right">
+                                <p class="text-3xl font-bold text-white">$10.2M</p>
+                                <p class="text-sm text-slate-400">Q2 Sales</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 h-48"><canvas id="historicalChart"></canvas></div>
+                    </div>
+                    <div id="visual-level-2" class="visual-panel-item kpi-card">
+                         <h4 class="font-bold text-white mb-2">Root Cause Analysis</h4>
+                         <p class="text-slate-400 text-sm mb-4">Fusing external and internal data reveals the drivers.</p>
+                         <div class="flex justify-around items-center text-center p-4 bg-slate-800/50 rounded-lg">
+                            <div class="text-center">
+                                <svg class="w-10 h-10 mx-auto text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                <p class="text-sm mt-1 font-semibold">CRM Data</p>
+                                <p class="text-lg font-bold text-white">Low Engagement</p>
+                            </div>
+                            <p class="text-2xl font-thin text-slate-500">+</p>
+                            <div class="text-center">
+                                <svg class="w-10 h-10 mx-auto text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                                <p class="text-sm mt-1 font-semibold">Macro Indicators</p>
+                                <p class="text-lg font-bold text-white">CPI Up 5%</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="visual-level-3" class="visual-panel-item kpi-card">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-bold text-white">Sales Forecast</h4>
+                            <div class="text-right">
+                                <p class="text-3xl font-bold text-white">$9.8M</p>
+                                <p class="text-sm text-slate-400">Q3 Forecast</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 h-48"><canvas id="forecastChart"></canvas></div>
+                    </div>
+                    <div id="visual-level-4" class="visual-panel-item kpi-card">
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-bold text-white">Interactive Simulation</h4>
+                            <div class="text-right">
+                                <p id="simulated-sales" class="text-3xl font-bold gradient-text">$10.52M</p>
+                                <p class="text-sm text-slate-400">Simulated Q3 Sales</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 h-48"><canvas id="simulationChart"></canvas></div>
+                        <div class="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-slate-700">
+                            <div>
+                                <label for="marketing-spend" class="text-sm text-slate-400">Marketing Spend Boost: <span id="marketing-value" class="font-bold text-white">15%</span></label>
+                                <input type="range" id="marketing-spend" min="0" max="25" value="15" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                            <div>
+                                <label for="discount" class="text-sm text-slate-400">Targeted Discount: <span id="discount-value" class="font-bold text-white">5%</span></label>
+                                <input type="range" id="discount" min="0" max="10" value="5" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 6: What's In It For Sciata? -->
+    <section class="slide">
+        <div class="slide-content">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold">What's In It For <span class="gradient-text">Sciata?</span></h2>
+                <p class="text-lg text-slate-400 max-w-3xl mx-auto">We're not just a platform; we're a strategic weapon to help accelerate your 25x growth mandate.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="kpi-card p-8 text-center">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    <h3 class="text-xl font-bold mb-2">Accelerate Revenue</h3>
+                    <p class="text-slate-400">Compress sales and delivery cycles from months to weeks. Run 4-week "Proof of Value" sprints to accelerate your "land and expand" strategy.</p>
+                </div>
+                <div class="kpi-card p-8 text-center">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <h3 class="text-xl font-bold mb-2">Improve Margins</h3>
+                    <p class="text-slate-400">Empower your existing pool of talented consultants to deliver sophisticated AI solutions, reducing dependency on scarce, expensive ML engineers.</p>
+                </div>
+                <div class="kpi-card p-8 text-center">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    <h3 class="text-xl font-bold mb-2">Win More Deals</h3>
+                    <p class="text-slate-400">Differentiate from giants by proposing faster, more agile solutions with a dramatically lower TCO for the client, replacing complex tool stacks with one elegant platform.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 7: Demo Story -->
+    <section class="slide">
+        <div class="slide-content">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold">Let's Make This Real: <span class="gradient-text">Live Demos</span></h2>
+                <p class="text-lg text-slate-400 max-w-3xl mx-auto">Here's how the Axyo OS delivers value for both Enterprise and SMB clients.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8 items-stretch">
+                <!-- Enterprise Demo Card -->
+                <div class="kpi-card p-8 flex flex-col">
+                    <h3 class="text-2xl font-bold mb-2">For Enterprises: <span class="text-blue-400">Axyo Studio</span></h3>
+                    <p class="text-slate-400 mb-4">Rapidly build and deploy tailored AI decision applications.</p>
+                    <div class="bg-slate-800/50 p-6 rounded-lg flex-grow">
+                        <h4 class="font-bold text-lg mb-2">Demo: Intelligent Demand Forecasting</h4>
+                        <p class="text-slate-400 text-sm">For a client like Trailblazer Cycle Co., we'll show you how to build a Super KPI for demand forecasting, optimizing inventory and unlocking millions in working capital.</p>
+                        <a href="https://studio.axyo.ai/" target="_blank"
+                                    class="text-blue-600 hover:text-blue-800 font-semibold mt-3 inline-block text-sm">
+                                    Axyo AI Studio &rarr;</a>
+                    </div>
+                </div>
+                <!-- SMB Demo Card -->
+                <div class="kpi-card p-8 flex flex-col">
+                    <h3 class="text-2xl font-bold mb-2">For SMBs: <span class="text-purple-400">Financial AI Co-pilot</span></h3>
+                    <p class="text-slate-400 mb-4">SMB command center for financial optimization.</p>
+                    <div class="bg-slate-800/50 p-6 rounded-lg flex-grow">
+                        <h4 class="font-bold text-lg mb-2">Demo: Financial Command Center</h4>
+                        <p class="text-slate-400 text-sm">We'll show you how an SMB can connect their financial data to get instant insights on cash flow, predict profitability, and simulate the impact of key business decisions.</p>
+                    <a href="https://app-dev.axyo.ai/dashboard" target="_blank"
+                                    class="text-blue-600 hover:text-blue-800 font-semibold mt-3 inline-block text-sm">
+                                    Axyo Financial AI Co-pilot &rarr;</a>    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 8: Engagement Blueprint -->
+    <section class="slide">
+        <div class="slide-content">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold">A <span class="gradient-text">Path to Partnership</span></h2>
+                <p class="text-lg text-slate-400 max-w-3xl mx-auto">Hours to Insights. Days to Action. Weeks to Payback.</p>
+            </div>
+            <div class="relative">
+                <!-- Timeline Line -->
+                <div class="absolute left-1/2 -ml-px w-0.5 h-full bg-slate-700" aria-hidden="true"></div>
+                
+                <!-- Step 1 -->
+                <div class="relative flex items-center justify-between w-full mb-8">
+                    <div class="w-5/12">
+                        <div class="kpi-card p-6 text-right">
+                            <h3 class="text-xl font-bold">Discovery & Super KPI Blueprint</h3>
+                            <p class="text-slate-400 mt-2">A joint workshop to identify the highest-value Super KPI and map all required data and logic.</p>
+                            <a href="usecase-discovery-app/" target="_blank"
+                                    class="text-blue-600 hover:text-blue-800 font-semibold mt-3 inline-block text-sm">
+                                    Axyo AI Decision App Blueprint &rarr;</a>
+                        </div>
+                    </div>
+                    <div class="absolute left-1/2 -ml-4 z-10 flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white font-bold">1</div>
+                    <div class="w-5/12"></div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="relative flex items-center justify-between w-full mb-8">
+                    <div class="w-5/12"></div>
+                    <div class="absolute left-1/2 -ml-4 z-10 flex items-center justify-center w-8 h-8 rounded-full bg-purple-600 text-white font-bold">2</div>
+                    <div class="w-5/12">
+                        <div class="kpi-card p-6">
+                            <h3 class="text-xl font-bold">AI-Powered Data Prep</h3>
+                            <p class="text-slate-400 mt-2">Use Axyo Studio's visual interface to connect data sources and create a unified model in real-time.</p>
+                            <a href="data-refinery-app/" target="_blank"
+                                    class="text-blue-600 hover:text-blue-800 font-semibold mt-3 inline-block text-sm">
+                                    Axyo AI Decision App Blueprint &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="relative flex items-center justify-between w-full mb-8">
+                    <div class="w-5/12">
+                        <div class="kpi-card p-6 text-right">
+                            <h3 class="text-xl font-bold">No-Code AI Model Build</h3>
+                            <p class="text-slate-400 mt-2">A hands-on demo of the Axyo AI Engine, showcasing the model leaderboard and feature importance.</p>
+                        </div>
+                    </div>
+                    <div class="absolute left-1/2 -ml-4 z-10 flex items-center justify-center w-8 h-8 rounded-full bg-indigo-600 text-white font-bold">3</div>
+                    <div class="w-5/12"></div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="relative flex items-center justify-between w-full">
+                    <div class="w-5/12"></div>
+                    <div class="absolute left-1/2 -ml-4 z-10 flex items-center justify-center w-8 h-8 rounded-full bg-pink-600 text-white font-bold">4</div>
+                    <div class="w-5/12">
+                        <div class="kpi-card p-6">
+                            <h3 class="text-xl font-bold">Command Center Deployment</h3>
+                            <p class="text-slate-400 mt-2">Present the final, high-value application with interactive simulators and a live recommendations feed.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Chart Data and Config ---
+            const historicalLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const historicalData = [8.5, 8.2, 9.0, 9.5, 10.5, 11.0, 10.8, 10.2, 9.8, 9.5, 11.5, 12.0];
+            const baseForecastData = [10.8, 10.2, 9.8]; // Last 2 historical + forecast
+            
+            const chartOptions = (displayGrid = false, customTooltip = false) => {
+                const options = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            enabled: true,
+                            mode: 'index',
+                            intersect: false,
+                        }
+                    },
+                    scales: {
+                        x: { ticks: { color: '#94a3b8' }, grid: { color: displayGrid ? 'rgba(71, 85, 105, 0.5)' : 'transparent' } },
+                        y: { ticks: { color: '#94a3b8' }, grid: { color: displayGrid ? 'rgba(71, 85, 105, 0.5)' : 'transparent' } }
+                    }
+                };
+                if (customTooltip) {
+                    options.plugins.tooltip.callbacks = {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y) + 'M';
+                            }
+                            // Add custom text for the dip
+                            if (context.dataIndex === 9) { // October
+                                return [label, 'Anomaly detected: Unexplained dip.'];
+                            }
+                            return label;
+                        }
+                    }
+                }
+                return options;
+            };
+            
+            let historicalChart, forecastChart, simulationChart;
+
+            // --- KPI Evolution Logic ---
+            const nextLevelBtn = document.getElementById('next-level-btn');
+            let currentLevel = 0;
+
+            const levels = [
+                { control: 'control-level-1', visual: 'visual-level-1', chart: 'historical' },
+                { control: 'control-level-2', visual: 'visual-level-2' },
+                { control: 'control-level-3', visual: 'visual-level-3', chart: 'forecast' },
+                { control: 'control-level-4', visual: 'visual-level-4', chart: 'simulation' }
+            ];
+
+            nextLevelBtn.addEventListener('click', () => {
+                if (currentLevel >= levels.length) return;
+
+                if (currentLevel === 0) {
+                    nextLevelBtn.textContent = 'Reveal Next Level';
+                }
+
+                const level = levels[currentLevel];
+                document.getElementById(level.control).classList.add('active');
+                document.getElementById(level.visual).classList.add('active');
+                
+                // Initialize charts when their section becomes visible
+                if(level.chart === 'historical') initHistoricalChart();
+                if(level.chart === 'forecast') initForecastChart();
+                if(level.chart === 'simulation') initSimulationChart();
+
+                currentLevel++;
+
+                if (currentLevel >= levels.length) {
+                    nextLevelBtn.textContent = 'Evolution Complete';
+                    nextLevelBtn.disabled = true;
+                    nextLevelBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            });
+
+            // --- Chart Initialization Functions ---
+            function initHistoricalChart() {
+                const ctx = document.getElementById('historicalChart').getContext('2d');
+                historicalChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: historicalLabels,
+                        datasets: [{
+                            label: 'Sales',
+                            data: historicalData,
+                            borderColor: 'rgb(96, 165, 250)',
+                            tension: 0.3,
+                            pointRadius: (context) => context.dataIndex === 9 ? 5 : 0, // Highlight the dip
+                            pointBackgroundColor: (context) => context.dataIndex === 9 ? 'rgb(239, 68, 68)' : 'rgb(96, 165, 250)',
+                            pointBorderColor: (context) => context.dataIndex === 9 ? 'rgb(239, 68, 68)' : 'rgb(96, 165, 250)',
+                        }]
+                    },
+                    options: chartOptions(false, true)
+                });
+            }
+            
+            function initForecastChart() {
+                const ctx = document.getElementById('forecastChart').getContext('2d');
+                forecastChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [{
+                            label: 'Historical',
+                            data: [10.2, 9.8, 9.5, null, null],
+                            borderColor: 'rgb(96, 165, 250)',
+                            tension: 0.3,
+                        }, {
+                            label: 'Forecast',
+                            data: [null, null, 9.5, 9.6, 9.8],
+                            borderColor: 'rgb(167, 139, 250)',
+                            borderDash: [5, 5],
+                            tension: 0.3,
+                        }]
+                    },
+                    options: chartOptions(true)
+                });
+            }
+
+            // --- Simulation Logic ---
+            const marketingSlider = document.getElementById('marketing-spend');
+            const discountSlider = document.getElementById('discount');
+            const marketingValue = document.getElementById('marketing-value');
+            const discountValue = document.getElementById('discount-value');
+            const simulatedSales = document.getElementById('simulated-sales');
+            const baseProjection = 9.8;
+
+            function calculateSimulation() {
+                const marketingBoost = marketingSlider.value / 100;
+                const discountBoost = discountSlider.value / 100 * 0.5; // Assume discount has half the impact
+                
+                const newProjection = baseProjection * (1 + marketingBoost + discountBoost);
+                
+                // Update text values
+                marketingValue.textContent = `${marketingSlider.value}%`;
+                discountValue.textContent = `${discountSlider.value}%`;
+                simulatedSales.textContent = `$${newProjection.toFixed(2)}M`;
+                
+                // Update chart
+                const simulatedData = [
+                    null, null, 9.5, 
+                    baseProjection * (1 + (marketingSlider.value / 1.5) / 100), 
+                    newProjection
+                ];
+                simulationChart.data.datasets[1].data = simulatedData;
+                simulationChart.update();
+            }
+
+            function initSimulationChart() {
+                const ctx = document.getElementById('simulationChart').getContext('2d');
+                simulationChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [{
+                            label: 'Base Forecast',
+                            data: [null, null, 9.5, 9.6, 9.8],
+                            borderColor: 'rgb(71, 85, 105)',
+                            borderDash: [5, 5],
+                            tension: 0.3,
+                        }, {
+                            label: 'Simulated Forecast',
+                            data: [], // Initially empty
+                            borderColor: 'rgb(167, 139, 250)',
+                            backgroundColor: 'rgba(167, 139, 250, 0.2)',
+                            fill: true,
+                            tension: 0.3,
+                        }]
+                    },
+                    options: chartOptions(true)
+                });
+                
+                marketingSlider.addEventListener('input', calculateSimulation);
+                discountSlider.addEventListener('input', calculateSimulation);
+                
+                // Initial calculation
+                calculateSimulation();
+            }
+        });
+    </script>
+
+</body>
+</html>

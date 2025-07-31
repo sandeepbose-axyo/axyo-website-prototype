@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive AI Data Refinery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Manrope', sans-serif; }
+        .recipe-step { border-left: 2px solid; }
+        .recipe-step.active { border-color: #3b82f6; }
+        .recipe-step.completed { border-color: #22c55e; }
+        .recipe-step.pending { border-color: #e5e7eb; }
+        .table-highlight { background-color: rgba(59, 130, 246, 0.1); }
+        .assistant-message { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .loader { border-top-color: #3498db; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .center-pane-content { animation: fadeIn 0.3s ease-in-out; }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div id="app" class="flex flex-col h-screen">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 p-4 flex justify-between items-center shadow-sm">
+            <h1 class="text-xl font-extrabold text-gray-800">Interactive AI Data Refinery</h1>
+            <div class="flex items-center space-x-4">
+                <span class="text-sm font-medium text-gray-500">Super-KPI: Customer Lifetime Value (CLV)</span>
+                <div class="w-4 h-4 bg-green-500 rounded-full animate-pulse" title="System Status: Operational"></div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow flex p-4 space-x-4 overflow-hidden">
+
+            <!-- Left Pane: AI Assistant -->
+            <div id="assistant-container" class="w-1/4 bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col overflow-hidden">
+                <div class="p-4 border-b bg-gray-50">
+                    <h2 class="font-bold text-lg">AI Assistant</h2>
+                    <p id="assistant-status" class="text-sm text-gray-500">Ready for your instructions.</p>
+                </div>
+                <div id="assistant-pane" class="flex-grow p-4 space-y-4 overflow-y-auto">
+                    <!-- Assistant messages will be dynamically inserted here -->
+                </div>
+                <div id="assistant-input-container" class="p-4 border-t bg-gray-50 hidden">
+                     <!-- Input for Stage 4 will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <!-- Center Pane: Dynamic Content -->
+            <div id="center-pane-container" class="w-1/2 bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col overflow-hidden">
+                <!-- Content will be dynamically inserted here -->
+            </div>
+
+            <!-- Right Pane: Recipe -->
+            <div class="w-1/4 bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col overflow-hidden">
+                <div class="p-4 border-b">
+                    <h2 class="font-bold text-lg">Data Recipe</h2>
+                    <p class="text-sm text-gray-500">Your transformation steps will appear here.</p>
+                </div>
+                <div id="recipe-pane" class="p-4 space-y-4 overflow-y-auto">
+                    <!-- Recipe steps will be dynamically inserted here -->
+                </div>
+            </div>
+
+        </main>
+    </div>
+    
+    <!-- Notification Toast -->
+    <div id="notification" class="hidden fixed top-5 right-5 bg-green-500 text-white py-2 px-4 rounded-lg shadow-xl animate-bounce">
+        <p id="notification-message"></p>
+    </div>
+
+
+<script>
+// --- DATA & STATE MANAGEMENT ---
+const state = {
+    currentStage: 0,
+    sourceSchema: [
+        { name: 'CUST_ID', type: 'VARCHAR(50)', description: '' },
+        { name: 'signup_d', type: 'TEXT', description: '' },
+        { name: 'last_seen', type: 'TEXT', description: '' },
+        { name: 'total_spend', type: 'NUMBER', description: '' },
+        { name: 'transaction_count', type: 'INTEGER', description: '' },
+        { name: 'user_location', type: 'TEXT', description: '' },
+        { name: 'is_active_user', type: 'BOOLEAN', description: '' },
+    ],
+    targetSchema: [
+        { name: 'CustomerID', type: 'string', description: '' },
+        { name: 'SignupDate', type: 'date', description: '' },
+        { name: 'LastSeenDate', type: 'date', description: '' },
+        { name: 'TotalRevenue', type: 'float', description: '' },
+        { name: 'TotalTransactions', type: 'integer', description: '' },
+        { name: 'City', type: 'string', description: '' },
+        { name: 'State', type: 'string', description: '' },
+        { name: 'IsActive', type: 'boolean', description: '' },
+        { name: 'CustomerTenureDays', type: 'integer', description: '' },
+    ],
+    sourceData: [
+        { CUST_ID: 'user-a-123', signup_d: '2024-01-15', last_seen: 'July 5, 2025', total_spend: 150.75, transaction_count: 5, user_location: 'Phoenix, AZ', is_active_user: true },
+        { CUST_ID: 'user-b-456', signup_d: '2023-11-20', last_seen: 'June 28, 2025', total_spend: 89.99, transaction_count: 2, user_location: 'Los Angeles, CA', is_active_user: true },
+        { CUST_ID: 'user-c-789', signup_d: '2024-03-01', last_seen: 'July 1, 2025', total_spend: 250.00, transaction_count: 10, user_location: 'New York, NY', is_active_user: true },
+        { CUST_ID: 'user-d-101', signup_d: '2022-05-10', last_seen: 'December 12, 2023', total_spend: 550.40, transaction_count: 15, user_location: 'Chicago, IL', is_active_user: false },
+        { CUST_ID: 'user-e-112', signup_d: '2024-02-18', last_seen: 'May 30, 2025', total_spend: null, transaction_count: 0, user_location: 'Houston, TX', is_active_user: true },
+        { CUST_ID: 'user-f-131', signup_d: '2023-08-05', last_seen: 'July 15, 2025', total_spend: 320.50, transaction_count: 8, user_location: 'Miami, FL', is_active_user: true },
+        { CUST_ID: 'user-g-415', signup_d: 'not available', last_seen: 'July 20, 2025', total_spend: 12.25, transaction_count: 1, user_location: 'Seattle, WA', is_active_user: true },
+        { CUST_ID: 'user-h-617', signup_d: '2024-06-01', last_seen: 'July 25, 2025', total_spend: 75.00, transaction_count: 3, user_location: 'Boston', is_active_user: true },
+        { CUST_ID: 'user-i-713', signup_d: '2023-01-30', last_seen: 'July 22, 2025', total_spend: 180.90, transaction_count: 6, user_location: 'Dallas, TX', is_active_user: true },
+        { CUST_ID: 'user-j-801', signup_d: '2024-04-10', last_seen: 'July 18, 2025', total_spend: 45.30, transaction_count: 2, user_location: 'Salt Lake City, UT', is_active_user: true },
+    ],
+    recipe: [],
+    currentData: [],
+    mappings: {},
+};
+
+// --- MOCK AI RESPONSES & TRANSFORMATION LOGIC ---
+const aiResponses = {
+    descriptions: {
+        'CUST_ID': 'Appears to be the primary unique reference for a customer account.',
+        'signup_d': 'Likely the date the user registered for the service.',
+        'last_seen': 'The most recent date the user was active.',
+        'total_spend': 'Represents the cumulative monetary value of all transactions.',
+        'transaction_count': 'The total number of transactions made by the user.',
+        'user_location': 'The geographical location of the user, likely city and state.',
+        'is_active_user': 'A boolean flag indicating if the user is currently considered active.',
+        'CustomerID': 'The required unique identifier for each customer in the final model.',
+        'SignupDate': 'The standardized date of the user\'s registration.',
+        'LastSeenDate': 'The standardized date of the user\'s last activity.',
+        'TotalRevenue': 'The total revenue generated by the customer.',
+        'TotalTransactions': 'The total count of transactions for the customer.',
+        'City': 'The city where the customer is located.',
+        'State': 'The two-letter state abbreviation for the customer\'s location.',
+        'IsActive': 'A boolean flag for the customer\'s active status.',
+        'CustomerTenureDays': 'The number of days since the customer signed up, a key feature for CLV.',
+    },
+    suggestedMappings: {
+        'CustomerID': 'CUST_ID',
+        'SignupDate': 'signup_d',
+        'LastSeenDate': 'last_seen',
+        'TotalRevenue': 'total_spend',
+        'TotalTransactions': 'transaction_count',
+        'IsActive': 'is_active_user',
+    },
+    gaps: ['City', 'State', 'CustomerTenureDays'],
+};
+
+const transformations = {
+    fill_revenue: {
+        label: "Fill missing TotalRevenue with 0",
+        description: "Filled missing revenue with 0.",
+        code: `df['TotalRevenue'] = df['TotalRevenue'].fillna(0)`,
+        highlightedCols: ['TotalRevenue'],
+        apply: data => data.map(row => ({...row, TotalRevenue: row.TotalRevenue === null ? 0 : row.TotalRevenue })),
+    },
+    standardize_dates: {
+        label: "Standardize date columns",
+        description: "Standardized date columns to YYYY-MM-DD format.",
+        code: `df['SignupDate'] = pd.to_datetime(df['SignupDate'], errors='coerce')\ndf['LastSeenDate'] = pd.to_datetime(df['LastSeenDate'], errors='coerce')`,
+        highlightedCols: ['SignupDate', 'LastSeenDate'],
+        apply: data => data.map(row => {
+            try { row.SignupDate = new Date(row.SignupDate).toISOString().split('T')[0]; } catch(e) { row.SignupDate = null; }
+            try { row.LastSeenDate = new Date(row.LastSeenDate).toISOString().split('T')[0]; } catch(e) { row.LastSeenDate = null; }
+            return row;
+        }),
+    },
+    create_city_state: {
+        label: "Create City and State from user_location",
+        description: "Created City and State from user_location.",
+        code: `df[['City', 'State']] = df['user_location'].str.split(',', expand=True)\ndf['State'] = df['State'].str.strip()`,
+        highlightedCols: ['City', 'State'],
+        apply: data => data.map(row => {
+            const location = row.user_location || ',';
+            const parts = location.split(',');
+            row.City = parts[0].trim();
+            row.State = parts[1] ? parts[1].trim() : 'N/A';
+            return row;
+        }),
+    },
+    calculate_tenure: {
+        label: "Calculate CustomerTenureDays",
+        description: "Calculated CustomerTenureDays.",
+        code: `df['CustomerTenureDays'] = (pd.to_datetime('today') - df['SignupDate']).dt.days`,
+        highlightedCols: ['CustomerTenureDays'],
+        apply: data => data.map(row => {
+            if (row.SignupDate) {
+                const signup = new Date(row.SignupDate);
+                const today = new Date('2025-07-30'); // Fixed date for consistent demo
+                row.CustomerTenureDays = Math.floor((today - signup) / (1000 * 60 * 60 * 24));
+            } else {
+                row.CustomerTenureDays = null;
+            }
+            return row;
+        }),
+    }
+};
+
+
+// --- UI RENDER FUNCTIONS ---
+const assistantPane = document.getElementById('assistant-pane');
+const recipePane = document.getElementById('recipe-pane');
+const centerPaneContainer = document.getElementById('center-pane-container');
+
+function renderAssistantMessage(html, actions = []) {
+    const lastMessage = assistantPane.querySelector('.assistant-message:last-child');
+    if (lastMessage) {
+        lastMessage.querySelectorAll('button').forEach(b => b.disabled = true);
+    }
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'assistant-message bg-gray-100 p-4 rounded-lg border';
+    messageDiv.innerHTML = `<div class="prose prose-sm max-w-none">${html}</div>`;
+
+    if (actions.length > 0) {
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'mt-4 flex space-x-2';
+        actions.forEach(action => {
+            const button = document.createElement('button');
+            button.className = `px-4 py-2 text-sm font-semibold rounded-md ${action.primary ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`;
+            button.textContent = action.label;
+            button.onclick = action.handler;
+            actionsDiv.appendChild(button);
+        });
+        messageDiv.appendChild(actionsDiv);
+    }
+    assistantPane.appendChild(messageDiv);
+    assistantPane.scrollTop = assistantPane.scrollHeight;
+}
+
+function renderRecipe() {
+    recipePane.innerHTML = '';
+    const stages = [
+        { name: 'Prerequisites', completed: state.currentStage > 0 },
+        { name: 'Semantic Enrichment', completed: state.currentStage > 1 },
+        { name: 'Schema Mapping', completed: state.currentStage > 2 },
+        { name: 'Data Ingestion & Profiling', completed: state.currentStage > 3 },
+        { name: 'Transformation & Enrichment', completed: state.currentStage > 4 },
+        { name: 'Final Validation & ETL', completed: state.currentStage > 5 },
+    ];
+    stages.forEach((stage, index) => {
+        const stepDiv = document.createElement('div');
+        const status = state.currentStage === index ? 'active' : (stage.completed ? 'completed' : 'pending');
+        stepDiv.className = `recipe-step p-3 rounded-r-lg ${status}`;
+        stepDiv.innerHTML = `
+            <h3 class="font-semibold text-sm">${index + 1}. ${stage.name}</h3>
+            ${status === 'active' ? '<p class="text-xs text-gray-500">In Progress...</p>' : ''}
+            ${status === 'completed' ? '<p class="text-xs text-green-600">Completed</p>' : ''}
+        `;
+        recipePane.appendChild(stepDiv);
+    });
+}
+
+function renderCenterPane(title, contentHtml) {
+    centerPaneContainer.innerHTML = `
+        <div class="p-4 border-b flex justify-between items-center">
+            <h2 class="font-bold text-lg">${title}</h2>
+        </div>
+        <div class="flex-grow overflow-auto p-4 center-pane-content">
+            ${contentHtml}
+        </div>
+    `;
+}
+
+function renderDataTable(data, headers, highlightColumns = []) {
+    const tableHtml = `
+        <div class="overflow-auto h-full">
+            <table class="w-full text-sm text-left">
+                <thead class="bg-gray-50 text-xs text-gray-700 uppercase sticky top-0">
+                    <tr>
+                        ${headers.map(h => `<th scope="col" class="px-6 py-3">${h}</th>`).join('')}
+                    </tr>
+                </thead>
+                <tbody>
+                    ${data.map(row => `
+                        <tr class="bg-white border-b hover:bg-gray-50">
+                            ${headers.map(header => {
+                                let value = row[header];
+                                let classes = `px-6 py-4`;
+                                if (highlightColumns.includes(header)) classes += ' table-highlight font-semibold';
+                                if (value === null || value === undefined) {
+                                    value = 'NULL';
+                                    classes += ' text-red-500';
+                                } else if (typeof value === 'boolean') {
+                                    value = value ? 'true' : 'false';
+                                    classes += value === 'true' ? ' text-green-600' : ' text-orange-600';
+                                }
+                                return `<td class="${classes}">${value}</td>`;
+                            }).join('')}
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+    renderCenterPane('Data Preview <span class="text-sm font-normal text-gray-500">(Showing 10 of 15,820 rows)</span>', tableHtml);
+}
+
+function showNotification(message) {
+    const notification = document.getElementById('notification');
+    const notificationMessage = document.getElementById('notification-message');
+    notificationMessage.textContent = message;
+    notification.classList.remove('hidden');
+    setTimeout(() => {
+        notification.classList.add('hidden');
+    }, 3000);
+}
+
+
+// --- WORKFLOW STAGES ---
+
+function runStage0_Prerequisites() {
+    state.currentStage = 0;
+    renderRecipe();
+    renderDataTable(state.sourceData.slice(0, 10), state.sourceSchema.map(s => s.name));
+    renderAssistantMessage(
+        `<h3>Welcome to the Interactive AI Data Refinery!</h3>
+        <p>This demo will walk you through transforming raw data into a model-ready dataset.</p>
+        <h4>Stage 0: Prerequisites</h4>
+        <p>Before we begin, the system has confirmed the following inputs are ready:</p>
+        <ul class="list-disc list-inside text-sm">
+            <li><span class="text-green-600 font-semibold">&#10003;</span> Source Data connection established.</li>
+            <li><span class="text-green-600 font-semibold">&#10003;</span> Target Data Blueprint loaded.</li>
+        </ul>`,
+        [{ label: "Confirm & Begin", handler: runStage1_Enrichment, primary: true }]
+    );
+}
+
+function runStage1_Enrichment() {
+    state.currentStage = 1;
+    assistantPane.innerHTML = '';
+    renderRecipe();
+    renderAssistantMessage(
+        `<h4>Stage 1: Semantic Enrichment</h4>
+        <p>First, I'll analyze the schemas to generate plain-English descriptions for each attribute. Please review them in the center pane.</p>`,
+        [{ label: "Generate Descriptions", handler: () => {
+            // Populate initial descriptions
+            state.sourceSchema.forEach(c => c.description = aiResponses.descriptions[c.name]);
+            state.targetSchema.forEach(c => c.description = aiResponses.descriptions[c.name]);
+            renderStage1UI();
+        }, primary: true }]
+    );
+}
+
+function renderStage1UI() {
+    const descriptionsHtml = `
+        <p class="text-sm text-gray-600 mb-4">Review the AI-generated descriptions below. Click the edit icon to make changes.</p>
+        <div class="space-y-4">
+            <div>
+                <h3 class="font-semibold text-blue-600">Source Schema</h3>
+                <table class="w-full text-sm mt-2">
+                    ${state.sourceSchema.map((c, i) => `
+                        <tr class="border-b">
+                            <td class="p-2 font-mono w-1/4">${c.name}</td>
+                            <td class="p-2" id="desc-source-${i}">${c.description}</td>
+                            <td class="p-2 w-10 text-center">
+                                <button onclick="editDescription('source', ${i})" class="text-gray-400 hover:text-blue-600">&#9998;</button>
+                            </td>
+                        </tr>`).join('')}
+                </table>
+            </div>
+            <div>
+                <h3 class="font-semibold text-green-600">Target Schema</h3>
+                <table class="w-full text-sm mt-2">
+                     ${state.targetSchema.map((c, i) => `
+                        <tr class="border-b">
+                            <td class="p-2 font-mono w-1/4">${c.name}</td>
+                            <td class="p-2" id="desc-target-${i}">${c.description}</td>
+                            <td class="p-2 w-10 text-center">
+                                <button onclick="editDescription('target', ${i})" class="text-gray-400 hover:text-blue-600">&#9998;</button>
+                            </td>
+                        </tr>`).join('')}
+                </table>
+            </div>
+        </div>`;
+    renderCenterPane('Semantic Enrichment', descriptionsHtml);
+    renderAssistantMessage(
+        `<h4>Review Descriptions</h4>
+        <p>The generated descriptions are now in the center pane. Please review and edit them as needed. When you're satisfied, approve them to continue.</p>`,
+        [{ label: "Approve Descriptions", handler: runStage2_Mapping, primary: true }]
+    );
+}
+
+function editDescription(schemaType, index) {
+    const schema = schemaType === 'source' ? state.sourceSchema : state.targetSchema;
+    const currentDesc = schema[index].description;
+    const cellId = `desc-${schemaType}-${index}`;
+    const cell = document.getElementById(cellId);
+    
+    cell.innerHTML = `<input type="text" id="edit-desc-input" class="w-full p-1 border rounded" value="${currentDesc}">`;
+    const input = document.getElementById('edit-desc-input');
+    input.focus();
+    
+    const save = () => {
+        schema[index].description = input.value;
+        cell.innerHTML = input.value;
+        showNotification("Description updated!");
+    };
+    
+    input.onblur = save;
+    input.onkeydown = (e) => { if (e.key === 'Enter') input.blur(); };
+}
+
+function runStage2_Mapping() {
+    state.currentStage = 2;
+    assistantPane.innerHTML = '';
+    renderRecipe();
+    renderAssistantMessage(
+        `<h4>Stage 2: Schema Mapping</h4>
+        <p>Excellent. Now, using those validated descriptions, I will propose direct 1:1 mappings. Please review and adjust them in the center pane.</p>`,
+        [{ label: "Generate Mappings", handler: () => {
+            state.mappings = { ...aiResponses.suggestedMappings };
+            renderStage2UI();
+        }, primary: true }]
+    );
+}
+
+function renderStage2UI() {
+    const sourceOptions = state.sourceSchema.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+    const mappingHtml = `
+        <p class="text-sm text-gray-600 mb-4">Review the AI-suggested mappings. Use the dropdowns to make corrections or select '-- No Match --' to create a gap.</p>
+        <table class="w-full text-sm">
+            <thead class="font-bold text-left"><tr><th class="p-2">Target Column</th><th class="p-2">Mapping</th><th class="p-2">Source Column</th></tr></thead>
+            <tbody>
+            ${state.targetSchema.map(targetCol => {
+                const suggestedSource = state.mappings[targetCol.name] || 'none';
+                return `
+                    <tr class="border-b">
+                        <td class="p-2 font-mono w-1/3 text-green-600">${targetCol.name}</td>
+                        <td class="p-2 text-center w-1/6">&larr;</td>
+                        <td class="p-2 w-1/2">
+                            <select onchange="updateMapping('${targetCol.name}', this.value)" class="w-full p-2 border rounded bg-white">
+                                <option value="none">-- No Match --</option>
+                                ${sourceOptions}
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            }).join('')}
+            </tbody>
+        </table>
+    `;
+    renderCenterPane('Schema Mapping', mappingHtml);
+    // Pre-select the dropdowns
+    state.targetSchema.forEach(targetCol => {
+        const select = centerPaneContainer.querySelector(`select[onchange="updateMapping('${targetCol.name}', this.value)"]`);
+        select.value = state.mappings[targetCol.name] || 'none';
+    });
+    
+    renderAssistantMessage(
+        `<h4>Review Mappings</h4>
+        <p>The proposed mappings are now in the center pane. Please adjust as needed and approve to continue.</p>`,
+        [{ label: "Approve Mappings", handler: runStage3_Ingestion, primary: true }]
+    );
+}
+
+function updateMapping(target, source) {
+    if (source === 'none') {
+        delete state.mappings[target];
+    } else {
+        state.mappings[target] = source;
+    }
+    showNotification(`Mapping for ${target} updated.`);
+}
+
+
+function runStage3_Ingestion() {
+    state.currentStage = 3;
+    assistantPane.innerHTML = '';
+    renderRecipe();
+    
+    // Create the initial mapped data state
+    state.currentData = state.sourceData.map(sourceRow => {
+        const newRow = { ...sourceRow };
+        Object.entries(state.mappings).forEach(([target, source]) => {
+            if (newRow.hasOwnProperty(source)) {
+                newRow[target] = newRow[source];
+            }
+        });
+        return newRow;
+    });
+    
+    renderStage3UI();
+    
+    renderAssistantMessage(
+        `<h4>Stage 3: Data Ingestion & Profiling</h4>
+        <p>I've ingested a sample of the data and applied your approved mappings. The Initial Data Health Report is now shown in the center pane.</p>`,
+        [{ label: "Initiate Full Dataset Scan", handler: () => {
+            const button = assistantPane.querySelector('button');
+            button.disabled = true;
+            button.innerHTML = `<div class="loader w-4 h-4 border-2 rounded-full inline-block mr-2"></div> Scanning...`;
+            setTimeout(() => {
+                showNotification("Full dataset scan complete!");
+                renderAssistantMessage(
+                    `<h4>Full Profile Complete</h4>
+                    <p>The full dataset has been profiled. The detailed report confirms the issues found in the sample. We are now ready to clean and transform the data.</p>`,
+                    [{ label: "Begin Transformation", handler: runStage4_Transformation, primary: true }]
+                );
+                const headers = Object.keys(state.currentData[0]);
+                renderDataTable(state.currentData.slice(0, 10), headers);
+            }, 2500);
+        }, primary: true }]
+    );
+}
+
+function renderStage3UI() {
+    const reportHtml = `
+        <p class="text-sm text-gray-600 mb-4">This report is based on a sample of the data and highlights key quality issues to address.</p>
+        <div class="space-y-3">
+            <div class="bg-red-50 border border-red-200 p-3 rounded-lg">
+                <h4 class="font-bold text-red-800">Missing Values</h4>
+                <p class="text-sm text-red-700">Column <strong class="font-mono">TotalRevenue</strong> has 1 missing value (10% of sample).</p>
+            </div>
+            <div class="bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
+                <h4 class="font-bold text-yellow-800">Inconsistent Formatting</h4>
+                <p class="text-sm text-yellow-700">Column <strong class="font-mono">LastSeenDate</strong> contains multiple date formats (e.g., 'July 5, 2025').</p>
+            </div>
+            <div class="bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
+                <h4 class="font-bold text-yellow-800">Invalid Data</h4>
+                <p class="text-sm text-yellow-700">Column <strong class="font-mono">SignupDate</strong> contains non-date values like 'not available'.</p>
+            </div>
+        </div>
+    `;
+    renderCenterPane('Initial Data Health Report', reportHtml);
+}
+
+
+function runStage4_Transformation() {
+    state.currentStage = 4;
+    assistantPane.innerHTML = '';
+    renderRecipe();
+    document.getElementById('assistant-input-container').classList.remove('hidden');
+
+    renderAssistantMessage(
+        `<h4>Stage 4: Conversational Transformation</h4>
+        <p>Now for the fun part! Select the recommended transformations below, or type your own custom command to clean the data and resolve the gaps.</p>`
+    );
+    
+    const inputContainer = document.getElementById('assistant-input-container');
+    inputContainer.innerHTML = `
+        <div id="transform-options" class="space-y-2 mb-4">
+            ${Object.entries(transformations).map(([key, t]) => `
+                <label class="flex items-center p-2 bg-white rounded-md border hover:bg-gray-50 cursor-pointer">
+                    <input type="checkbox" name="transform" value="${key}" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <span class="ml-3 text-sm">${t.label}</span>
+                </label>
+            `).join('')}
+        </div>
+        <div class="flex space-x-2">
+            <input id="command-input" type="text" class="flex-grow p-2 border rounded-md text-sm" placeholder="Or type a custom command...">
+            <button id="run-command" class="bg-blue-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-blue-700">Apply</button>
+        </div>
+    `;
+    
+    document.getElementById('run-command').onclick = applyTransformations;
+}
+
+function applyTransformations() {
+    const checkedTransformations = Array.from(document.querySelectorAll('input[name="transform"]:checked')).map(cb => cb.value);
+    const customCommand = document.getElementById('command-input').value.trim();
+    let allHighlightedCols = new Set();
+
+    if (checkedTransformations.length === 0 && !customCommand) {
+        alert("Please select a transformation or type a command.");
+        return;
+    }
+
+    checkedTransformations.forEach(key => {
+        const t = transformations[key];
+        if (t) {
+            state.currentData = t.apply(state.currentData);
+            state.recipe.push({ description: t.description, code: t.code });
+            renderAssistantMessage(
+                `<h4>Transformation Applied</h4>
+                 <p><strong>Action:</strong> ${t.description}</p>
+                 <pre class="bg-gray-800 text-white p-2 rounded-md text-xs mt-1"><code>${t.code}</code></pre>`
+            );
+            t.highlightedCols.forEach(col => allHighlightedCols.add(col));
+        }
+    });
+    
+    if (customCommand) {
+        alert(`Custom command "${customCommand}" would be sent to the LLM for processing. This feature is not fully implemented in the demo.`);
+    }
+    
+    document.getElementById('command-input').value = '';
+    document.querySelectorAll('input[name="transform"]:checked').forEach(cb => cb.checked = false);
+
+    const headers = Object.keys(state.currentData[0]);
+    renderDataTable(state.currentData.slice(0, 10), headers, Array.from(allHighlightedCols));
+    showNotification(`${checkedTransformations.length} transformation(s) applied!`);
+
+    const allDone = Object.keys(transformations).every(key => state.recipe.some(r => r.description === transformations[key].description));
+    if (allDone) {
+         renderAssistantMessage(
+             `<h4>All Transformations Complete!</h4>
+             <p>We have cleaned the data and engineered all necessary features. The data is now ready for the final step.</p>`,
+             [{label: "Finalize & Run ETL", handler: runStage5_Finalize, primary: true}]
+         )
+         document.getElementById('assistant-input-container').classList.add('hidden');
+    }
+}
+
+function runStage5_Finalize() {
+    state.currentStage = 5;
+    assistantPane.innerHTML = '';
+    renderRecipe();
+    
+    const finalRecipe = state.recipe.map(r => r.code).join('\n\n#---\n\n');
+
+    renderAssistantMessage(
+        `<h4>Stage 5: Final Validation & ETL</h4>
+        <p>The complete data recipe has been compiled. This script is version-controlled and ensures the entire process is repeatable.</p>
+        <p class="mt-2 font-semibold text-xs">Final "Data Recipe" Script:</p>
+        <pre class="bg-gray-800 text-white p-2 rounded-md text-xs mt-1 overflow-auto max-h-48"><code># 1:1 Mappings
+df = df.rename(columns={
+${Object.entries(state.mappings).map(([t, s]) => `    '${s}': '${t}',`).join('\n')}
+})
+
+#-- Transformations --
+
+${finalRecipe}
+</code></pre>`,
+        [{label: "Run Full Pipeline", handler: () => {
+             const button = assistantPane.querySelector('button');
+             button.disabled = true;
+             button.innerHTML = `<div class="loader w-4 h-4 border-2 rounded-full inline-block mr-2"></div> Running ETL Job...`;
+             setTimeout(() => {
+                state.currentStage = 6;
+                renderRecipe();
+                showNotification("Success! Model-Ready Dataset is created.");
+                renderAssistantMessage(
+                    `<div class="text-center">
+                        <svg class="mx-auto h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h3 class="mt-2 text-lg font-medium">Workflow Complete!</h3>
+                        <p class="mt-1 text-sm text-gray-500">The Model-Ready Dataset (MRD) has been successfully generated and is ready for the next phase.</p>
+                    </div>`,
+                    [
+                        {label: "Download MRD (CSV)", handler: () => alert("This would trigger a download of the full, transformed 15,820 row dataset."), primary: true},
+                        {label: "Start Over", handler: () => location.reload()}
+                    ]
+                );
+             }, 3000);
+        }, primary: true}]
+    );
+}
+
+
+// --- INITIALIZE APP ---
+window.onload = () => {
+    state.currentData = [...state.sourceData];
+    runStage0_Prerequisites();
+};
+
+</script>
+</body>
+</html>

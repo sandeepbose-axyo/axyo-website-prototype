@@ -1,0 +1,5 @@
+[
+  { "name": "CustomerID", "type": "string" },
+  { "name": "SignupDate", "type": "date" },
+  { "name": "TotalRevenue", "type": "float" }
+]

@@ -1,0 +1,105 @@
+# ==============================================================================
+# File: prompts.yaml (Complete & Final Version)
+# Location: refinery_app/prompts.yaml
+# ==============================================================================
+
+test_prompt: "Hello, {name}! Welcome to the {app_name}."
+
+# --- Stage 1 & 2 Prompts ---
+# --- Stage 1: Semantic Description ---
+generate_semantic_description: |
+  You are a senior data architect and business strategist. Your task is to perform a deep inference on a single data attribute to deduce its precise business meaning and strategic importance.
+  Consider the column name, data type, sample values, and its relationship to other columns within the overall business context.
+
+  **CRITICAL RULES:**
+  1. Respond with ONLY a valid JSON object.
+  2. Do NOT include any text, explanations, or markdown like ```json before or after the JSON object.
+  3. The JSON object must contain exactly two string keys: "inferred_implication" and "concise_description".
+
+  Here is an example of the required JSON format for a 'last_seen' column:
+  {
+    "inferred_implication": "This attribute tracks the last known activity date, which is critical for calculating user churn, engagement, and recency for targeted marketing campaigns.",
+    "concise_description": "The most recent date a user was active in the application."
+  }
+  ---
+  BUSINESS CONTEXT: This data is for a {business_context} application.
+  OTHER COLUMNS IN DATASET: {other_columns}
+  ---
+  COLUMN TO ANALYZE:
+  - Name: {column_name}
+  - Data Type: {data_type}
+  - Sample Values: {data_sample}
+  ---
+  JSON RESPONSE:
+
+# --- Stage 2: Schema Mapping ---
+suggest_schema_mapping: |
+  You are an expert data analyst. Your task is to map columns from a source schema to a target schema based on their names and business descriptions.
+  Provide only the most logical 1:1 mappings. If a target column has no direct match in the source, do not include it in the output.
+
+  **CRITICAL RULES:**
+  1. Respond with ONLY a valid JSON object.
+  2. Do NOT include any text, explanations, or markdown like ```json before or after the JSON object.
+  3. The keys of the JSON object must be target column names, and the values must be the corresponding source column names.
+
+  Here is an example of the required JSON format:
+  {{"TargetColumnA": "SourceColumnX", "TargetColumnB": "SourceColumnY"}}
+  ---
+  SOURCE SCHEMA:
+  {source_schema}
+  ---
+  TARGET SCHEMA:
+  {target_schema}
+  ---
+  JSON RESPONSE:
+
+# --- Stage 4: Transformation Suggestions ---
+suggest_data_transformations: |
+  You are an expert data analyst reviewing a data quality report.
+  Based on the report below, provide a list of specific, actionable data cleaning or feature engineering steps.
+
+  **CRITICAL RULES:**
+  1. Respond with ONLY a valid JSON array of objects.
+  2. Do NOT include any text before or after the JSON array.
+  3. Each object in the array must have the following three string keys: "title", "context", and "action".
+  4. The "action" string should always begin with "Action:".
+
+  Here is an example of the required JSON format:
+  [
+    {
+      "title": "Impute Missing Values",
+      "context": "The 'TotalRevenue' column has 5 missing value(s), which could affect calculations.",
+      "action": "Action: Impute the missing values in 'TotalRevenue' with 0, assuming missing values indicate no spending."
+    },
+    {
+      "title": "Standardize Date Formats",
+      "context": "The 'LastSeenDate' column may contain multiple, inconsistent date formats.",
+      "action": "Action: Convert the 'LastSeenDate' column to a consistent 'YYYY-MM-DD' format."
+    }
+  ]
+  ---
+  DATA QUALITY REPORT:
+  {profile_report}
+  ---
+  JSON RESPONSE:
+
+# --- Stage 4: Code Generation ---
+generate_pandas_code: |
+  You are an expert Python programmer specializing in the pandas library.
+  Your task is to convert a natural language command into a single, executable line or block of Python code that transforms a pandas DataFrame named 'df'.
+  
+  **CRITICAL RULES:**
+  1. The DataFrame is ALWAYS named 'df'.
+  2. The final output MUST be only the raw Python code. Do NOT include any explanations, comments, or markdown like ```python.
+  3. NEVER, under any circumstances, include an `import` statement. The pandas library (`pd`) is already available.
+  4. Only use standard pandas and numpy functions that are available in the provided 'df' and 'pd' objects.
+  5. Do not use any functions that access the file system, network, or external libraries (e.g., no `pd.read_csv`, `os`, `requests`, `open`, `eval`, `exec`).
+
+  ---
+  DATA SCHEMA:
+  {data_schema}
+  ---
+  USER COMMAND:
+  "{command}"
+  ---
+  PYTHON CODE:

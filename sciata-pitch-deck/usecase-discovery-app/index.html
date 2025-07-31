@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Use Case Discovery & Data Blueprinting</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Manrope', sans-serif; }
+        .progress-step { border-left: 2px solid; }
+        .progress-step.active { border-color: #3b82f6; }
+        .progress-step.completed { border-color: #22c55e; }
+        .progress-step.pending { border-color: #e5e7eb; }
+        .assistant-message { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .loader { border-top-color: #3498db; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .center-pane-content { animation: fadeIn 0.3s ease-in-out; }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .editable-field {
+            background-color: #f9fafb;
+            border: 1px dashed #d1d5db;
+            padding: 8px;
+            border-radius: 4px;
+            min-height: 40px;
+        }
+        .kpi-item.primary {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+            border-width: 2px;
+        }
+        .kpi-item {
+             border-width: 2px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div id="app" class="flex flex-col h-screen">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 p-4 flex justify-between items-center shadow-sm">
+            <h1 class="text-xl font-extrabold text-gray-800">AI Use Case Discovery & Data Blueprinting</h1>
+            <div class="flex items-center space-x-4">
+                <span class="text-sm font-medium text-gray-500">Use Case: Sales & Demand Forecasting</span>
+                <div class="w-4 h-4 bg-green-500 rounded-full animate-pulse" title="System Status: Operational"></div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow flex p-4 space-x-4 overflow-hidden">
+
+            <!-- Left Pane: AI Assistant -->
+            <div id="assistant-container" class="w-1/4 bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col overflow-hidden">
+                <div class="p-4 border-b bg-gray-50">
+                    <h2 class="font-bold text-lg">AI Assistant</h2>
+                </div>
+                <div id="assistant-pane" class="flex-grow p-4 space-y-4 overflow-y-auto">
+                    <!-- Assistant messages will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <!-- Center Pane: Dynamic Content -->
+            <div id="center-pane-container" class="w-1/2 bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col overflow-hidden">
+                <!-- Content will be dynamically inserted here -->
+            </div>
+
+            <!-- Right Pane: Blueprint Progress -->
+            <div class="w-1/4 bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col overflow-hidden">
+                <div class="p-4 border-b">
+                    <h2 class="font-bold text-lg">Blueprint Progress</h2>
+                    <p class="text-sm text-gray-500">Your progress will appear here.</p>
+                </div>
+                <div id="progress-pane" class="p-4 space-y-4 overflow-y-auto">
+                    <!-- Progress steps will be dynamically inserted here -->
+                </div>
+            </div>
+
+        </main>
+    </div>
+    
+    <!-- Notification Toast -->
+    <div id="notification" class="hidden fixed top-5 right-5 bg-green-500 text-white py-2 px-4 rounded-lg shadow-xl animate-bounce">
+        <p id="notification-message"></p>
+    </div>
+
+<script>
+// --- DATA & STATE MANAGEMENT ---
+const state = {
+    currentStage: 0,
+    useCase: {
+        businessContext: '',
+        useCaseDescription: '',
+        targetVariable: '',
+        predictionGranularity: '',
+        objective: '',
+        keyResult: '',
+        primaryKPI: '',
+        associatedKPIs: []
+    },
+    featureList: [],
+    blueprint: [],
+};
+
+// --- MOCK AI RESPONSES & DATA ---
+const aiResponses = {
+    useCaseDraft: {
+        businessContext: 'Global Electrical Manufacturer is a leader in the electrical and energy sectors, operating a complex global supply chain with long lead times for raw materials like copper. The business is highly sensitive to macroeconomic shifts and commodity price volatility.',
+        useCaseDescription: 'The current forecasting process is slow, manual, and fails to anticipate market shifts. It cannot systematically integrate critical external drivers like the copper index or PMI, leading to inventory imbalances and the "bullwhip effect" across the supply chain. The opportunity is to build a dynamic, AI-powered forecasting engine that not only predicts what will happen but explains why, quantifying the complex relationships between internal decisions, external market forces, and sales outcomes.',
+        targetVariable: 'net_sales_amount',
+        predictionGranularity: 'SKU / Sales Region / Week',
+        objective: 'Transform sales forecasting from a reactive, manual exercise into a proactive, AI-powered strategic function.',
+        keyResult: 'Reduce overall forecast error (WAPE) from 35% to 20% within 12 months.',
+        primaryKPI: 'Forecast Accuracy (WAPE)',
+        associatedKPIs: ['Inventory Holding Costs', 'On-Time-In-Full (OTIF) %', 'Working Capital Reduction']
+    },
+    suggestedObjectives: [
+        "Improve sales and demand forecast accuracy.",
+        "Optimize inventory levels across the supply chain.",
+        "Understand the key drivers of customer churn."
+    ],
+    kpiOptions: [
+        'Forecast Accuracy (WAPE)',
+        'Inventory Holding Costs',
+        'On-Time-In-Full (OTIF) %',
+        'Working Capital Reduction',
+        'Stockout Rate',
+        'Margin Erosion %',
+        'Expedited Freight Costs',
+        'Forecast Bias'
+    ],
+    featureCategories: {
+        "Internal Sales & Product Data": ["product_price", "promotion_flag", "sales_history_lag_12w"],
+        "Supply Chain & Inventory": ["inventory_on_hand", "supplier_lead_time"],
+        "External Macroeconomic": ["pmi_manufacturing_index", "consumer_confidence_index"],
+        "External Commodity Data": ["copper_material_index", "crude_oil_price"],
+    },
+    blueprintDetails: {
+        product_price: { category: "Internal Sales & Product Data", dataType: "float", description: "The listed price of the SKU for a given week.", constraints: "> 0", example: "125.99" },
+        promotion_flag: { category: "Internal Sales & Product Data", dataType: "boolean", description: "A flag (True/False) indicating if the SKU was part of a promotion.", constraints: "True/False", example: "True" },
+        sales_history_lag_12w: { category: "Internal Sales & Product Data", dataType: "integer", description: "The net sales amount for the same SKU 12 weeks prior.", constraints: ">= 0", example: "5400" },
+        inventory_on_hand: { category: "Supply Chain & Inventory", dataType: "integer", description: "The quantity of the SKU available in the warehouse at the start of the week.", constraints: ">= 0", example: "1250" },
+        supplier_lead_time: { category: "Supply Chain & Inventory", dataType: "integer", description: "The average number of days to receive the product from the supplier.", constraints: "> 0", example: "45" },
+        pmi_manufacturing_index: { category: "External Macroeconomic", dataType: "float", description: "The Purchasing Managers' Index, a key indicator of economic health.", constraints: "0-100", example: "52.8" },
+        consumer_confidence_index: { category: "External Macroeconomic", dataType: "float", description: "An index measuring consumer optimism about the economy.", constraints: "0-200", example: "101.3" },
+        copper_material_index: { category: "External Commodity Data", dataType: "float", description: "The market price index for copper, a key raw material.", constraints: "> 0", example: "4.52" },
+        crude_oil_price: { category: "External Commodity Data", dataType: "float", description: "The market price for WTI crude oil, affecting transport costs.", constraints: "> 0", example: "85.40" },
+    }
+};
+
+// --- UI RENDER FUNCTIONS ---
+const assistantPane = document.getElementById('assistant-pane');
+const progressPane = document.getElementById('progress-pane');
+const centerPaneContainer = document.getElementById('center-pane-container');
+
+function renderAssistantMessage(html, actions = []) {
+    const lastMessage = assistantPane.querySelector('.assistant-message:last-child');
+    if (lastMessage) {
+        lastMessage.querySelectorAll('button').forEach(b => b.disabled = true);
+    }
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'assistant-message bg-gray-100 p-4 rounded-lg border';
+    messageDiv.innerHTML = `<div class="prose prose-sm max-w-none">${html}</div>`;
+
+    if (actions.length > 0) {
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'mt-4 flex space-x-2';
+        actions.forEach(action => {
+            const button = document.createElement('button');
+            button.className = `px-4 py-2 text-sm font-semibold rounded-md ${action.primary ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`;
+            button.textContent = action.label;
+            button.onclick = action.handler;
+            actionsDiv.appendChild(button);
+        });
+        messageDiv.appendChild(actionsDiv);
+    }
+    assistantPane.appendChild(messageDiv);
+    assistantPane.scrollTop = assistantPane.scrollHeight;
+}
+
+function renderProgress() {
+    progressPane.innerHTML = '';
+    const stages = [
+        { name: 'Context Ingestion', completed: state.currentStage > 0 },
+        { name: 'Use Case Definition', completed: state.currentStage > 1 },
+        { name: 'Feature Brainstorming', completed: state.currentStage > 2 },
+        { name: 'Blueprint Refinement', completed: state.currentStage > 3 },
+    ];
+    stages.forEach((stage, index) => {
+        const stepDiv = document.createElement('div');
+        const status = state.currentStage === index ? 'active' : (stage.completed ? 'completed' : 'pending');
+        stepDiv.className = `progress-step p-3 rounded-r-lg ${status}`;
+        stepDiv.innerHTML = `
+            <h3 class="font-semibold text-sm">${index + 1}. ${stage.name}</h3>
+            ${status === 'active' ? '<p class="text-xs text-gray-500">In Progress...</p>' : ''}
+            ${status === 'completed' ? '<p class="text-xs text-green-600">Completed</p>' : ''}
+        `;
+        progressPane.appendChild(stepDiv);
+    });
+}
+
+function renderCenterPane(title, contentHtml) {
+    centerPaneContainer.innerHTML = `
+        <div class="p-4 border-b flex justify-between items-center">
+            <h2 class="font-bold text-lg">${title}</h2>
+        </div>
+        <div class="flex-grow overflow-auto p-4 space-y-4 center-pane-content">
+            ${contentHtml}
+        </div>
+    `;
+}
+
+function showNotification(message) {
+    const notification = document.getElementById('notification');
+    const notificationMessage = document.getElementById('notification-message');
+    notificationMessage.textContent = message;
+    notification.classList.remove('hidden');
+    setTimeout(() => {
+        notification.classList.add('hidden');
+    }, 3000);
+}
+
+// --- WORKFLOW STAGES ---
+
+function runStage0_ContextIngestion() {
+    state.currentStage = 0;
+    renderProgress();
+    renderAssistantMessage(
+        `<h3>Welcome to the AI Use Case Discovery & Data Blueprinting Workflow!</h3>
+        <p>This demo will guide you through defining a use case and creating a detailed data blueprint.</p>
+        <h4>Stage 0: Automated Context Ingestion</h4>
+        <p>To start, please provide your company's website and your primary objective. I will use this to automatically tailor the use case for you.</p>`
+    );
+    const contentHtml = `
+        <div class="space-y-4">
+            <div>
+                <label for="company-url" class="block text-sm font-medium text-gray-700">Company Website URL</label>
+                <input type="text" id="company-url" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm" value="www.global-electrical-mfg.com">
+            </div>
+            <div>
+                <label for="high-level-objective" class="block text-sm font-medium text-gray-700">High-Level Objective</label>
+                <div class="mt-2 space-y-2">
+                    <p class="text-xs text-gray-500">Based on the website, here are some suggested objectives. Click one or write your own.</p>
+                    ${aiResponses.suggestedObjectives.map(obj => `<button class="w-full text-left p-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm" onclick="setObjective(this)">${obj}</button>`).join('')}
+                </div>
+                <input type="text" id="high-level-objective" class="mt-2 block w-full p-2 border border-gray-300 rounded-md shadow-sm" placeholder="Or type your objective here...">
+            </div>
+            <div class="text-right">
+                <button id="start-discovery" class="bg-blue-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-blue-700">Start Discovery</button>
+            </div>
+        </div>
+    `;
+    renderCenterPane('Inputs for AI Context Gathering', contentHtml);
+    document.getElementById('start-discovery').onclick = runStage1_UseCaseGen;
+}
+
+function setObjective(button) {
+    document.getElementById('high-level-objective').value = button.innerText;
+}
+
+function runStage1_UseCaseGen() {
+    state.currentStage = 1;
+    renderProgress();
+    renderAssistantMessage(
+        `<h4>Stage 1: Use Case Definition</h4>
+        <p>Thank you. I am now analyzing your company's context and objective to generate a detailed use case document.</p>
+        <p class="text-xs text-gray-500 mt-2"><strong>Behind the scenes:</strong> I'm running an internal "Generator-Critic" process to refine the draft before you see it, ensuring a high-quality starting point.</p>`,
+        [{ label: "Generating...", handler: () => {}, primary: true }]
+    );
+    
+    const button = assistantPane.querySelector('button');
+    button.disabled = true;
+    button.innerHTML = `<div class="loader w-4 h-4 border-2 rounded-full inline-block mr-2"></div> Generating & Refining...`;
+    
+    setTimeout(() => {
+        state.useCase = { ...aiResponses.useCaseDraft };
+        renderStage1UI();
+    }, 2500);
+}
+
+function renderStage1UI() {
+    const targetVarOptions = ['net_sales_amount', 'gross_margin', 'customer_churn_probability'];
+    const granularityOptions = ['SKU / Sales Region / Week', 'Customer / Month', 'Product Line / Quarter'];
+
+    const useCaseHtml = `
+        <div class="prose prose-sm max-w-none">
+            <div class="mb-4">
+                <h4 class="font-bold">Business Context</h4>
+                <div class="editable-field" contenteditable="true" id="uc-businessContext">${state.useCase.businessContext}</div>
+            </div>
+            <div class="mb-4">
+                <h4 class="font-bold">Use Case Description (Pain Points & Opportunities)</h4>
+                <div class="editable-field" contenteditable="true" id="uc-useCaseDescription">${state.useCase.useCaseDescription}</div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <h4 class="font-bold">Target Variable</h4>
+                    <select id="uc-targetVariable" class="w-full p-2 border rounded-md bg-white">
+                        ${targetVarOptions.map(o => `<option value="${o}" ${state.useCase.targetVariable === o ? 'selected' : ''}>${o}</option>`).join('')}
+                        <option value="other">Other (specify)</option>
+                    </select>
+                    <input type="text" id="uc-targetVariable-other" class="mt-1 w-full p-2 border rounded-md hidden" placeholder="Specify target variable">
+                </div>
+                <div>
+                    <h4 class="font-bold">Prediction Granularity</h4>
+                     <select id="uc-predictionGranularity" class="w-full p-2 border rounded-md bg-white">
+                        ${granularityOptions.map(o => `<option value="${o}" ${state.useCase.predictionGranularity === o ? 'selected' : ''}>${o}</option>`).join('')}
+                        <option value="other">Other (specify)</option>
+                    </select>
+                    <input type="text" id="uc-predictionGranularity-other" class="mt-1 w-full p-2 border rounded-md hidden" placeholder="Specify granularity">
+                </div>
+            </div>
+             <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <h4 class="font-bold">Objective (O)</h4>
+                    <div class="editable-field" contenteditable="true" id="uc-objective">${state.useCase.objective}</div>
+                </div>
+                 <div>
+                    <h4 class="font-bold">Key Result (KR)</h4>
+                    <div class="editable-field" contenteditable="true" id="uc-keyResult">${state.useCase.keyResult}</div>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-bold">Key Performance Indicators (KPIs)</h4>
+                <p class="text-xs text-gray-500">Select functional business KPIs. The first one you select becomes the Primary KPI.</p>
+                <div id="kpi-selector" class="mt-2 space-y-2 p-3 border rounded-md bg-gray-50">
+                    <!-- KPI items will be dynamically generated here -->
+                </div>
+            </div>
+        </div>
+    `;
+    renderCenterPane('Use Case Document', useCaseHtml);
+    
+    // Add event listeners for dropdowns
+    document.getElementById('uc-targetVariable').onchange = (e) => { document.getElementById('uc-targetVariable-other').classList.toggle('hidden', e.target.value !== 'other'); };
+    document.getElementById('uc-predictionGranularity').onchange = (e) => { document.getElementById('uc-predictionGranularity-other').classList.toggle('hidden', e.target.value !== 'other'); };
+
+    renderKPISelector();
+
+    renderAssistantMessage(
+        `<h4>Review Use Case Draft</h4>
+        <p>I've generated a draft of the use case document in the center pane. Please review and edit any fields directly. When you're satisfied, approve it to continue.</p>`,
+        [{ label: "Approve Use Case", handler: runStage2_FeatureGen, primary: true }]
+    );
+}
+
+function renderKPISelector() {
+    const kpiContainer = document.getElementById('kpi-selector');
+    kpiContainer.innerHTML = aiResponses.kpiOptions.map(kpi => `
+        <label class="kpi-item flex items-center p-2 bg-white rounded-md border-2 border-gray-200 hover:border-gray-400 cursor-pointer">
+            <input type="checkbox" name="kpi" value="${kpi}" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+            <span class="ml-3 text-sm flex-grow">${kpi}</span>
+            <span class="primary-label hidden text-xs font-bold text-blue-600">(Primary)</span>
+        </label>
+    `).join('');
+    
+    const kpiItems = document.querySelectorAll('.kpi-item');
+    kpiItems.forEach(item => {
+        const checkbox = item.querySelector('input');
+        // Pre-check based on initial state
+        if (state.useCase.primaryKPI === checkbox.value || state.useCase.associatedKPIs.includes(checkbox.value)) {
+            checkbox.checked = true;
+        }
+        // Attach click listener to the whole label
+        item.addEventListener('click', (e) => {
+            // We handle the logic ourselves, so prevent default label behavior
+            e.preventDefault();
+            checkbox.checked = !checkbox.checked;
+            updateKPIs();
+        });
+    });
+    updateKPIs(); // Initial render
+}
+
+function updateKPIs() {
+    const kpiItems = document.querySelectorAll('.kpi-item');
+    let primarySet = false;
+    state.primaryKPI = '';
+    state.associatedKPIs = [];
+
+    kpiItems.forEach(item => {
+        const checkbox = item.querySelector('input');
+        const primaryLabel = item.querySelector('.primary-label');
+        
+        item.classList.remove('primary');
+        primaryLabel.classList.add('hidden');
+
+        if (checkbox.checked) {
+            if (!primarySet) {
+                item.classList.add('primary');
+                primaryLabel.classList.remove('hidden');
+                state.primaryKPI = checkbox.value;
+                primarySet = true;
+            } else {
+                state.associatedKPIs.push(checkbox.value);
+            }
+        }
+    });
+}
+
+function runStage2_FeatureGen() {
+    state.currentStage = 2;
+    renderProgress();
+    // Save any edits from the user
+    state.useCase.businessContext = document.getElementById('uc-businessContext').innerText;
+    state.useCase.useCaseDescription = document.getElementById('uc-useCaseDescription').innerText;
+    state.useCase.objective = document.getElementById('uc-objective').innerText;
+    state.useCase.keyResult = document.getElementById('uc-keyResult').innerText;
+    // ... save other fields ...
+    showNotification("Use Case Document saved!");
+
+    renderAssistantMessage(
+        `<h4>Stage 2: Feature Brainstorming</h4>
+        <p>Excellent. Now, based on the approved use case, I will brainstorm an exhaustive list of potential features needed for the model.</p>
+        <p class="text-xs text-gray-500 mt-2"><strong>Behind the scenes:</strong> Again, I'm using my internal "Critic" to ensure the feature list is comprehensive before you see it.</p>`,
+        [{ label: "Brainstorming...", handler: () => {}, primary: true }]
+    );
+
+    const button = assistantPane.querySelector('button');
+    button.disabled = true;
+    button.innerHTML = `<div class="loader w-4 h-4 border-2 rounded-full inline-block mr-2"></div> Generating & Refining...`;
+
+    setTimeout(() => {
+        renderStage2UI();
+    }, 2500);
+}
+
+function renderStage2UI() {
+    const featuresHtml = `
+        <div>
+            <h4 class="font-bold text-base mb-2">AI-Suggested Features</h4>
+            <p class="text-xs text-gray-500 mb-2">Uncheck any features that are irrelevant or unavailable.</p>
+            <div class="grid grid-cols-2 gap-4">
+            ${Object.entries(aiResponses.featureCategories).map(([category, features]) => `
+                <div>
+                    <h5 class="font-semibold text-sm mb-2">${category}</h5>
+                    <div class="space-y-2">
+                        ${features.map(feature => `
+                            <label class="flex items-center p-2 bg-white rounded-md border hover:bg-gray-50 cursor-pointer">
+                                <input type="checkbox" name="feature" value="${feature}" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" checked>
+                                <span class="ml-3 text-sm font-mono">${feature}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('')}
+            </div>
+        </div>
+        <div>
+            <h4 class="font-bold text-base mb-2">Additional Feature Ideas</h4>
+            <p class="text-xs text-gray-500 mb-2">Describe any other features you think are important. I will parse this and add them to the list.</p>
+            <textarea id="custom-features" class="w-full h-24 p-2 border rounded-md" placeholder="e.g., 'We should also consider competitor pricing data and maybe something about local holidays.'"></textarea>
+        </div>
+    `;
+    renderCenterPane('Feature Brainstorming', featuresHtml);
+    renderAssistantMessage(
+        `<h4>Curate Feature List</h4>
+        <p>I've generated a list of potential features. Please review, uncheck any as needed, and add any other ideas in the text box. When you're done, approve the list.</p>`,
+        [{ label: "Approve Feature List", handler: runStage3_BlueprintGen, primary: true }]
+    );
+}
+
+function runStage3_BlueprintGen() {
+    state.currentStage = 3;
+    renderProgress();
+    state.featureList = Array.from(document.querySelectorAll('input[name="feature"]:checked')).map(cb => cb.value);
+    showNotification("Feature list saved!");
+
+    renderAssistantMessage(
+        `<h4>Stage 3: Blueprint Refinement</h4>
+        <p>Perfect. For the final step, I will flesh out the complete schema for each selected feature, including data types, descriptions, and constraints.</p>`,
+        [{ label: "Generate Blueprint", handler: () => {
+            renderStage3UI();
+        }, primary: true }]
+    );
+}
+
+function renderStage3UI() {
+    const blueprintHtml = `
+        <p class="text-sm text-gray-600 mb-4">This is the final, detailed specification for the model-ready dataset. Review and edit any details as needed.</p>
+        <table class="w-full text-sm">
+            <thead class="font-bold text-left bg-gray-50">
+                <tr>
+                    <th class="p-2">Feature Name</th>
+                    <th class="p-2">Category</th>
+                    <th class="p-2">Data Type</th>
+                    <th class="p-2">Description</th>
+                    <th class="p-2">Constraints</th>
+                    <th class="p-2">Example</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${state.featureList.map(feature => {
+                    const details = aiResponses.blueprintDetails[feature];
+                    return `
+                        <tr class="border-b">
+                            <td class="p-2 font-mono">${feature}</td>
+                            <td class="p-2 editable-field" contenteditable="true">${details.category}</td>
+                            <td class="p-2 editable-field" contenteditable="true">${details.dataType}</td>
+                            <td class="p-2 editable-field" contenteditable="true">${details.description}</td>
+                            <td class="p-2 editable-field" contenteditable="true">${details.constraints}</td>
+                            <td class="p-2 editable-field" contenteditable="true">${details.example}</td>
+                        </tr>
+                    `;
+                }).join('')}
+            </tbody>
+        </table>
+    `;
+    renderCenterPane('Target Data Blueprint', blueprintHtml);
+    renderAssistantMessage(
+        `<h4>Finalize Target Data Blueprint</h4>
+        <p>The complete blueprint is now in the center pane. After your final review and edits, lock it in to complete the process.</p>`,
+        [{ label: "Lock Blueprint & Finish", handler: runFinalStep, primary: true }]
+    );
+}
+
+function runFinalStep() {
+    state.currentStage = 4;
+    renderProgress();
+    showNotification("Target Data Blueprint Locked!");
+
+    renderAssistantMessage(
+        `<div class="text-center">
+            <svg class="mx-auto h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3 class="mt-2 text-lg font-medium">Discovery & Blueprinting Complete!</h3>
+            <p class="mt-1 text-sm text-gray-500">The <strong>Target Data Blueprint</strong> has been successfully generated. It is now ready to be used as the master plan for the <strong>AI Data Refinery</strong> workflow.</p>
+        </div>`,
+        [{label: "Start Over", handler: () => location.reload()}]
+    );
+}
+
+// --- INITIALIZE APP ---
+window.onload = () => {
+    runStage0_ContextIngestion();
+};
+
+</script>
+</body>
+</html>

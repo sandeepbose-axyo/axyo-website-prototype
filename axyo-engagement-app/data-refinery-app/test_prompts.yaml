@@ -1,0 +1,2 @@
+generate_semantic_description: "Describe {column_name}"
+suggest_schema_mapping: "Map {source_schema} to {target_schema}"
