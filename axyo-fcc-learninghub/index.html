@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axyo Financial Command Center - Community Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #F0F2F5;
+            color: #1F2937;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .bg-iris { background-color: #0D0DB7; }
+        .text-iris { color: #0D0DB7; }
+        .border-iris { border-color: #0D0DB7; }
+        .hover\:bg-iris-dark:hover { background-color: #0A0A8A; }
+        .bg-flamingo { background-color: #E565AE; }
+        .text-flamingo { color: #E565AE; }
+        .bg-gold { background-color: #F68D1A; }
+        .text-gold { color: #F68D1A; }
+        .bg-sapphire { background-color: #5DC0C0; }
+        .text-sapphire { color: #5DC0C0; }
+        .bg-olive { background-color: #AEC073; }
+        .text-olive { color: #AEC073; }
+        .gradient-text {
+            background: linear-gradient(to right, #0D0DB7, #3B82F6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-link-active {
+            color: #0D0DB7;
+            background-color: rgba(13, 13, 183, 0.05);
+            border-bottom: 2px solid #0D0DB7;
+        }
+        #main-content-container {
+            transition: margin-right 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <div id="app" class="relative min-h-screen">
+        <!-- Main Content Container -->
+        <div id="main-content-container" class="w-full">
+            <!-- Header -->
+            <header class="sticky top-0 bg-white/80 backdrop-blur-lg shadow-sm z-50 border-b border-gray-200/80">
+                <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                    <div class="flex items-center space-x-4">
+                        <span class="text-3xl font-extrabold text-iris tracking-tighter">AXYO</span>
+                        <div>
+                             <span class="text-gray-600 font-semibold hidden sm:block text-lg">Financial Command Center</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 max-w-xl hidden md:block">
+                        <div class="relative">
+                            <ion-icon name="search-outline" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl"></ion-icon>
+                            <input type="text" placeholder="Search for events, resources..." class="w-full border rounded-full py-2.5 pl-12 pr-4 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-iris focus:bg-white transition-all">
+                        </div>
+                    </div>
+                     <div class="flex items-center space-x-4">
+                        <button class="text-gray-500 hover:text-iris md:hidden"><ion-icon name="search-outline" class="text-2xl"></ion-icon></button>
+                        <button class="text-gray-500 hover:text-iris"><ion-icon name="notifications-outline" class="text-2xl"></ion-icon></button>
+                        <img src="https://placehold.co/40x40/E565AE/FFFFFF?text=P" class="rounded-full border-2 border-white shadow" alt="User Avatar">
+                    </div>
+                </div>
+                <!-- Navigation -->
+                <nav class="bg-white/60 border-b border-t border-gray-200/80">
+                    <div class="container mx-auto px-6 flex items-center space-x-1">
+                        <a href="#" class="nav-link text-gray-600 hover:bg-gray-100 hover:text-iris font-semibold py-3 px-4" data-page="home">Home</a>
+                        <a href="#" class="nav-link text-gray-600 hover:bg-gray-100 hover:text-iris font-semibold py-3 px-4" data-page="events">Events</a>
+                        <a href="#" class="nav-link text-gray-600 hover:bg-gray-100 hover:text-iris font-semibold py-3 px-4" data-page="resources">Resources</a>
+                        <a href="#" class="nav-link text-gray-600 hover:bg-gray-100 hover:text-iris font-semibold py-3 px-4" data-page="community">Community</a>
+                    </div>
+                </nav>
+            </header>
+            <!-- Main Content Area -->
+            <main id="main-content-area" class="flex-grow"></main>
+        </div>
+        
+        <!-- Co-pilot Pane -->
+        <aside id="copilot-pane" class="w-80 bg-white/80 backdrop-blur-lg border-l border-gray-200/80 transition-transform duration-300 flex flex-col fixed right-0 top-0 h-full shadow-lg z-[60] transform translate-x-full">
+            <div class="p-4 flex justify-between items-center border-b bg-gray-50/50">
+                <h3 class="text-lg font-bold text-iris flex items-center"><ion-icon name="flash-outline" class="mr-2"></ion-icon>Axyo Co-pilot</h3>
+                <button id="copilot-toggle-close" class="text-gray-500 hover:text-black"><ion-icon name="chevron-forward-outline" class="text-2xl"></ion-icon></button>
+            </div>
+            <div id="copilot-context-area" class="flex-grow p-4 overflow-y-auto"></div>
+            <div class="p-4 border-t bg-gray-50/50">
+                <div class="relative">
+                    <input type="text" placeholder="Ask a question..." class="w-full border rounded-full py-2 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-iris">
+                    <button class="absolute top-1/2 right-2 transform -translate-y-1/2 bg-iris p-1 rounded-full text-white hover:bg-iris-dark"><ion-icon name="arrow-up-outline"></ion-icon></button>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Co-pilot Toggle Button -->
+        <button id="copilot-toggle-open" class="fixed right-0 top-1/2 -translate-y-1/2 bg-iris text-white p-2 rounded-l-lg shadow-lg z-40 hover:bg-iris-dark transition-transform hover:scale-105">
+            <ion-icon name="flash-outline" class="text-2xl"></ion-icon>
+        </button>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal-backdrop" class="fixed inset-0 bg-black bg-opacity-70 z-[100] hidden items-center justify-center p-4 transition-opacity duration-300 opacity-0">
+        <div id="modal-content" class="glass-effect rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8 relative transform scale-95 transition-transform duration-300">
+            <!-- Modal content will be injected here -->
+        </div>
+    </div>
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <script>
+        // --- DATA STORE ---
+        const portalData = {
+            events: [
+                { id: 1, title: 'The Project Profitability Masterclass', type: 'Livecast', date: '2025-08-15', persona: 'Preeti', theme: 'Mastering Profitability', description: 'Learn to calculate your true, blended team cost per project.', icon: 'cash-outline', pairedClinicId: 5 },
+                { id: 5, title: 'Hands-On Clinic: Profitability Dashboard', type: 'Clinic', date: '2025-08-18', persona: 'Preeti', theme: 'Mastering Profitability', description: 'Connect your QBO data and build your own profitability dashboard.', icon: 'analytics-outline' },
+                { id: 2, title: 'The Automated Board Deck', type: 'Livecast', date: '2025-08-22', persona: 'David', theme: 'Fueling Growth', description: 'Get your key growth metrics, like LTV:CAC and runway, in real-time.', icon: 'rocket-outline', pairedClinicId: 8 },
+                { id: 8, title: 'Clinic: Build Your Investor Dashboard', type: 'Clinic', date: '2025-08-25', persona: 'David', theme: 'Fueling Growth', description: 'A hands-on session to generate the key metrics VCs care about.', icon: 'podium-outline' },
+                { id: 3, title: 'Contractor Cash Flow Survival Guide', type: 'Livecast', date: '2025-08-29', persona: 'Carlos', theme: 'Commanding Cash Flow', description: 'Build a real cash flow forecast that handles lumpy payments.', icon: 'construct-outline', pairedClinicId: null },
+                { id: 4, 'title': 'The Business Resilience Masterclass', type: 'Livecast', date: '2025-09-05', persona: 'Maria', theme: 'De-risking the Business', description: 'Instantly quantify your customer concentration risk.', icon: 'shield-checkmark-outline', pairedClinicId: null },
+                { id: 6, title: 'Past Event: Intro to Unit Economics', type: 'Livecast', date: '2025-07-10', persona: 'David', theme: 'Fueling Growth', description: 'A foundational session on the most important metrics for scaling.', icon: 'calculator-outline', status: 'past' },
+            ],
+            resources: [
+                { id: 1, title: '5 Steps to Price a Fixed-Bid Project', type: 'Playbook', persona: 'Preeti', theme: 'Mastering Profitability', description: 'A comprehensive guide to pricing complex projects without sacrificing your margins.', icon: 'book-outline', content: 'This is the full content for the playbook on pricing fixed-bid projects. It includes detailed steps, examples, and best practices for consultancies.' },
+                { id: 2, title: 'The 3 Metrics VCs Actually Care About', type: 'Playbook', persona: 'David', theme: 'Fueling Growth', description: 'Master LTV:CAC, Payback Period, and Burn Multiple to speak the language of your investors.', icon: 'trending-up-outline', content: 'Full content for the VC metrics playbook. This guide breaks down exactly how to calculate and interpret the key metrics that will get you funded.' },
+                { id: 3, title: '3 Ways to Survive a Cash Flow Crunch', type: 'Guide', persona: 'Carlos', theme: 'Commanding Cash Flow', description: 'Tactical advice for managing payables and receivables when cash is tight.', icon: 'document-text-outline', content: 'A step-by-step guide for contractors on managing lumpy cash flow.' },
+                { id: 4, title: 'The 3 Hidden Risks That Can Kill a Family Business', type: 'Playbook', persona: 'Maria', theme: 'De-risking the Business', description: 'Learn to identify and mitigate risks like customer concentration and vendor dependency.', icon: 'alert-circle-outline', content: 'An in-depth look at the unique risks facing family-owned businesses and how to build resilience for the next generation.' },
+            ]
+        };
+
+        // --- APP STATE ---
+        let currentPage = 'home';
+
+        // --- DOM ELEMENT DEFINITIONS ---
+        let mainContentArea, navLinks, copilotPane, copilotToggleOpen, copilotToggleClose, modalBackdrop, modalContent;
+
+        // --- TEMPLATES ---
+        const homePageTemplate = () => {
+             const featuredEvent = portalData.events[0];
+             const featuredResource = portalData.resources[0];
+             return `
+            <div class="container mx-auto px-6 py-12">
+                <div class="text-center py-16">
+                    <h1 class="text-4xl md:text-6xl font-extrabold gradient-text">From Anxiety to Confidence.</h1>
+                    <p class="mt-4 text-lg text-gray-700 max-w-2xl mx-auto">Axyo gives you the financial clarity, foresight, and control to move from reacting to commanding your business's future.</p>
+                    <div class="mt-8">
+                        <button class="bg-iris text-white font-bold py-4 px-8 rounded-full hover:bg-iris-dark transition duration-300 text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1" onclick="showSimulator('Preeti')">Launch the Simulator</button>
+                    </div>
+                </div>
+                <div class="mt-12">
+                    <h2 class="text-3xl font-bold mb-8 text-gray-900">Featured for You</h2>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Featured Event -->
+                        <div class="glass-effect rounded-xl shadow-lg p-6 flex flex-col hover:-translate-y-1 transition-transform duration-300">
+                            <div class="flex items-center space-x-3"><ion-icon name="${featuredEvent.icon}" class="text-2xl text-flamingo"></ion-icon><span class="text-sm font-bold text-flamingo">${featuredEvent.type.toUpperCase()}</span></div>
+                            <h3 class="text-xl font-bold mt-4 text-gray-800">${featuredEvent.title}</h3>
+                            <p class="text-gray-600 mt-2 flex-grow">${featuredEvent.description}</p>
+                            <div class="mt-6"><a href="#" class="block text-center w-full mt-4 bg-white border-2 border-iris text-iris font-bold py-2 px-4 rounded-full hover:bg-iris hover:text-white transition duration-300" onclick="renderPage('events')">View Event</a></div>
+                        </div>
+                        <!-- Featured Resource -->
+                        <div class="glass-effect rounded-xl shadow-lg p-6 flex flex-col hover:-translate-y-1 transition-transform duration-300">
+                            <div class="flex items-center space-x-3"><ion-icon name="${featuredResource.icon}" class="text-2xl text-gold"></ion-icon><span class="text-sm font-bold text-gold">${featuredResource.type.toUpperCase()}</span></div>
+                            <h3 class="text-xl font-bold mt-4 text-gray-800">${featuredResource.title}</h3>
+                            <p class="text-gray-600 mt-2 flex-grow">${featuredResource.description}</p>
+                            <div class="mt-6"><a href="#" class="block text-center w-full mt-4 bg-white border-2 border-iris text-iris font-bold py-2 px-4 rounded-full hover:bg-iris hover:text-white transition duration-300" onclick="handleCardClick('resource', ${featuredResource.id})">Read More</a></div>
+                        </div>
+                        <!-- Featured Community Thread -->
+                        <div class="glass-effect rounded-xl shadow-lg p-6 flex flex-col hover:-translate-y-1 transition-transform duration-300">
+                            <div class="flex items-center space-x-3"><ion-icon name="chatbubbles-outline" class="text-2xl text-sapphire"></ion-icon><span class="text-sm font-bold text-sapphire">COMMUNITY DISCUSSION</span></div>
+                            <h3 class="text-xl font-bold mt-4 text-gray-800">How are you calculating Customer Lifetime Value (LTV)?</h3>
+                            <p class="text-gray-600 mt-2 flex-grow">"We're a SaaS company trying to nail down our LTV for our next board meeting. Curious how other founders are approaching this..."</p>
+                            <div class="mt-6"><a href="#" class="block text-center w-full mt-4 bg-white border-2 border-iris text-iris font-bold py-2 px-4 rounded-full hover:bg-iris hover:text-white transition duration-300" onclick="renderPage('community')">Join Discussion</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-20 text-center bg-white/50 backdrop-blur-lg rounded-xl shadow-lg p-12 border border-white/20">
+                    <h2 class="text-3xl font-bold mb-4 text-gray-900">Your Journey to Financial Command</h2>
+                    <div class="grid md:grid-cols-3 gap-8 text-left mt-12">
+                        <div class="p-4 rounded-lg flex items-start space-x-4 hover:bg-gray-50/50 transition-colors duration-300"><div class="flex-shrink-0"><div class="flex items-center justify-center h-16 w-16 rounded-full bg-iris text-white shadow-lg"><ion-icon name="school-outline" class="text-3xl"></ion-icon></div></div><div><h3 class="text-xl font-bold">1. Learn</h3><p class="mt-1 text-gray-600">Build foundational knowledge with expert-led livecasts and in-depth playbooks.</p></div></div>
+                        <div class="p-4 rounded-lg flex items-start space-x-4 hover:bg-gray-50/50 transition-colors duration-300 cursor-pointer" onclick="showSimulator('Preeti')"><div class="flex-shrink-0"><div class="flex items-center justify-center h-16 w-16 rounded-full bg-iris text-white shadow-lg"><ion-icon name="game-controller-outline" class="text-3xl"></ion-icon></div></div><div><h3 class="text-xl font-bold">2. Practice</h3><p class="mt-1 text-gray-600">Experience the "aha!" moment in a risk-free environment using our AI Co-pilot.</p></div></div>
+                        <div class="p-4 rounded-lg flex items-start space-x-4 hover:bg-gray-50/50 transition-colors duration-300 cursor-pointer" onclick="showFlyModal()"><div class="flex-shrink-0"><div class="flex items-center justify-center h-16 w-16 rounded-full bg-iris text-white shadow-lg"><ion-icon name="airplane-outline" class="text-3xl"></ion-icon></div></div><div><h3 class="text-xl font-bold">3. Fly</h3><p class="mt-1 text-gray-600">Connect your own data to the Financial Command Center and take command.</p></div></div>
+                    </div>
+                </div>
+            </div>
+        `;};
+        
+        const eventRowTemplate = (event) => `
+            <div class="bg-white/60 backdrop-blur-lg rounded-lg shadow-sm border border-white/20 p-4 mb-4 transition-all duration-300 hover:shadow-md">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between">
+                    <div class="flex items-start sm:items-center space-x-4 mb-4 sm:mb-0">
+                        <ion-icon name="${event.icon}" class="text-3xl text-iris mt-1 sm:mt-0"></ion-icon>
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-900">${event.title}</h3>
+                            <p class="text-sm text-gray-600">${event.description}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4 self-end sm:self-center">
+                        <button class="text-iris font-semibold hover:underline" onclick="toggleEventDetails(${event.id})">Learn More</button>
+                        <button class="bg-iris text-white font-bold py-2 px-6 rounded-full hover:bg-iris-dark transition whitespace-nowrap">Enroll Now</button>
+                    </div>
+                </div>
+                <div id="event-details-${event.id}" class="hidden mt-4 pt-4 border-t border-gray-200/80">
+                    <!-- Details will be injected here -->
+                </div>
+            </div>
+        `;
+
+        const eventsPageTemplate = () => {
+            const upcomingEvents = portalData.events.filter(e => e.status !== 'past');
+            const groupedEvents = upcomingEvents.reduce((acc, event) => {
+                const date = new Date(event.date).toDateString();
+                if (!acc[date]) acc[date] = [];
+                acc[date].push(event);
+                return acc;
+            }, {});
+
+            return `
+            <div class="container mx-auto px-6 py-12">
+                <h1 class="text-4xl font-bold mb-8 text-gray-900">Events & Clinics</h1>
+                ${Object.keys(groupedEvents).sort((a,b) => new Date(a) - new Date(b)).map(date => `
+                    <div class="mb-8">
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4">${date}</h2>
+                        ${groupedEvents[date].map(event => eventRowTemplate(event)).join('')}
+                    </div>
+                `).join('')}
+            </div>
+            `;
+        };
+        
+        const resourceCardTemplate = (resource) => `
+            <div class="glass-effect rounded-xl shadow-lg p-6 flex flex-col hover:-translate-y-1 transition-transform duration-300 cursor-pointer" onclick="handleCardClick('resource', ${resource.id})">
+                <div class="flex items-center space-x-3">
+                    <ion-icon name="${resource.icon}" class="text-2xl text-gold"></ion-icon>
+                    <span class="text-sm font-bold text-gold">${resource.type.toUpperCase()}</span>
+                </div>
+                <h3 class="text-xl font-bold mt-4 text-gray-800">${resource.title}</h3>
+                <p class="text-gray-600 mt-2 flex-grow">${resource.description}</p>
+                <div class="mt-6">
+                    <span class="text-iris font-bold hover:underline">Read More</span>
+                </div>
+            </div>
+        `;
+
+        const resourcesPageTemplate = () => `
+            <div class="container mx-auto px-6 py-12">
+                <h1 class="text-4xl font-bold mb-8 text-gray-900">Resource Library</h1>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    ${portalData.resources.map(resource => resourceCardTemplate(resource)).join('')}
+                </div>
+            </div>
+        `;
+        
+        const communityPageTemplate = () => `
+            <div class="container mx-auto px-6 py-12">
+                <h1 class="text-4xl font-bold mb-2 text-gray-900">Community Hub</h1>
+                <p class="text-lg text-gray-600 mb-8">Connect with peers, get expert advice, and shape the future of Axyo.</p>
+                
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <!-- Main Content -->
+                    <div class="lg:col-span-2 bg-white/60 backdrop-blur-lg rounded-lg shadow-sm border border-white/20 p-6">
+                        <h2 class="text-2xl font-bold text-gray-800">Recent Discussions</h2>
+                        <!-- Placeholder for discussion threads -->
+                        <div class="mt-4 space-y-4">
+                            <div class="p-4 border rounded-lg hover:bg-gray-50/50 cursor-pointer">
+                                <h3 class="font-bold text-iris">How are you calculating Customer Lifetime Value (LTV)?</h3>
+                                <p class="text-sm text-gray-600 mt-1">"We're a SaaS company trying to nail down our LTV for our next board meeting..."</p>
+                                <div class="text-xs text-gray-500 mt-2">Started by David (Tech Founder) • 3 replies</div>
+                            </div>
+                             <div class="p-4 border rounded-lg hover:bg-gray-50/50 cursor-pointer">
+                                <h3 class="font-bold text-iris">Best way to manage cash flow with lumpy payments?</h3>
+                                <p class="text-sm text-gray-600 mt-1">"As a contractor, I get paid in big chunks but have steady payroll. It's a nightmare..."</p>
+                                <div class="text-xs text-gray-500 mt-2">Started by Carlos (Contractor) • 8 replies</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Sidebar -->
+                    <div class="space-y-6">
+                        <div class="bg-white/60 backdrop-blur-lg rounded-lg shadow-sm border border-white/20 p-6">
+                            <h3 class="text-xl font-bold text-gray-800 flex items-center"><ion-icon name="bulb-outline" class="mr-2 text-gold"></ion-icon>Suggest an Idea</h3>
+                            <p class="text-sm text-gray-600 mt-2">Have an idea for a new feature or resource? Share it with the community!</p>
+                            <button class="w-full mt-4 bg-gold text-white font-bold py-2 px-4 rounded-full hover:bg-opacity-90 transition">Submit an Idea</button>
+                        </div>
+                        <div class="bg-white/60 backdrop-blur-lg rounded-lg shadow-sm border border-white/20 p-6">
+                            <h3 class="text-xl font-bold text-gray-800 flex items-center"><ion-icon name="help-buoy-outline" class="mr-2 text-sapphire"></ion-icon>Ask an Expert</h3>
+                            <p class="text-sm text-gray-600 mt-2">Get advice from our vetted network of fractional CFOs and accountants.</p>
+                             <button class="w-full mt-4 bg-sapphire text-white font-bold py-2 px-4 rounded-full hover:bg-opacity-90 transition">Browse Experts</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // --- EVENT HANDLERS & LOGIC (Global Scope) ---
+        function toggleEventDetails(eventId) {
+            const detailsEl = document.getElementById(`event-details-${eventId}`);
+            const event = portalData.events.find(e => e.id === eventId);
+            if (!event) return;
+
+            if (detailsEl.classList.toggle('hidden')) return; // It's now hidden, so we exit.
+
+            // If it's not hidden, we populate and show it.
+            let pairedClinicHTML = '';
+            if (event.pairedClinicId) {
+                const clinic = portalData.events.find(c => c.id === event.pairedClinicId);
+                if (clinic) {
+                    pairedClinicHTML = `
+                        <div class="mt-4 p-4 bg-iris/10 rounded-lg">
+                            <h4 class="font-bold flex items-center"><ion-icon name="analytics-outline" class="mr-2"></ion-icon>Paired Hands-On Clinic</h4>
+                            <p class="mt-2 text-sm text-gray-700">${clinic.title} on ${new Date(clinic.date).toLocaleDateString()}</p>
+                            <p class="mt-1 text-sm text-gray-600">${clinic.description}</p>
+                            <button class="mt-2 text-iris font-semibold text-sm hover:underline">Enroll in Clinic</button>
+                        </div>
+                    `;
+                }
+            }
+            detailsEl.innerHTML = `
+                <p class="text-gray-700">This is a detailed description for the event titled "${event.title}". It would cover the agenda, speakers, and what you'll learn in more depth.</p>
+                ${pairedClinicHTML}
+            `;
+        };
+
+        function showResourceDetail(resourceId) {
+            const resource = portalData.resources.find(r => r.id === resourceId);
+            if (!resource) return;
+
+            modalContent.innerHTML = `
+                <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black text-4xl z-10">&times;</button>
+                <div class="flex items-center space-x-3 mb-4">
+                    <ion-icon name="${resource.icon}" class="text-3xl text-iris"></ion-icon>
+                    <span class="text-sm font-bold text-iris">${resource.type.toUpperCase()}</span>
+                </div>
+                <h2 class="text-3xl font-bold mb-4 text-gray-900">${resource.title}</h2>
+                <div class="prose max-w-none text-gray-700">${resource.content}</div>
+            `;
+            showModal();
+            updateCopilotContext('resourceDetail', resourceId);
+        };
+
+        function showModal() {
+            modalBackdrop.classList.remove('hidden');
+            modalBackdrop.classList.add('flex');
+            setTimeout(() => {
+                modalBackdrop.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+            }, 10);
+        };
+        
+        function closeModal() {
+            modalBackdrop.classList.add('opacity-0');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modalBackdrop.classList.add('hidden');
+                modalContent.innerHTML = ''; // Clear content after closing
+            }, 300);
+        };
+        
+        function toggleCopilot(show) {
+            const mainContainer = document.getElementById('main-content-container');
+            if (show) {
+                copilotPane.classList.remove('translate-x-full');
+                mainContainer.classList.add('mr-80'); // Changed from md:mr-80
+                copilotToggleOpen.classList.add('hidden');
+            } else {
+                copilotPane.classList.add('translate-x-full');
+                mainContainer.classList.remove('mr-80'); // Changed from md:mr-80
+                copilotToggleOpen.classList.remove('hidden');
+            }
+        };
+
+        function renderPage(pageId) {
+            currentPage = pageId;
+            // Add a simple fade-out/fade-in transition
+            mainContentArea.style.opacity = 0;
+            setTimeout(() => {
+                switch(pageId) {
+                    case 'home': mainContentArea.innerHTML = homePageTemplate(); break;
+                    case 'events': mainContentArea.innerHTML = eventsPageTemplate(); break;
+                    case 'resources': mainContentArea.innerHTML = resourcesPageTemplate(); break;
+                    case 'community': mainContentArea.innerHTML = communityPageTemplate(); break;
+                    default: mainContentArea.innerHTML = homePageTemplate();
+                }
+                mainContentArea.style.opacity = 1;
+                window.scrollTo(0, 0); // Scroll to top on page change
+            }, 200);
+            updateActiveNavLink();
+        }
+        
+        function updateActiveNavLink() {
+            navLinks.forEach(link => {
+                link.classList.remove('nav-link-active');
+                if (link.dataset.page === currentPage) {
+                    link.classList.add('nav-link-active');
+                }
+            });
+        }
+
+        function handleCardClick(type, id) {
+             if (type === 'resource') {
+                showResourceDetail(id);
+            } else {
+                // This is a placeholder for other card types
+                console.log(`Card clicked: type=${type}, id=${id}`);
+            }
+        }
+
+        function updateCopilotContext(pageId, itemId) {
+            const contextArea = copilotPane.querySelector('#copilot-context-area');
+            if (!contextArea) return;
+
+            if (pageId === 'resourceDetail') {
+                const resource = portalData.resources.find(r => r.id === itemId);
+                const related = portalData.resources.filter(r => r.theme === resource.theme && r.id !== resource.id);
+                contextArea.innerHTML = `
+                    <h4 class="font-bold mb-2">Context: ${resource.title}</h4>
+                    <p class="text-sm text-gray-600 mb-4">Ask me anything about this playbook, or explore related resources.</p>
+                    <h4 class="font-bold mb-2">Related Resources</h4>
+                    <ul class="space-y-2 text-sm">
+                        ${related.length > 0 ? related.map(r => `<li><a href="#" class="text-iris hover:underline" onclick="closeModal(); setTimeout(() => showResourceDetail(${r.id}), 350)">${r.title}</a></li>`).join('') : '<li class="text-gray-500">None</li>'}
+                    </ul>
+                `;
+            } else {
+                 contextArea.innerHTML = `<p class="text-sm text-gray-600">Welcome! How can I help you navigate the Axyo portal today?</p>`;
+            }
+        }
+
+        function showSimulator(persona) {
+            modalContent.innerHTML = `
+                <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black text-4xl z-10">&times;</button>
+                <h2 class="text-3xl font-bold mb-4 text-gray-900">Axyo Simulator</h2>
+                <p class="text-lg text-gray-700">Loading the interactive simulator experience for persona: <strong>${persona}</strong>.</p>
+                <div class="mt-6 p-8 bg-gray-900 rounded-lg text-white font-mono">
+                    <p>&gt; Connecting to simulator environment...</p>
+                    <p>&gt; Loading sample data for <strong>${persona}</strong>'s business...</p>
+                    <p>&gt; Initializing financial models...</p>
+                    <p class="text-green-400 mt-4 animate-pulse">&gt; Ready.</p>
+                </div>
+            `;
+            showModal();
+        }
+
+        function showFlyModal() {
+            modalContent.innerHTML = `
+                <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black text-4xl z-10">&times;</button>
+                <div class="text-center">
+                    <ion-icon name="airplane-outline" class="text-6xl text-iris"></ion-icon>
+                    <h2 class="text-3xl font-bold my-4 text-gray-900">You're Ready to Fly</h2>
+                    <p class="text-lg text-gray-700 max-w-xl mx-auto">Take command of your business with real-time insights from your own financial data.</p>
+                    <div class="mt-8">
+                        <button class="bg-iris text-white font-bold py-4 px-8 rounded-full hover:bg-iris-dark transition duration-300 text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">Connect QuickBooks Online</button>
+                    </div>
+                </div>
+            `;
+            showModal();
+        }
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Define DOM elements
+            mainContentArea = document.getElementById('main-content-area');
+            navLinks = document.querySelectorAll('.nav-link');
+            copilotPane = document.getElementById('copilot-pane');
+            copilotToggleOpen = document.getElementById('copilot-toggle-open');
+            copilotToggleClose = document.getElementById('copilot-toggle-close');
+            modalBackdrop = document.getElementById('modal-backdrop');
+            modalContent = document.getElementById('modal-content');
+
+            // Initial Page Load
+            renderPage('home');
+
+            // Setup Event Listeners
+            document.querySelector('nav').addEventListener('click', (e) => {
+                if (e.target.matches('.nav-link')) {
+                    e.preventDefault();
+                    renderPage(e.target.dataset.page);
+                }
+            });
+            copilotToggleOpen.addEventListener('click', () => toggleCopilot(true));
+            copilotToggleClose.addEventListener('click', () => toggleCopilot(false));
+            modalBackdrop.addEventListener('click', (e) => {
+                if (e.target.id === 'modal-backdrop') closeModal();
+            });
+        });
+
+    </script>
+</body>
+</html>
