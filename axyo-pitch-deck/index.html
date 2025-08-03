@@ -521,11 +521,18 @@
             let currentSlide = 0;
 
             slides.forEach((slide, index) => {
-                const footer = document.createElement('div');
-                footer.className = 'footer';
-                footer.innerHTML = `<div class="footer-center">© 2025 Axyo Inc. All rights reserved</div><div class="footer-right">${index + 1} / ${totalSlides}</div>`;
-                slide.appendChild(footer);
-            });
+    const footer = document.createElement('div');
+    footer.className = 'footer';
+    // Add an <img> tag for the footer logo
+    footer.innerHTML = `
+        <div class="absolute left-10">
+            <img src="images/Axyo logo, no name, transparent.png" alt="Axyo Logo" class="h-10">
+        </div>
+        <div class="footer-center">© 2025 Axyo Inc. All rights reserved</div>
+        <div class="footer-right">${index + 1} / ${totalSlides}</div>
+    `;
+    slide.appendChild(footer);
+});
 
             function updateSlidePosition() {
                 deckContainer.style.transform = `translateX(-${currentSlide * 100 / totalSlides}%)`;
