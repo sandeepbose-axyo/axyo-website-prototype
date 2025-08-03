@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axyo Investor Pitch Deck</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0A0A0A;
+            color: #E2E8F0;
+            overflow: hidden;
+        }
+        #deck-container {
+            display: flex;
+            width: 1100%; /* 11 slides * 100% */
+            height: 100vh;
+            transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem 2rem;
+            flex-shrink: 0;
+            position: relative;
+            background-image: radial-gradient(circle at 10% 10%, rgba(167, 139, 250, 0.05), transparent 30%),
+                              radial-gradient(circle at 90% 90%, rgba(96, 165, 250, 0.05), transparent 40%);
+        }
+        .slide-content {
+            max-width: 1200px;
+            width: 100%;
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #60A5FA, #A78BFA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+        .kpi-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(51, 65, 85, 1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .nav-arrow {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(45, 55, 72, 0.5);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 9999px;
+            width: 3.5rem;
+            height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            z-index: 50;
+            backdrop-filter: blur(5px);
+        }
+        .nav-arrow:hover {
+            background-color: rgba(96, 165, 250, 0.3);
+            transform: translateY(-50%) scale(1.1);
+        }
+        #prev-slide { left: 2rem; display: none; }
+        #next-slide { right: 2rem; }
+        .dashed-line { stroke-dasharray: 8, 8; }
+        
+        .footer {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 0;
+            right: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 2.5rem;
+            font-size: 0.875rem;
+            color: #64748b; /* slate-500 */
+        }
+        .footer-center {
+            text-align: center;
+            flex-grow: 1;
+        }
+        .footer-right {
+            position: absolute;
+            right: 2.5rem;
+        }
+
+        /* Carousel Styles for Slide 5 */
+        .carousel-wrapper {
+            overflow: hidden;
+            position: relative;
+        }
+        .carousel-track-v2 {
+            display: flex;
+            gap: 2rem;
+            transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+        .carousel-card-v2 {
+            width: 75%; /* Makes about 1.25 cards visible */
+            flex-shrink: 0;
+            height: auto;
+        }
+        .carousel-arrow-v2 {
+            background-color: rgba(45, 55, 72, 0.8);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 9999px;
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            z-index: 10;
+        }
+        .carousel-arrow-v2:hover {
+            background-color: rgba(96, 165, 250, 0.5);
+            transform: scale(1.1);
+        }
+        .carousel-arrow-v2.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .carousel-text-panel {
+            position: relative;
+            height: 220px; /* Fixed height to prevent layout shifts */
+        }
+        .carousel-text {
+            position: absolute;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .carousel-text.active {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="deck-container">
+
+        <!-- Slide 1: Title -->
+        <section class="slide">
+            <div class="slide-content text-center">
+                <img src="images/Axyo logo, no name, transparent.png" alt="Axyo Logo" class="h-60 mx-auto mb-4">
+                <h1 class="text-5xl md:text-7xl font-bold tracking-tight leading-tight mb-4">
+                    From Watching the Score <br> to <span class="gradient-text">Rewriting It.</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto">
+                    Plug-and-Play AI for Your P&L.
+                </p>
+            </div>
+        </section>
+
+        <!-- Slide 2: Mission Statement -->
+        <section class="slide">
+            <div class="slide-content text-center">
+                <h2 class="text-5xl md:text-6xl font-bold tracking-tight">Plug-and-Play AI. Every KPI.</h2>
+                <p class="text-2xl text-slate-400 mt-4 mb-12">No-Code AI for Core Business Decisions that drive your P&L.</p>
+                <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    <div class="kpi-card p-8 text-center border-blue-500/50 border-2">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        <h3 class="text-2xl font-bold mb-2">Understand the Past</h3>
+                        <p class="text-slate-400">Automatically analyze historical trends, seasonality, and anomalies.</p>
+                    </div>
+                    <div class="kpi-card p-8 text-center border-purple-500/50 border-2">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        <h3 class="text-2xl font-bold mb-2">Predict the Future</h3>
+                        <p class="text-slate-400">Generate transparent forecasts with rank-ordered drivers. No data science effort required.</p>
+                    </div>
+                    <div class="kpi-card p-8 text-center border-pink-500/50 border-2">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                        <h3 class="text-2xl font-bold mb-2">Take Charge</h3>
+                        <p class="text-slate-400">Use interactive what-if analysis to find the optimal path and change the outcome.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 3: Pain Points -->
+        <section class="slide">
+            <div class="slide-content">
+                <div class="text-center">
+                    <h2 class="text-4xl md:text-5xl font-bold">The Reality of Enterprise AI: <span class="gradient-text">A Tale of Two Failures</span></h2>
+                    <p class="text-xl text-slate-400 mt-4">Most projects get stuck in gridlock before they start, or get lost on a long, expensive road to nowhere.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 mt-12 items-start">
+                    <div class="kpi-card p-8 text-center h-full lg:col-span-2">
+                        <h3 class="text-3xl font-bold mb-4">1. The AI Development Gridlock</h3>
+                        <p class="text-slate-400 mb-8">Before you even start, there's too much friction between the three critical elements.</p>
+                        <div class="relative w-full max-w-sm mx-auto h-64">
+                            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
+                                <line x1="50" y1="10" x2="15" y2="85" stroke="#475569" stroke-width="1" class="dashed-line"/>
+                                <line x1="15" y1="85" x2="85" y2="85" stroke="#475569" stroke-width="1" class="dashed-line"/>
+                                <line x1="85" y1="85" x2="50" y2="10" stroke="#475569" stroke-width="1" class="dashed-line"/>
+                            </svg>
+                            <div class="absolute top-0 left-1/2 -translate-x-1/2 text-center">
+                                <div class="bg-slate-800 p-3 rounded-full inline-block"><svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg></div>
+                                <p class="font-bold mt-2">Idea</p>
+                            </div>
+                            <div class="absolute bottom-0 left-0 text-center">
+                                <div class="bg-slate-800 p-3 rounded-full inline-block"><svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>
+                                <p class="font-bold mt-2">Talent</p>
+                            </div>
+                            <div class="absolute bottom-0 right-0 text-center">
+                                <div class="bg-slate-800 p-3 rounded-full inline-block"><svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4M4 7v10M12 11v10M20 7v10"></path></svg></div>
+                                <p class="font-bold mt-2">Data</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kpi-card p-6 flex flex-col text-center h-full lg:col-span-3">
+                        <h3 class="text-3xl font-bold mb-2">2. The Long, Expensive Road</h3>
+                        <p class="text-slate-400 text-sm">...to build an end-to-end AI solution from idea to production deployment.</p>
+                        <div class="flex-grow flex flex-col justify-center space-y-4">
+                            <div class="flex items-start justify-center space-x-2 text-slate-400">
+                                <div class="flex-1 text-center"><div class="p-3 bg-slate-800/50 rounded-full inline-block mb-2"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg></div><p class="font-bold text-sm">Scoping</p><p class="text-xs">2-4 Wks</p><p class="text-xs text-slate-500">Business, PM</p></div>
+                                <div class="text-red-500/50 pt-6 text-2xl font-thin">&rarr;</div>
+                                <div class="flex-1 text-center"><div class="p-3 bg-slate-800/50 rounded-full inline-block mb-2"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5l-8 5-8-5"></path></svg></div><p class="font-bold text-sm">Data Prep</p><p class="text-xs">4-8 Wks</p><p class="text-xs text-slate-500">Data Engineer</p></div>
+                                <div class="text-red-500/50 pt-6 text-2xl font-thin">&rarr;</div>
+                                <div class="flex-1 text-center"><div class="p-3 bg-slate-800/50 rounded-full inline-block mb-2"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg></div><p class="font-bold text-sm">Model Dev</p><p class="text-xs">6-12 Wks</p><p class="text-xs text-slate-500">Data Scientist</p></div>
+                            </div>
+                            <div class="flex items-start justify-center space-x-2 text-slate-400">
+                                <div class="flex-1 text-center"><div class="p-3 bg-slate-800/50 rounded-full inline-block mb-2"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg></div><p class="font-bold text-sm">Deployment</p><p class="text-xs">4-6 Wks</p><p class="text-xs text-slate-500">ML Engineer</p></div>
+                                <div class="text-red-500/50 pt-6 text-2xl font-thin">&rarr;</div>
+                                <div class="flex-1 text-center"><div class="p-3 bg-slate-800/50 rounded-full inline-block mb-2"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m3 6V7m-9 4h6M5 21h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg></div><p class="font-bold text-sm">Monitor</p><p class="text-xs">Ongoing</p><p class="text-xs text-slate-500">MLOps, BI</p></div>
+                            </div>
+                            <div class="text-center mt-auto">
+                                <p class="font-bold text-2xl text-red-400">Total Time: 3-6 Months</p>
+                                <p class="font-bold text-xl text-red-400/70">Total Cost: $250k - $750k+</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 4: The Axyo OS Intro -->
+        <section class="slide">
+            <div class="slide-content text-center">
+                <h2 class="text-4xl md:text-5xl font-bold">The Axyo AI <span class="gradient-text">Decision-Intelligence OS</span></h2>
+                <p class="text-xl text-slate-400 mt-4 mb-12 max-w-4xl mx-auto">Our OS breaks the gridlock, transforming every KPI into a Super-KPI and giving you the power to take charge.</p>
+                <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    <div class="kpi-card p-8 text-center border-blue-500/50 border-2">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M12 19c-3.866 0-7-3.134-7-7s3.134-7 7-7 7 3.134 7 7-3.134 7-7 7z"></path></svg>
+                        <h3 class="text-2xl font-bold mb-2">Super KPI</h3>
+                        <p class="text-slate-400">Go beyond static dashboards. Understand the past, predict the future, and get prescriptive actions to take charge.</p>
+                    </div>
+                    <div class="kpi-card p-8 text-center border-purple-500/50 border-2">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <h3 class="text-2xl font-bold mb-2">Zero-Code & Zero Data Science Effort</h3>
+                        <p class="text-slate-400">An intuitive, no-code environment empowers business and data analysts to build sophisticated AI applications with unprecedented speed.</p>
+                    </div>
+                    <div class="kpi-card p-8 text-center border-pink-500/50 border-2">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <h3 class="text-2xl font-bold mb-2">ML in Hours, Not Months</h3>
+                        <p class="text-slate-400">Leverage our No-Code AutoML engine to build and deploy powerful models without needing a team of specialized engineers.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 5: The Super KPI Concept (REVAMPED as Carousel) -->
+        <section class="slide">
+            <div class="slide-content">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-4">Introducing the <span class="gradient-text">Super KPI</span></h2>
+                    <p class="text-lg text-slate-400 max-w-3xl mx-auto">A standard KPI only tells you what happened. A Super KPI is a living command center that lets you rewrite the future.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center">
+                    <div class="lg:col-span-2">
+                        <div class="carousel-text-panel">
+                            <div id="carousel-text-0" class="carousel-text active">
+                                <span class="text-sm font-semibold text-blue-400">LEVEL 1: THE PAST</span>
+                                <h3 class="text-3xl font-bold text-white mt-1">Standard KPI</h3>
+                                <p class="text-slate-300 mt-4 text-lg"><strong class="gradient-text">The Axyo Difference:</strong> We automatically integrate historical data to reveal trends, seasonality, and anomalies. This eliminates manual data pulls and establishes a single source of truth, so teams can stop arguing about whose numbers are right and start focusing on the insights.</p>
+                            </div>
+                            <div id="carousel-text-1" class="carousel-text">
+                                <span class="text-sm font-semibold text-purple-400">LEVEL 2: THE PRESENT</span>
+                                <h3 class="text-3xl font-bold text-white mt-1">Contextual KPI</h3>
+                                <p class="text-slate-300 mt-4 text-lg"><strong class="gradient-text">The Axyo Difference:</strong> We seamlessly fuse internal data (CRM, ERP) with external signals (macro indicators, weather) to explain the 'why' behind the numbers. Now, a sales dip isn't just a number; it's a story about a competitor's promotion and rising fuel prices.</p>
+                            </div>
+                            <div id="carousel-text-2" class="carousel-text">
+                                <span class="text-sm font-semibold text-indigo-400">LEVEL 3: THE FUTURE</span>
+                                <h3 class="text-3xl font-bold text-white mt-1">Predictive KPI</h3>
+                                <p class="text-slate-300 mt-4 text-lg"><strong class="gradient-text">The Axyo Difference:</strong> We generate transparent, driver-based forecasts, not black-box predictions. This builds trust and gives teams early warnings on risks and opportunities, turning them from reactive firefighters into proactive pilots.</p>
+                            </div>
+                            <div id="carousel-text-3" class="carousel-text">
+                                <span class="text-sm font-semibold text-pink-400">LEVEL 4: THE ACTION</span>
+                                <h3 class="text-3xl font-bold text-white mt-1">Super KPI</h3>
+                                <p class="text-slate-300 mt-4 text-lg"><strong class="gradient-text">The Axyo Difference:</strong> We turn the KPI into an interactive control knob. Teams can simulate decisions before they're made, instantly seeing the dollar impact of pulling different levers and turning strategy into an evidence-based playbook.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4 mt-8">
+                           <button id="carousel-prev-v2" class="carousel-arrow-v2 disabled"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+                           <button id="carousel-next-v2" class="carousel-arrow-v2"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-3 carousel-wrapper">
+                        <div id="carousel-track-v2" class="carousel-track-v2">
+                            <div class="carousel-card-v2 kpi-card p-6"><div class="flex justify-between items-start"><h4 class="font-bold text-white">Historical Sales</h4><div class="text-right"><p class="text-2xl font-bold text-white">$10.2M</p><p class="text-sm text-slate-400">Q2 Sales</p></div></div><div class="mt-4 h-64"><canvas id="historicalChart-v2"></canvas></div></div>
+                            <div class="carousel-card-v2 kpi-card p-6"><h4 class="font-bold text-white mb-2">Root Cause Analysis</h4><div class="flex h-64 justify-around items-center text-center p-4 bg-slate-800/50 rounded-lg"><div class="text-center"><svg class="w-12 h-12 mx-auto text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg><p class="text-sm mt-2 font-semibold">CRM Data</p><p class="text-lg font-bold text-white">Low Engagement</p></div><p class="text-3xl font-thin text-slate-500">+</p><div class="text-center"><svg class="w-12 h-12 mx-auto text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg><p class="text-sm mt-2 font-semibold">Macro Indicators</p><p class="text-lg font-bold text-white">CPI Up 5%</p></div></div></div>
+                            <div class="carousel-card-v2 kpi-card p-6"><div class="flex justify-between items-start"><h4 class="font-bold text-white">Sales Forecast</h4><div class="text-right"><p class="text-2xl font-bold text-white">$9.8M</p><p class="text-sm text-slate-400">Q3 Forecast</p></div></div><div class="mt-4 h-64"><canvas id="forecastChart-v2"></canvas></div></div>
+                            <div class="carousel-card-v2 kpi-card p-6"><div class="flex justify-between items-start"><h4 class="font-bold text-white">Interactive Simulation</h4><div class="text-right"><p id="simulated-sales-v2" class="text-2xl font-bold gradient-text">$10.52M</p><p class="text-sm text-slate-400">Simulated Q3 Sales</p></div></div><div class="mt-4 h-48"><canvas id="simulationChart-v2"></canvas></div><div class="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-slate-700"><div><label for="marketing-spend-v2" class="text-sm text-slate-400">Marketing Boost: <span id="marketing-value-v2" class="font-bold text-white">15%</span></label><input type="range" id="marketing-spend-v2" min="0" max="25" value="15" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"></div><div><label for="discount-v2" class="text-sm text-slate-400">Discount: <span id="discount-value-v2" class="font-bold text-white">5%</span></label><input type="range" id="discount-v2" min="0" max="10" value="5" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"></div></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 6: Our Products -->
+        <section class="slide">
+             <div class="slide-content">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl md:text-5xl font-bold">Purpose-Built Solutions for <span class="gradient-text">Every Business Size</span></h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div class="kpi-card p-10">
+                        <div class="bg-purple-500/20 p-3 rounded-lg inline-block mb-4">
+                           <svg class="h-8 w-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        </div>
+                        <h3 class="text-3xl font-bold mb-2">Financial Command Center</h3>
+                        <p class="text-lg text-purple-400 font-semibold mb-4">For SMBs</p>
+                        <p class="text-slate-300 text-lg mb-6">An AI-Powered Financial Co-Pilot that ends financial uncertainty. It turns financial data into a living cash-control system to help you unlock cash, master profitability, and build foresight.</p>
+                        <p class="text-sm text-slate-500">Connectivity: Currently supports QuickBooks Online, with Xero, Zoho, Salesforce, and HubSpot on the near-term roadmap.</p>
+                    </div>
+                    <div class="kpi-card p-10">
+                        <div class="bg-blue-500/20 p-3 rounded-lg inline-block mb-4">
+                            <svg class="h-8 w-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                        </div>
+                        <h3 class="text-3xl font-bold mb-2">Axyo Studio</h3>
+                        <p class="text-lg text-blue-400 font-semibold mb-4">For Enterprise</p>
+                        <p class="text-slate-300 text-lg mb-6">The No-Code Studio for Enterprise AI Decision Apps. It empowers your existing business analysts to build the sophisticated AI apps you've been waiting months for—in a matter of hours.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 7: Go-to-Market -->
+        <section class="slide">
+            <div class="slide-content">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl md:text-5xl font-bold">A Focused, <span class="gradient-text">Multi-Channel Approach</span></h2>
+                    <p class="text-xl text-slate-400 mt-4 max-w-4xl mx-auto">We are executing two parallel motions to build a robust pipeline, secure initial revenue, and establish a foundation for exponential growth.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="kpi-card p-8">
+                        <div class="flex items-center gap-4 mb-4"><div class="bg-purple-500/20 p-3 rounded-lg"><svg class="h-8 w-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9V3m-9 9h18" /></svg></div><div><h3 class="text-2xl font-bold text-slate-100">GTM 1: The Beachhead</h3><p class="text-purple-400 font-semibold">Financial Command Center</p></div></div>
+                        <p class="text-slate-400 mb-6">A high-velocity play to acquire Small Business Owners in Phoenix, validating PMF and generating initial revenue.</p>
+                        <div class="space-y-4">
+                            <div class="bg-slate-800/50 p-4 rounded-lg flex items-center gap-4"><div class="bg-purple-500/20 p-2 rounded-lg"><svg class="h-6 w-6 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div><div><p class="font-bold text-lg">Community Engine</p><p class="text-sm text-slate-400">Drive adoption via "AI Clinics" with partners like ASU & TiE Phoenix.</p></div></div>
+                            <div class="bg-slate-800/50 p-4 rounded-lg flex items-center gap-4"><div class="bg-purple-500/20 p-2 rounded-lg"><svg class="h-6 w-6 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg></div><div><p class="font-bold text-lg">Targeted Outreach</p><p class="text-sm text-slate-400">Email campaigns to qualified SMB personas.</p></div></div>
+                        </div>
+                    </div>
+                    <div class="kpi-card p-8">
+                        <div class="flex items-center gap-4 mb-4"><div class="bg-blue-500/20 p-3 rounded-lg"><svg class="h-8 w-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg></div><div><h3 class="text-2xl font-bold text-slate-100">GTM 2: The Enterprise Play</h3><p class="text-blue-400 font-semibold">Curated AI Decision Apps</p></div></div>
+                        <p class="text-slate-400 mb-6">A strategic motion targeting larger enterprises as design partners to build high-value, repeatable solutions.</p>
+                        <div class="space-y-4">
+                            <div class="bg-slate-800/50 p-4 rounded-lg flex items-center gap-4"><div class="bg-blue-500/20 p-2 rounded-lg"><svg class="h-6 w-6 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-2a6 6 0 00-5.197-5.975M15 21H9" /></svg></div><div><p class="font-bold text-lg">Design Partnerships</p><p class="text-sm text-slate-400">Co-build solutions with a 4-step sprint that radically accelerates time-to-value.</p></div></div>
+                            <div class="bg-slate-800/50 p-4 rounded-lg flex items-center gap-4"><div class="bg-blue-500/20 p-2 rounded-lg"><svg class="h-6 w-6 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg></div><div><p class="font-bold text-lg">Targeted Outreach</p><p class="text-sm text-slate-400">Email campaigns to innovation leaders and heads of analytics.</p></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 8: Traction -->
+        <section class="slide">
+            <div class="slide-content">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold">Validated by the Market: <span class="gradient-text">Early Wins & Strong Pipeline</span></h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="kpi-card p-8 text-center">
+                        <p class="text-7xl font-extrabold gradient-text">$1.2M</p>
+                        <p class="text-slate-200 font-semibold mt-2 text-xl">Total Contract Value</p>
+                        <p class="text-sm text-slate-400 mt-2">from first enterprise client, including $300k ARR for Axyo Studio.</p>
+                    </div>
+                     <div class="kpi-card p-8 text-center">
+                        <p class="text-7xl font-extrabold gradient-text">2</p>
+                        <p class="text-slate-200 font-semibold mt-2 text-xl">Active SMB Design Partners</p>
+                        <p class="text-sm text-slate-400 mt-2">using the Financial Command Center and providing critical feedback.</p>
+                    </div>
+                    <div class="kpi-card p-8 text-center">
+                        <p class="text-7xl font-extrabold gradient-text">3</p>
+                        <p class="text-slate-200 font-semibold mt-2 text-xl">Qualified Enterprise Leads</p>
+                        <p class="text-sm text-slate-400 mt-2">with CFOs at a mfg co, a national logistics leader, and a F500 bank.</p>
+                    </div>
+                     <div class="kpi-card p-8 text-center">
+                        <p class="text-7xl font-extrabold gradient-text">2</p>
+                        <p class="text-slate-200 font-semibold mt-2 text-xl">Strategic Channel Partners</p>
+                        <p class="text-sm text-slate-400 mt-2">in discussion, representing thousands of potential end-users.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 9: The Team -->
+        <section class="slide">
+            <div class="slide-content">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl md:text-5xl font-bold">The Right Mix of <span class="gradient-text">Vision & Expertise</span></h2>
+                </div>
+                <div class="grid grid-cols-12 gap-8 items-center">
+                    <div class="col-span-3 space-y-10 text-right pr-8">
+                        <div>
+                            <p class="text-5xl font-bold" style="color: #60A5FA;">40+</p>
+                            <p class="text-slate-400 text-lg">Collective years of relevant experience</p>
+                        </div>
+                        <div>
+                            <p class="text-5xl font-bold" style="color: #A78BFA;">25+</p>
+                            <p class="text-slate-400 text-lg">Data & AI patents</p>
+                        </div>
+                        <div>
+                            <p class="text-5xl font-bold" style="color: #9ca3af;">30+</p>
+                            <p class="text-slate-400 text-lg">Publications</p>
+                        </div>
+                    </div>
+                    <div class="col-span-1 border-l border-slate-700 h-64"></div>
+                    <div class="col-span-4 text-center">
+                        <img src="images/SB.jpg" alt="Sandeep Bose" class="w-48 h-48 rounded-full object-cover mx-auto mb-4 border-4 border-slate-600">
+                        <h3 class="text-2xl font-bold text-white">Sandeep Bose</h3>
+                        <p class="text-slate-400 text-lg">Founder & CEO</p>
+                        <div class="space-y-4 mt-6 text-left">
+                            <div class="flex items-center"><img src="images/SVB logo.svg" alt="Silicon Valley Bank Logo" class="w-12 h-12 object-contain rounded mr-3"><div><p class="font-bold">Chief Data, Privacy, & Analytics Officer</p><p class="text-slate-400">Silicon Valley Bank</p></div></div>
+                            <div class="flex items-center"><img src="images/Amex logo.png" alt="American Express Logo" class="w-14 h-14 object-contain rounded mr-3"><div><p class="font-bold">Chief Information Officer</p><p class="text-slate-400">Credit & Fraud Risk, American Express</p></div></div>
+                            <div class="flex items-center"><img src="images/IBM logo.png" alt="IBM Logo" class="w-12 h-12 object-contain rounded mr-3"><div><p class="font-bold">Delivery Project Executive</p><p class="text-slate-400">IBM</p></div></div>
+                        </div>
+                    </div>
+                    <div class="col-span-4 text-center">
+                        <img src="images/MG.jpg" alt="Madhu Sudhan Reddy Gudur" class="w-48 h-48 rounded-full object-cover mx-auto mb-4 border-4 border-slate-600">
+                        <h3 class="text-2xl font-bold text-white">Dr. Madhu Sudhan Gudur</h3>
+                        <p class="text-slate-400 text-lg">Co-Founder & Chief AI Officer</p>
+                         <div class="space-y-4 mt-6 text-left">
+                            <div class="flex items-center"><img src="images/Amex logo.png" alt="American Express Logo" class="w-14 h-14 object-contain rounded mr-3"><div><p class="font-bold">Director of Machine Learning</p><p class="text-slate-400">American Express</p></div></div>
+                            <div class="flex items-center"><img src="images/Stanford logo.png" alt="Stanford University Logo" class="w-12 h-12 object-contain rounded mr-3"><div><p class="font-bold">Post Doctorate</p><p class="text-slate-400">Stanford University</p></div></div>
+                            <div class="flex items-center"><img src="images/U-Mich logo.png" alt="University of Michigan Logo" class="w-12 h-12 object-contain rounded mr-3"><div><p class="font-bold">Masters & Ph.D.</p><p class="text-slate-400">University of Michigan</p></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 10: The Ask -->
+        <section class="slide">
+            <div class="slide-content">
+                 <div class="text-center mb-12">
+                    <h2 class="text-4xl md:text-5xl font-bold">Seeking <span class="gradient-text">$1M</span> to Fuel Our Growth Engine</h2>
+                     <p class="text-xl text-slate-400 mt-4">Pre-Seed SAFE with a 15% Discount</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <div class="kpi-card p-8">
+                        <h3 class="text-2xl font-bold mb-4">Use of Funds</h3>
+                        <ul class="space-y-4 text-lg">
+                            <li class="flex items-center"><span class="w-4 h-4 rounded-full bg-purple-400 mr-4"></span>Sales & Marketing: <strong class="ml-auto">40%</strong></li>
+                            <li class="flex items-center"><span class="w-4 h-4 rounded-full bg-blue-400 mr-4"></span>Product & Engineering: <strong class="ml-auto">35%</strong></li>
+                            <li class="flex items-center"><span class="w-4 h-4 rounded-full bg-pink-400 mr-4"></span>Operations & G&A: <strong class="ml-auto">25%</strong></li>
+                        </ul>
+                    </div>
+                    <div class="kpi-card p-8 text-center">
+                        <p class="text-lg text-slate-300">This funding achieves in 18 months:</p>
+                        <p class="text-5xl font-extrabold gradient-text mt-2">$1M+ ARR</p>
+                        <div class="flex justify-around mt-4 text-slate-400">
+                            <div><p class="text-2xl font-bold text-white">50+</p><p>FCC Clients</p><p class="text-xs">(~$2k ACV)</p></div>
+                            <div><p class="text-2xl font-bold text-white">10+</p><p>Studio Clients</p><p class="text-xs">(~$40k ACV)</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 11: The Vision -->
+        <section class="slide">
+            <div class="slide-content text-center max-w-4xl">
+                <h2 class="text-5xl md:text-6xl font-bold tracking-tight mb-6">We Are Building the <span class="gradient-text">Decision-Making Layer</span> for the Modern Enterprise.</h2>
+                <div class="w-24 h-1.5 bg-blue-500 mx-auto mt-8 mb-8 rounded-full"></div>
+                <h3 class="text-4xl font-bold">Stop reporting on the past. <br>Let's build the future.</h3>
+                <p class="text-xl text-slate-400 mt-12">Sandeep Bose | sandeep.bose@axyo.ai | 602-228-9901</p>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Navigation -->
+    <button id="prev-slide" class="nav-arrow">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+    </button>
+    <button id="next-slide" class="nav-arrow">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const deckContainer = document.getElementById('deck-container');
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prev-slide');
+            const nextBtn = document.getElementById('next-slide');
+            
+            const totalSlides = slides.length;
+            let currentSlide = 0;
+
+            slides.forEach((slide, index) => {
+                const footer = document.createElement('div');
+                footer.className = 'footer';
+                footer.innerHTML = `<div class="footer-center">© 2025 Axyo Inc. All rights reserved</div><div class="footer-right">${index + 1} / ${totalSlides}</div>`;
+                slide.appendChild(footer);
+            });
+
+            function updateSlidePosition() {
+                deckContainer.style.transform = `translateX(-${currentSlide * 100 / totalSlides}%)`;
+                prevBtn.style.display = currentSlide === 0 ? 'none' : 'flex';
+                nextBtn.style.display = currentSlide === totalSlides - 1 ? 'none' : 'flex';
+                if (currentSlide === 4) { startKpiEvolutionV2(); }
+            }
+
+            nextBtn.addEventListener('click', () => {
+                if (currentSlide < totalSlides - 1) { currentSlide++; updateSlidePosition(); }
+            });
+            prevBtn.addEventListener('click', () => {
+                if (currentSlide > 0) { currentSlide--; updateSlidePosition(); }
+            });
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') { nextBtn.click(); } 
+                else if (e.key === 'ArrowLeft') { prevBtn.click(); }
+            });
+
+            // --- Super KPI Carousel V2 ---
+            const trackV2 = document.getElementById('carousel-track-v2');
+            const prevCarouselBtnV2 = document.getElementById('carousel-prev-v2');
+            const nextCarouselBtnV2 = document.getElementById('carousel-next-v2');
+            const textPanels = document.querySelectorAll('.carousel-text');
+            const carouselWrapper = document.querySelector('.carousel-wrapper');
+            let carouselIndexV2 = 0;
+            let cardWidthV2 = 0;
+            let maxIndexV2 = 0;
+            let carouselInterval;
+
+            function setupCarousel() {
+                if (!trackV2 || trackV2.children.length === 0) return;
+                const gap = parseFloat(window.getComputedStyle(trackV2).gap);
+                cardWidthV2 = trackV2.children[0].offsetWidth + gap;
+                maxIndexV2 = trackV2.children.length - 1;
+            }
+
+            function updateCarouselV2() {
+                if (!trackV2) return;
+                const containerWidth = trackV2.parentElement.offsetWidth;
+                const cardVisibleWidth = containerWidth * 0.8;
+                const offset = (containerWidth - cardVisibleWidth) / 2;
+                
+                let translateValue = -(carouselIndexV2 * cardWidthV2) + offset;
+                trackV2.style.transform = `translateX(${translateValue}px)`;
+                
+                prevCarouselBtnV2.classList.toggle('disabled', carouselIndexV2 === 0);
+                nextCarouselBtnV2.classList.toggle('disabled', carouselIndexV2 >= (trackV2.children.length - 1.25));
+
+                textPanels.forEach((panel, index) => {
+                    panel.classList.toggle('active', index === carouselIndexV2);
+                });
+            }
+
+            function startAutoscroll() {
+                stopAutoscroll(); // Clear any existing interval
+                carouselInterval = setInterval(() => {
+                    carouselIndexV2 = (carouselIndexV2 + 1) % (maxIndexV2 + 1);
+                    updateCarouselV2();
+                }, 3000);
+            }
+
+            function stopAutoscroll() {
+                clearInterval(carouselInterval);
+            }
+
+            if (nextCarouselBtnV2) {
+                nextCarouselBtnV2.addEventListener('click', () => {
+                    stopAutoscroll();
+                    if (!nextCarouselBtnV2.classList.contains('disabled')) {
+                        carouselIndexV2++;
+                        updateCarouselV2();
+                    }
+                });
+            }
+            if (prevCarouselBtnV2) {
+                prevCarouselBtnV2.addEventListener('click', () => {
+                    stopAutoscroll();
+                    if (carouselIndexV2 > 0) {
+                        carouselIndexV2--;
+                        updateCarouselV2();
+                    }
+                });
+            }
+            
+            if(carouselWrapper) {
+                carouselWrapper.addEventListener('mouseenter', stopAutoscroll);
+                carouselWrapper.addEventListener('mouseleave', startAutoscroll);
+            }
+            
+            let historicalChartV2, forecastChartV2, simulationChartV2;
+            
+            function startKpiEvolutionV2() {
+                setupCarousel();
+                updateCarouselV2();
+                initHistoricalChartV2();
+                initForecastChartV2();
+                initSimulationChartV2();
+                startAutoscroll();
+            }
+
+            const chartOptionsV2 = (displayGrid = false) => ({ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: true, mode: 'index', intersect: false } }, scales: { x: { ticks: { color: '#94a3b8', font: {size: 10} }, grid: { color: displayGrid ? 'rgba(71, 85, 105, 0.5)' : 'transparent' } }, y: { ticks: { color: '#94a3b8', font: {size: 10} }, grid: { color: displayGrid ? 'rgba(71, 85, 105, 0.5)' : 'transparent' } } } });
+            function initHistoricalChartV2() { if(document.getElementById('historicalChart-v2') && !historicalChartV2) { const ctx = document.getElementById('historicalChart-v2').getContext('2d'); historicalChartV2 = new Chart(ctx, { type: 'line', data: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], datasets: [{ label: 'Sales', data: [8.5, 8.2, 9.0, 9.5, 10.5, 11.0, 10.8, 10.2, 9.8, 9.5, 11.5, 12.0], borderColor: 'rgb(96, 165, 250)', tension: 0.3 }] }, options: chartOptionsV2() }); } }
+            function initForecastChartV2() { if(document.getElementById('forecastChart-v2') && !forecastChartV2) { const ctx = document.getElementById('forecastChart-v2').getContext('2d'); forecastChartV2 = new Chart(ctx, { type: 'line', data: { labels: ['Aug', 'Sep', 'Oct', 'Nov', 'Dec'], datasets: [{ label: 'Historical', data: [10.2, 9.8, 9.5, null, null], borderColor: 'rgb(96, 165, 250)', tension: 0.3, }, { label: 'Forecast', data: [null, null, 9.5, 9.6, 9.8], borderColor: 'rgb(167, 139, 250)', borderDash: [5, 5], tension: 0.3, }] }, options: chartOptionsV2(true) }); } }
+            function initSimulationChartV2() { if(document.getElementById('simulationChart-v2') && !simulationChartV2) { const ctx = document.getElementById('simulationChart-v2').getContext('2d'); simulationChartV2 = new Chart(ctx, { type: 'line', data: { labels: ['Aug', 'Sep', 'Oct', 'Nov', 'Dec'], datasets: [{ label: 'Base Forecast', data: [null, null, 9.5, 9.6, 9.8], borderColor: 'rgb(71, 85, 105)', borderDash: [5, 5], tension: 0.3, }, { label: 'Simulated Forecast', data: [], borderColor: 'rgb(167, 139, 250)', backgroundColor: 'rgba(167, 139, 250, 0.2)', fill: true, tension: 0.3, }] }, options: chartOptionsV2(true) }); const marketingSlider = document.getElementById('marketing-spend-v2'); const discountSlider = document.getElementById('discount-v2'); function calculateSimulation() { const marketingBoost = marketingSlider.value / 100; const discountBoost = discountSlider.value / 100 * 0.5; const newProjection = 9.8 * (1 + marketingBoost + discountBoost); document.getElementById('marketing-value-v2').textContent = `${marketingSlider.value}%`; document.getElementById('discount-value-v2').textContent = `${discountSlider.value}%`; document.getElementById('simulated-sales-v2').textContent = `$${newProjection.toFixed(2)}M`; const simulatedData = [ null, null, 9.5, 9.8 * (1 + (marketingSlider.value / 1.5) / 100), newProjection ]; simulationChartV2.data.datasets[1].data = simulatedData; simulationChartV2.update(); } marketingSlider.addEventListener('input', calculateSimulation); discountSlider.addEventListener('input', calculateSimulation); calculateSimulation(); } }
+            
+            updateSlidePosition();
+            window.addEventListener('resize', setupCarousel);
+        });
+    </script>
+
+</body>
+</html>
