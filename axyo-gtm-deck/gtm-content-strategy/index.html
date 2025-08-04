@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axyo GTM Content Strategy: The Blueprint</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0D1117;
+            background: linear-gradient(-45deg, #0D1117, #1F2937, #0D1117, #111827);
+            background-size: 400% 400%;
+            animation: gradient-animation 15s ease infinite;
+            color: #E6EDF3;
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #818CF8, #34D399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .card {
+            background-color: rgba(17, 24, 39, 0.6);
+            border: 1px solid rgba(55, 65, 81, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all 0.3s ease-in-out;
+        }
+        .card:hover:not(.no-hover) {
+            border-color: rgba(52, 211, 153, 0.5);
+            transform: translateY(-4px);
+        }
+        .glow-border {
+            box-shadow: 0 0 20px rgba(52, 211, 153, 0.15), 0 0 8px rgba(129, 140, 248, 0.15);
+        }
+        .connector-line {
+            position: relative;
+        }
+        .connector-line::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 100%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 3rem;
+            background: linear-gradient(180deg, #374151, transparent);
+        }
+        .theme-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            stroke-width: 1.5;
+        }
+        .theme-card-header { cursor: pointer; }
+        .details-panel, .topics-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.7s ease-in-out, padding 0.7s ease-in-out, margin 0.7s ease-in-out;
+            padding-left: 0; padding-right: 0;
+        }
+        .details-panel.open, .topics-panel.open {
+            max-height: 1500px; /* Large enough for content */
+        }
+        .details-panel.open {
+             margin-top: 1.5rem;
+        }
+        .topic-cluster-header {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .topic-cluster-header:hover {
+            background-color: rgba(55, 65, 81, 0.3);
+        }
+        .fade-in {
+            opacity: 0;
+            animation: fadeInAnimation 1s ease-in-out forwards;
+        }
+        @keyframes fadeInAnimation {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+        
+        <!-- Header Section -->
+        <header class="text-center mb-16 fade-in" style="animation-delay: 0.1s;">
+            <div class="inline-block p-4 rounded-full bg-gray-800 border border-gray-700 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+            </div>
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight">
+                <span class="gradient-text">Axyo GTM Content Strategy</span>
+            </h1>
+            <p class="mt-4 text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto">The official blueprint for creating our category, leading the market, and driving predictable growth.</p>
+        </header>
+
+        <!-- Part I: Strategic Foundation -->
+        <section class="mb-20 fade-in" style="animation-delay: 0.3s;">
+            <h2 class="text-3xl font-bold text-center mb-2">Part I: The Strategic Foundation</h2>
+            <p class="text-center text-gray-400 mb-12">The "Why, What, and How" that guides every action.</p>
+
+            <div class="space-y-12">
+                <div class="text-center connector-line">
+                    <h3 class="text-xl font-semibold text-indigo-400 mb-2">Our Mission</h3>
+                    <p class="text-2xl font-bold max-w-3xl mx-auto">To lead and define the <span class="gradient-text">AI Decision Intelligence</span> category, shifting the market from passive reporting to active control.</p>
+                </div>
+
+                <div class="text-center connector-line">
+                    <h3 class="text-xl font-semibold text-indigo-400 mb-6">Our Goals</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="card p-6 rounded-xl text-center no-hover"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto mb-3 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.82m5.84-2.56a12.022 12.022 0 0 0-11.68 0M12 2.131V6.32M4.41 14.37a6 6 0 0 1 5.84 7.38v-4.82m5.84-2.56a12.022 12.022 0 0 0-11.68 0M12 2.131V6.32" /></svg><h4 class="font-bold text-lg">Category Creation</h4><p class="text-sm text-gray-400 mt-1">Own the AI Decision Intelligence space.</p></div>
+                        <div class="card p-6 rounded-xl text-center no-hover"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto mb-3 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M11.933 12.8a1 1 0 0 0 0-1.6L6.6 7.2A1 1 0 0 0 5 8v8a1 1 0 0 0 1.6.8l5.333-4Z" /><path stroke-linecap="round" stroke-linejoin="round" d="m18.6 12.8-5.333 4A1 1 0 0 1 12 16V8a1 1 0 0 1 1.267-.933l5.333 4a1 1 0 0 1 0 1.6Z" /></svg><h4 class="font-bold text-lg">Thought Leadership</h4><p class="text-sm text-gray-400 mt-1">Become the market's most trusted voice.</p></div>
+                        <div class="card p-6 rounded-xl text-center no-hover"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto mb-3 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" /></svg><h4 class="font-bold text-lg">Pipeline Generation</h4><p class="text-sm text-gray-400 mt-1">Build a scalable inbound lead engine.</p></div>
+                        <div class="card p-6 rounded-xl text-center no-hover"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto mb-3 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" /></svg><h4 class="font-bold text-lg">Sales Acceleration</h4><p class="text-sm text-gray-400 mt-1">Arm our team to shorten deal cycles.</p></div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <h3 class="text-xl font-semibold text-indigo-400 mb-6">Our Framework: The 4x4 Matrix</h3>
+                    <div class="card rounded-2xl p-8 glow-border no-hover">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                            <div class="text-left">
+                                <h4 class="text-2xl font-bold mb-4">The Narrative Pillars <span class="text-base font-medium text-gray-400">(The Story)</span></h4>
+                                <ul class="space-y-3"><li class="flex items-start"><span class="text-green-400 mr-3 mt-1">&#10140;</span><div><strong class="text-white">1. The Crisis:</strong> The costly failure of traditional BI & AI.</div></li><li class="flex items-start"><span class="text-green-400 mr-3 mt-1">&#10140;</span><div><strong class="text-white">2. The Revolution:</strong> The new "KPI-First" philosophy.</div></li><li class="flex items-start"><span class="text-green-400 mr-3 mt-1">&#10140;</span><div><strong class="text-white">3. The Solution:</strong> The "Super-KPI" in action.</div></li><li class="flex items-start"><span class="text-green-400 mr-3 mt-1">&#10140;</span><div><strong class="text-white">4. The Proof:</strong> Trust, security, and results.</div></li></ul>
+                            </div>
+                            <div class="text-left">
+                                <h4 class="text-2xl font-bold mb-4">The Strategic Themes <span class="text-base font-medium text-gray-400">(The Purpose)</span></h4>
+                                <ul class="space-y-3"><li class="flex items-start"><span class="text-indigo-400 mr-3 mt-1">&#10022;</span><div><strong class="text-white">1. Vision & Philosophy:</strong> To create our category.</div></li><li class="flex items-start"><span class="text-indigo-400 mr-3 mt-1">&#10022;</span><div><strong class="text-white">2. Functional & Domain Expertise:</strong> To prove we understand our customers.</div></li><li class="flex items-start"><span class="text-indigo-400 mr-3 mt-1">&#10022;</span><div><strong class="text-white">3. Technical & Platform Leadership:</strong> To win the technical evaluation.</div></li><li class="flex items-start"><span class="text-indigo-400 mr-3 mt-1">&#10022;</span><div><strong class="text-white">4. Human & Cultural Proof:</strong> To build trust through authenticity.</div></li></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Part II: Activating the Strategy -->
+        <section class="mb-20 fade-in" style="animation-delay: 0.5s;">
+            <h2 class="text-3xl font-bold text-center mb-2">Part II: Activating the Strategy</h2>
+            <p class="text-center text-gray-400 mb-12">Translating the framework into a market-facing plan.</p>
+            <div class="card rounded-2xl p-8 text-center mb-12 no-hover"><h3 class="text-xl font-semibold text-indigo-400 mb-2">The Formula for Content</h3><div class="text-2xl font-bold flex items-center justify-center flex-wrap"><span>Strategic Theme</span><span class="text-green-400 mx-4 text-4xl">+</span><span>Narrative Pillar</span><span class="text-green-400 mx-4 text-4xl">=</span><span class="gradient-text">A Specific Content Initiative</span></div></div>
+            <div class="text-center"><h3 class="text-xl font-semibold text-indigo-400 mb-6">Execution Cadence</h3><div class="grid grid-cols-1 md:grid-cols-3 gap-6"><div class="card p-6 rounded-xl no-hover"><h4 class="font-bold text-lg text-green-400">Phase 1: Launch Blitz</h4><p class="text-sm text-gray-400 mt-1">A 4-6 week high-frequency campaign to establish our core narrative around The Crisis & Revolution.</p></div><div class="card p-6 rounded-xl no-hover"><h4 class="font-bold text-lg text-green-400">Phase 2: Always-On Engine</h4><p class="text-sm text-gray-400 mt-1">A sustainable weekly rhythm (Vision > Functional > Technical > Human) to build long-term authority.</p></div><div class="card p-6 rounded-xl no-hover"><h4 class="font-bold text-lg text-green-400">Phase 3: Quarterly Spikes</h4><p class="text-sm text-gray-400 mt-1">Major integrated campaigns around a flagship asset (webinar, whitepaper) to drive lead generation.</p></div></div></div>
+        </section>
+
+        <!-- Part III: Thematic Deep Dive -->
+        <section class="fade-in" style="animation-delay: 0.7s;">
+            <h2 class="text-3xl font-bold text-center mb-2">Part III: Thematic Deep Dive</h2>
+            <p class="text-center text-gray-400 mb-12">Click on any theme to explore its core topics and rationale.</p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- THEME 1 -->
+                <div class="card rounded-2xl p-8" id="theme1">
+                    <div class="theme-card-header" onclick="togglePanel('theme1-details')">
+                        <div class="flex items-center"><div class="bg-indigo-900/50 p-3 rounded-lg mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="theme-icon text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 15" /></svg></div><div><h3 class="text-2xl font-bold">1. Vision & Philosophy</h3><p class="text-gray-400">To create and own our category.</p></div></div>
+                    </div>
+                    <div id="theme1-details" class="details-panel">
+                        <div class="space-y-4 pt-6 border-t border-gray-700 mt-6">
+                            <div class="topic-cluster" id="cluster1-1">
+                                <div class="topic-cluster-header p-3 rounded-lg" onclick="togglePanel('cluster1-1-topics', event)">
+                                    <h4 class="font-semibold text-lg text-green-400">The Broken Status Quo</h4>
+                                </div>
+                                <div id="cluster1-1-topics" class="topics-panel pl-6 pt-3 space-y-3">
+                                    <div><strong class="text-white">The "Rear-View Mirror" Problem:</strong><p class="text-sm text-gray-400">Frames existing tools as passive and inadequate, creating dissatisfaction.</p></div>
+                                    <div><strong class="text-white">The "Hidden Pipeline Tax":</strong><p class="text-sm text-gray-400">Makes the intangible pain of inefficiency tangible and costly.</p></div>
+                                    <div><strong class="text-white">The "Decision Latency" Gap:</strong><p class="text-sm text-gray-400">Elevates our thought leadership by focusing on the cycle time of critical decisions.</p></div>
+                                </div>
+                            </div>
+                            <div class="topic-cluster" id="cluster1-2">
+                                <div class="topic-cluster-header p-3 rounded-lg" onclick="togglePanel('cluster1-2-topics', event)">
+                                    <h4 class="font-semibold text-lg text-green-400">The New Manifesto (KPI-First)</h4>
+                                </div>
+                                <div id="cluster1-2-topics" class="topics-panel pl-6 pt-3 space-y-3">
+                                    <div><strong class="text-white">The "KPI-First vs. Data-First" Debate:</strong><p class="text-sm text-gray-400">Owns the central, disruptive idea that defines our category and positions us as the challenger.</p></div>
+                                </div>
+                            </div>
+                            <div class="topic-cluster" id="cluster1-3">
+                                <div class="topic-cluster-header p-3 rounded-lg" onclick="togglePanel('cluster1-3-topics', event)">
+                                    <h4 class="font-semibold text-lg text-green-400">The Future of Decision-Making</h4>
+                                </div>
+                                <div id="cluster1-3-topics" class="topics-panel pl-6 pt-3 space-y-3">
+                                    <div><strong class="text-white">From Reporting to Rewriting:</strong><p class="text-sm text-gray-400">Paints the aspirational vision of empowerment and agency.</p></div>
+                                    <div><strong class="text-white">The Democratization of P&L Impact:</strong><p class="text-sm text-gray-400">Broadens our vision to empowering the entire organization.</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- THEME 2 -->
+                <div class="card rounded-2xl p-8" id="theme2">
+                    <div class="theme-card-header" onclick="togglePanel('theme2-details')">
+                        <div class="flex items-center"><div class="bg-indigo-900/50 p-3 rounded-lg mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="theme-icon text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h12A2.25 2.25 0 0 0 20.25 14.25V5.25A2.25 2.25 0 0 0 18 3H6A2.25 2.25 0 0 0 3.75 3Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5h6m-10.5-11.25H18.75" /></svg></div><div><h3 class="text-2xl font-bold">2. Functional & Domain Expertise</h3><p class="text-gray-400">To prove we understand our customers' worlds.</p></div></div>
+                    </div>
+                    <div id="theme2-details" class="details-panel">
+                         <div class="space-y-4 pt-6 border-t border-gray-700 mt-6">
+                            <div class="topic-cluster" id="cluster2-1">
+                                <div class="topic-cluster-header p-3 rounded-lg" onclick="togglePanel('cluster2-1-topics', event)">
+                                    <h4 class="font-semibold text-lg text-green-400">The CFO & Finance Leader's Agenda</h4>
+                                </div>
+                                <div id="cluster2-1-topics" class="topics-panel pl-6 pt-3 space-y-3">
+                                    <div><strong class="text-white">Mastering the 13-Week Cash Flow Forecast:</strong><p class="text-sm text-gray-400">Solves the most critical, recurring pain for finance leaders.</p></div>
+                                    <div><strong class="text-white">Optimizing the Cash Conversion Cycle:</strong><p class="text-sm text-gray-400">Speaks the quantitative language of finance and shows tangible ROI.</p></div>
+                                    <div><strong class="text-white">The "Cost-to-Serve" Conundrum:</strong><p class="text-sm text-gray-400">Exposes a common blind spot and unlocks massive value.</p></div>
+                                </div>
+                            </div>
+                            <div class="topic-cluster" id="cluster2-2">
+                                <div class="topic-cluster-header p-3 rounded-lg" onclick="togglePanel('cluster2-2-topics', event)">
+                                    <h4 class="font-semibold text-lg text-green-400">The Supply Chain & Operations Mandate</h4>
+                                </div>
+                                <div id="cluster2-2-topics" class="topics-panel pl-6 pt-3 space-y-3">
+                                    <div><strong class="text-white">Taming the "Bullwhip Effect":</strong><p class="text-sm text-gray-400">Demonstrates deep domain expertise for physical-product businesses.</p></div>
+                                </div>
+                            </div>
+                            <div class="topic-cluster" id="cluster2-3">
+                                <div class="topic-cluster-header p-3 rounded-lg" onclick="togglePanel('cluster2-3-topics', event)">
+                                    <h4 class="font-semibold text-lg text-green-400">The Founder's Gauntlet</h4>
+                                </div>
+                                <div id="cluster2-3-topics" class="topics-panel pl-6 pt-3 space-y-3">
+                                    <div><strong class="text-white">The Anatomy of a "Diligence-Ready" Startup:</strong><p class="text-sm text-gray-400">Provides a high-value guide for our SMB persona seeking funding.</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- THEME 3 -->
+                <div class="card rounded-2xl p-8" id="theme3">
+                    <div class="theme-card-header" onclick="togglePanel('theme3-details')">
+                        <div class="flex items-center"><div class="bg-indigo-900/50 p-3 rounded-lg mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="theme-icon text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 7.5 3 11.25l3.75 3.75M17.25 7.5 21 11.25l-3.75 3.75M14.25 3.75 9.75 20.25" /></svg></div><div><h3 class="text-2xl font-bold">3. Technical & Platform Leadership</h3><p class="text-gray-400">To win the detailed technical evaluation.</p></div></div>
+                    </div>
+                    <div id="theme3-details" class="details-panel">
+                        <div class="space-y-4 pt-6 border-t border-gray-700 mt-6">
+                            <div class="topic-cluster" id="cluster3-1">
+                                <div class="topic-cluster-header p-3 rounded-lg" onclick="togglePanel('cluster3-1-topics', event)">
+                                    <h4 class="font-semibold text-lg text-green-400">The Core Intelligence Layer</h4>
+                                </div>
+                                <div id="cluster3-1-topics" class="topics-panel pl-6 pt-3 space-y-3">
+                                    <div><strong class="text-white">The Science of "What-If":</strong><p class="text-sm text-gray-400">Builds credibility in our sophisticated simulation engine.</p></div>
+                                    <div><strong class="text-white">Solving Hierarchical Forecasting:</strong><p class="text-sm text-gray-400">Proves our ability to solve a notoriously difficult enterprise problem.</p></div>
+                                    <div><strong class="text-white">From Correlation to Causality:</strong><p class="text-sm text-gray-400">Elevates our explainable AI story to a more sophisticated level.</p></div>
+                                </div>
+                            </div>
+                            <div class="topic-cluster" id="cluster3-2">
+                                <div class="topic-cluster-header p-3 rounded-lg" onclick="togglePanel('cluster3-2-topics', event)">
+                                    <h4 class="font-semibold text-lg text-green-400">The Architectural Advantage</h4>
+                                </div>
+                                <div id="cluster3-2-topics" class="topics-panel pl-6 pt-3 space-y-3">
+                                     <div><strong class="text-white">The Hybrid AI Engine:</strong><p class="text-sm text-gray-400">Positions us as the pragmatic, enterprise-ready solution in a hype-filled market.</p></div>
+                                     <div><strong class="text-white">Dynamic Data Fusion:</strong><p class="text-sm text-gray-400">Highlights a core speed and cost advantage over data lake approaches.</p></div>
+                                </div>
+                            </div>
+                             <div class="topic-cluster" id="cluster3-3">
+                                <div class="topic-cluster-header p-3 rounded-lg" onclick="togglePanel('cluster3-3-topics', event)">
+                                    <h4 class="font-semibold text-lg text-green-400">The Velocity & Trust Layer</h4>
+                                </div>
+                                <div id="cluster3-3-topics" class="topics-panel pl-6 pt-3 space-y-3">
+                                     <div><strong class="text-white">The Outcome-Defined Architecture:</strong><p class="text-sm text-gray-400">Explains our radical speed by connecting philosophy to architecture.</p></div>
+                                     <div><strong class="text-white">"Day-0 Conviction" with Synthetic Data:</strong><p class="text-sm text-gray-400">Showcases a massive differentiator that de-risks the sales process.</p></div>
+                                     <div><strong class="text-white">"Deploy with Confidence" via Integrated Governance:</strong><p class="text-sm text-gray-400">Proves governance is an automated, integrated accelerator, not a manual brake.</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- THEME 4 -->
+                <div class="card rounded-2xl p-8" id="theme4">
+                    <div class="theme-card-header" onclick="togglePanel('theme4-details')">
+                         <div class="flex items-center"><div class="bg-indigo-900/50 p-3 rounded-lg mr-4"><svg xmlns="http://www.w3.org/2000/svg" class="theme-icon text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c1.355 0 2.707-.158 4-.447M12 21c-1.355 0-2.707-.158-4-.447M3.284 14.251 2.25 12l1.034-2.251m17.432 4.5 1.034-2.25-1.034-2.251M12 3a9.004 9.004 0 0 0-8.716 6.747M12 3a9.004 9.004 0 0 1 8.716 6.747M12 3c1.355 0 2.707-.158 4 .447M12 3c-1.355 0-2.707-.158-4 .447" /></svg></div><div><h3 class="text-2xl font-bold">4. Human & Cultural Proof</h3><p class="text-gray-400">To build trust through authenticity.</p></div></div>
+                    </div>
+                    <div id="theme4-details" class="details-panel">
+                        <div class="space-y-4 pt-6 border-t border-gray-700 mt-6">
+                            <div class="topic-cluster" id="cluster4-1">
+                                <div class="topic-cluster-header p-3 rounded-lg" onclick="togglePanel('cluster4-1-topics', event)">
+                                    <h4 class="font-semibold text-lg text-green-400">"Meet the Makers"</h4>
+                                </div>
+                                <div id="cluster4-1-topics" class="topics-panel pl-6 pt-3 space-y-3">
+                                    <div><strong class="text-white">The Origin Story:</strong><p class="text-sm text-gray-400">Builds authenticity by showing our purpose is rooted in solving a real, painful problem.</p></div>
+                                    <div><strong class="text-white">A Post-Mortem of a Pivot:</strong><p class="text-sm text-gray-400">Builds immense trust through radical transparency and a commitment to learning.</p></div>
+                                </div>
+                            </div>
+                            <div class="topic-cluster" id="cluster4-2">
+                                <div class="topic-cluster-header p-3 rounded-lg" onclick="togglePanel('cluster4-2-topics', event)">
+                                    <h4 class="font-semibold text-lg text-green-400">The Customer Voice</h4>
+                                </div>
+                                <div id="cluster4-2-topics" class="topics-panel pl-6 pt-3 space-y-3">
+                                    <div><strong class="text-white">The First Enterprise Win:</strong><p class="text-sm text-gray-400">Provides the ultimate validation and social proof to convert prospects.</p></div>
+                                    <div><strong class="text-white">The Customer "Aha!" Moment:</strong><p class="text-sm text-gray-400">Makes the value of Axyo feel personal and immediate for top-of-funnel content.</p></div>
+                                </div>
+                            </div>
+                             <div class="topic-cluster" id="cluster4-3">
+                                <div class="topic-cluster-header p-3 rounded-lg" onclick="togglePanel('cluster4-3-topics', event)">
+                                    <h4 class="font-semibold text-lg text-green-400">The Ecosystem Advantage</h4>
+                                </div>
+                                <div id="cluster4-3-topics" class="topics-panel pl-6 pt-3 space-y-3">
+                                     <div><strong class="text-white">The "Phoenix AI Advantage" Initiative:</strong><p class="text-sm text-gray-400">Builds local brand equity and a defensible community moat.</p></div>
+                                     <div><strong class="text-white">From the Classroom to the Command Center:</strong><p class="text-sm text-gray-400">Positions us as a forward-thinking leader investing in future talent.</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function togglePanel(elementId, event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            const element = document.getElementById(elementId);
+            if (element) {
+                // If it's a main theme panel, close other main theme panels
+                if (element.classList.contains('details-panel')) {
+                    document.querySelectorAll('.details-panel.open').forEach(openPanel => {
+                        if (openPanel.id !== elementId) {
+                            openPanel.classList.remove('open');
+                            // Also close its children
+                            openPanel.querySelectorAll('.topics-panel.open').forEach(child => child.classList.remove('open'));
+                        }
+                    });
+                }
+                // If it's a topics panel, close other topic panels within the same parent
+                if (element.classList.contains('topics-panel')) {
+                     const parentContainer = element.closest('.details-panel');
+                     parentContainer.querySelectorAll('.topics-panel.open').forEach(openPanel => {
+                        if (openPanel.id !== elementId) {
+                           openPanel.classList.remove('open');
+                        }
+                     });
+                }
+                element.classList.toggle('open');
+            }
+        }
+    </script>
+</body>
+</html>
