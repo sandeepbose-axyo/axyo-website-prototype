@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axyo Go-to-Market Deck</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0A0A0A;
+            color: #E2E8F0;
+            overflow: hidden;
+        }
+        #deck-container {
+            display: flex;
+            width: 700%; /* 7 slides * 100% */
+            height: 100vh;
+            transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem 2rem;
+            flex-shrink: 0;
+            position: relative;
+            background-image: radial-gradient(circle at 10% 10%, rgba(167, 139, 250, 0.05), transparent 30%),
+                              radial-gradient(circle at 90% 90%, rgba(96, 165, 250, 0.05), transparent 40%);
+        }
+        .slide-content {
+            max-width: 1200px;
+            width: 100%;
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #60A5FA, #A78BFA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+        .kpi-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(51, 65, 85, 1);
+            border-radius: 1rem;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+         .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .nav-arrow {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(45, 55, 72, 0.5);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 9999px;
+            width: 3.5rem;
+            height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            z-index: 50;
+            backdrop-filter: blur(5px);
+        }
+        .nav-arrow:hover {
+            background-color: rgba(96, 165, 250, 0.3);
+            transform: translateY(-50%) scale(1.1);
+        }
+        #prev-slide { left: 2rem; display: none; }
+        #next-slide { right: 2rem; }
+        .footer {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 0;
+            right: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 2.5rem;
+            font-size: 0.875rem;
+            color: #64748b; /* slate-500 */
+        }
+        .footer-center {
+            text-align: center;
+            flex-grow: 1;
+        }
+        .footer-right {
+            position: absolute;
+            right: 2.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="deck-container">
+
+        <!-- Slide 1: Title -->
+        <section class="slide">
+            <div class="slide-content text-center">
+                <img src="images/Axyo logo, no name, transparent.png" alt="Axyo Logo" class="h-40 mx-auto mb-4">
+                <h1 class="text-5xl md:text-7xl font-bold tracking-tight leading-tight mb-4">
+                    A Disciplined Go-to-Market<br> <span class="gradient-text">Strategy</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto">
+                    Building a Scalable Path to Market Leadership
+                </p>
+            </div>
+        </section>
+
+        <!-- Slide 2: Our Guiding Philosophy -->
+        <section class="slide">
+            <div class="slide-content text-center max-w-4xl">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Our Guiding Philosophy</h2>
+                <p class="text-2xl font-semibold gradient-text mb-8">Removing the Friction from Enterprise AI</p>
+                <p class="text-lg text-slate-300 mb-6">While AI for individual productivity has seen exponential adoption, AI for core business decisions remains stalled by <strong class="text-white">organizational friction</strong>. Enterprises and SMBs alike struggle to embed intelligence into their core operations due to data, talent, and workflow challenges.</p>
+                <p class="text-lg text-slate-200 font-semibold">Axyo's core purpose is to eliminate this friction, making AI for business as seamless and accessible as personal productivity tools.</p>
+            </div>
+        </section>
+
+        <!-- Slide 3: Two-Pronged Strategy -->
+        <section class="slide">
+            <div class="slide-content">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl md:text-5xl font-bold">A Focused, <span class="gradient-text">Two-Pronged Strategy</span></h2>
+                    <p class="text-xl text-slate-400 mt-4 max-w-4xl mx-auto">We are executing two parallel motions to build a robust pipeline, secure initial revenue, and establish a foundation for exponential growth.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div class="kpi-card p-10">
+                        <div class="bg-purple-500/20 p-3 rounded-lg inline-block mb-4">
+                           <svg class="h-8 w-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9V3m-9 9h18" /></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">GTM Motion 1: The Beachhead</h3>
+                        <p class="text-lg text-purple-400 font-semibold mb-4">Financial Command Center</p>
+                        <p class="text-slate-300 text-lg">A high-velocity play to acquire SMBs, validate product-market fit, and generate initial revenue with a repeatable playbook.</p>
+                    </div>
+                    <div class="kpi-card p-10">
+                        <div class="bg-blue-500/20 p-3 rounded-lg inline-block mb-4">
+                            <svg class="h-8 w-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">GTM Motion 2: The Enterprise Play</h3>
+                        <p class="text-lg text-blue-400 font-semibold mb-4">Axyo Studio</p>
+                        <p class="text-slate-300 text-lg">A strategic motion to land high-value enterprise accounts by building Tailored AI Decision Apps that solve complex, P&L-driving problems.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 4: GTM Motion 1 Deep Dive -->
+        <section class="slide">
+            <div class="slide-content">
+                <div class="text-center mb-12">
+                     <p class="text-purple-400 font-semibold mb-2">GTM Motion 1: Financial Command Center</p>
+                    <h2 class="text-4xl md:text-5xl font-bold">The Beachhead: <span class="gradient-text">Winning the Local Market</span></h2>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="kpi-card p-8">
+                        <div class="flex items-center gap-4 mb-4"><div class="bg-purple-500/20 p-2 rounded-lg"><svg class="h-6 w-6 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg></div><h3 class="text-2xl font-bold">Target Audience (ICP)</h3></div>
+                        <ul class="space-y-3 text-slate-300">
+                            <li class="border-t border-slate-700 pt-3"><strong class="text-white">Revenue:</strong> $1M - $20M</li>
+                            <li class="border-t border-slate-700 pt-3"><strong class="text-white">Industries:</strong> Services, Tech, E-commerce, Trades</li>
+                            <li class="border-t border-slate-700 pt-3"><strong class="text-white">Location:</strong> Greater Phoenix Area</li>
+                            <li class="border-t border-slate-700 pt-3"><strong class="text-white">Pain:</strong> Frustrated with spreadsheets, fears cash flow surprises.</li>
+                        </ul>
+                    </div>
+                    <div class="kpi-card p-8">
+                        <div class="flex items-center gap-4 mb-4"><div class="bg-purple-500/20 p-2 rounded-lg"><svg class="h-6 w-6 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div><h3 class="text-2xl font-bold">Value Proposition</h3></div>
+                        <p class="text-slate-300 text-lg italic">"Stop reacting to yesterday's numbers. Turn your financial data into a forward-looking command center to predict cash flow, master profitability, and control your future."</p>
+                    </div>
+                    <div class="kpi-card p-8">
+                        <div class="flex items-center gap-4 mb-4"><div class="bg-purple-500/20 p-2 rounded-lg"><svg class="h-6 w-6 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg></div><h3 class="text-2xl font-bold">Playbook</h3></div>
+                        <p class="text-slate-300 mb-4">Build trust and pull users in via the <strong class="text-white">"Phoenix AI Advantage"</strong> initiative.</p>
+                        <div class="space-y-2">
+                           <div class="bg-slate-800/50 p-3 rounded-lg"><p class="font-semibold text-sm">Expert Livecasts with ASU & TiE</p></div>
+                           <div class="bg-slate-800/50 p-3 rounded-lg"><p class="font-semibold text-sm">Hands-On "AI Clinics" for Onboarding</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 5: GTM Motion 2 Deep Dive -->
+        <section class="slide">
+            <div class="slide-content">
+                <div class="text-center mb-12">
+                     <p class="text-blue-400 font-semibold mb-2">GTM Motion 2: Axyo Studio</p>
+                    <h2 class="text-4xl md:text-5xl font-bold">The Enterprise Play: <span class="gradient-text">Building Tailored AI Apps</span></h2>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="kpi-card p-8">
+                        <div class="flex items-center gap-4 mb-4"><div class="bg-blue-500/20 p-2 rounded-lg"><svg class="h-6 w-6 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg></div><h3 class="text-2xl font-bold">Target Audience (ICP)</h3></div>
+                        <ul class="space-y-3 text-slate-300">
+                            <li class="border-t border-slate-700 pt-3"><strong class="text-white">Revenue:</strong> $20M+</li>
+                            <li class="border-t border-slate-700 pt-3"><strong class="text-white">Industries:</strong> Manufacturing, Supply Chain, Retail</li>
+                            <li class="border-t border-slate-700 pt-3"><strong class="text-white">Pain:</strong> "Data-rich, insight-poor." Struggles with complex forecasting and scenario planning.</li>
+                        </ul>
+                    </div>
+                    <div class="kpi-card p-8">
+                        <div class="flex items-center gap-4 mb-4"><div class="bg-blue-500/20 p-2 rounded-lg"><svg class="h-6 w-6 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg></div><h3 class="text-2xl font-bold">Value Proposition</h3></div>
+                        <p class="text-slate-300 text-lg italic">"Go from raw data to a production-ready, Tailored AI Decision App in weeks, not months. Empower your existing analysts to solve your hardest P&L problems."</p>
+                    </div>
+                    <div class="kpi-card p-8">
+                        <div class="flex items-center gap-4 mb-4"><div class="bg-blue-500/20 p-2 rounded-lg"><svg class="h-6 w-6 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 011-1h1a2 2 0 100-4H7a1 1 0 01-1-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" /></svg></div><h3 class="text-2xl font-bold">Playbook</h3></div>
+                        <p class="text-slate-300 mb-4">A 4-week, paid PoV to co-build a high-impact solution and prove value immediately.</p>
+                        <div class="space-y-2">
+                           <div class="bg-slate-800/50 p-3 rounded-lg"><p class="font-semibold text-sm">Targeted Use Cases (e.g., Demand Forecasting)</p></div>
+                           <div class="bg-slate-800/50 p-3 rounded-lg"><p class="font-semibold text-sm">Clear Path to Enterprise-Wide Expansion</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 6: Growth Trajectory -->
+        <section class="slide">
+            <div class="slide-content">
+                <div class="text-center mb-8">
+                    <h2 class="text-4xl md:text-5xl font-bold">Our Path to <span class="gradient-text">$1M+ ARR</span></h2>
+                    <p class="text-lg text-slate-400 mt-4 max-w-3xl mx-auto">(Note: Projections are based on initial land ACV and do not include expansion revenue, which represents a significant upside to reach our $1M+ ARR goal within 24 months.)</p>
+                </div>
+                <div class="kpi-card p-8">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="border-b border-slate-700">
+                                <th class="p-4 text-xl font-bold">Offering</th>
+                                <th class="p-4 text-xl font-bold text-center">Dec 2025</th>
+                                <th class="p-4 text-xl font-bold text-center">Jun 2026</th>
+                                <th class="p-4 text-xl font-bold text-center">Dec 2026</th>
+                                <th class="p-4 text-xl font-bold text-center">Jun 2027</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-slate-700">
+                                <td class="p-4"><p class="font-semibold text-lg">Financial Command Center</p><p class="text-sm text-slate-400">$2,500 ACV</p></td>
+                                <td class="p-4 text-center"><p class="font-bold text-2xl text-white">$12,500</p><p class="text-sm text-slate-400">5 Clients</p></td>
+                                <td class="p-4 text-center"><p class="font-bold text-2xl text-white">$75,000</p><p class="text-sm text-slate-400">30 Clients</p></td>
+                                <td class="p-4 text-center"><p class="font-bold text-2xl text-white">$125,000</p><p class="text-sm text-slate-400">50 Clients</p></td>
+                                <td class="p-4 text-center"><p class="font-bold text-2xl text-white">$250,000</p><p class="text-sm text-slate-400">100 Clients</p></td>
+                            </tr>
+                            <tr>
+                                <td class="p-4"><p class="font-semibold text-lg">Axyo Studio</p><p class="text-sm text-slate-400">$45,000 ACV</p></td>
+                                <td class="p-4 text-center"><p class="font-bold text-2xl text-white">$135,000</p><p class="text-sm text-slate-400">3 Clients</p></td>
+                                <td class="p-4 text-center"><p class="font-bold text-2xl text-white">$270,000</p><p class="text-sm text-slate-400">6 Clients</p></td>
+                                <td class="p-4 text-center"><p class="font-bold text-2xl text-white">$450,000</p><p class="text-sm text-slate-400">10 Clients</p></td>
+                                <td class="p-4 text-center"><p class="font-bold text-2xl text-white">$900,000</p><p class="text-sm text-slate-400">20 Clients</p></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="border-t-2 border-slate-500">
+                                <td class="p-4 font-bold text-xl">Total ARR</td>
+                                <td class="p-4 text-center font-bold text-3xl gradient-text">$147,500</td>
+                                <td class="p-4 text-center font-bold text-3xl gradient-text">$345,000</td>
+                                <td class="p-4 text-center font-bold text-3xl gradient-text">$575,000</td>
+                                <td class="p-4 text-center font-bold text-3xl gradient-text">$1,150,000</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 7: Contact -->
+        <section class="slide">
+            <div class="slide-content text-center max-w-4xl">
+                <h2 class="text-5xl md:text-6xl font-bold tracking-tight mb-6">Let's Build the <span class="gradient-text">Future</span></h2>
+                <div class="w-24 h-1.5 bg-blue-500 mx-auto mt-8 mb-8 rounded-full"></div>
+                <p class="text-xl text-slate-400 mt-12">Sandeep Bose | sandeep.bose@axyo.ai | 602-228-9901</p>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Navigation -->
+    <button id="prev-slide" class="nav-arrow">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+    </button>
+    <button id="next-slide" class="nav-arrow">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const deckContainer = document.getElementById('deck-container');
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prev-slide');
+            const nextBtn = document.getElementById('next-slide');
+            
+            const totalSlides = slides.length;
+            let currentSlide = 0;
+
+            slides.forEach((slide, index) => {
+                const footer = document.createElement('div');
+                footer.className = 'footer';
+                footer.innerHTML = `<div class="footer-center">© 2025 Axyo Inc. All rights reserved</div><div class="footer-right">${index + 1} / ${totalSlides}</div>`;
+                slide.appendChild(footer);
+            });
+
+            function updateSlidePosition() {
+                deckContainer.style.transform = `translateX(-${currentSlide * 100 / totalSlides}%)`;
+                prevBtn.style.display = currentSlide === 0 ? 'none' : 'flex';
+                nextBtn.style.display = currentSlide === totalSlides - 1 ? 'none' : 'flex';
+            }
+
+            nextBtn.addEventListener('click', () => {
+                if (currentSlide < totalSlides - 1) { currentSlide++; updateSlidePosition(); }
+            });
+            prevBtn.addEventListener('click', () => {
+                if (currentSlide > 0) { currentSlide--; updateSlidePosition(); }
+            });
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') { nextBtn.click(); } 
+                else if (e.key === 'ArrowLeft') { prevBtn.click(); }
+            });
+            
+            updateSlidePosition();
+        });
+    </script>
+
+</body>
+</html>
