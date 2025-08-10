@@ -12,13 +12,20 @@
         .recipe-step.active { border-color: #3b82f6; }
         .recipe-step.completed { border-color: #22c55e; }
         .recipe-step.pending { border-color: #e5e7eb; }
-        .table-highlight { background-color: rgba(59, 130, 246, 0.1); }
+        .table-highlight { 
+            background-color: rgba(59, 130, 246, 0.15) !important;
+            transition: background-color 1.5s ease;
+        }
         .assistant-message { animation: fadeIn 0.5s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .loader { border-top-color: #3498db; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .center-pane-content { animation: fadeIn 0.3s ease-in-out; }
         button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .card-disabled {
+            opacity: 0.6;
+            pointer-events: none;
+            background-color: #f9fafb;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -31,19 +38,20 @@
             </div>
         </header>
         <main class="flex-grow flex p-4 space-x-4 overflow-hidden">
-            <div id="assistant-container" class="w-1/4 bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col overflow-hidden">
+            <div id="assistant-container" class="w-3/12 bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col overflow-hidden">
                 <div class="p-4 border-b bg-gray-50"><h2 class="font-bold text-lg">AI Assistant</h2></div>
                 <div id="assistant-pane" class="flex-grow p-4 space-y-4 overflow-y-auto"></div>
                 <div id="assistant-input-container" class="p-4 border-t bg-gray-50 hidden"></div>
             </div>
-            <div id="center-pane-container" class="w-1/2 bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col overflow-hidden"></div>
-            <div class="w-1/4 bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col overflow-hidden">
+            <div id="center-pane-container" class="w-7/12 bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col overflow-hidden"></div>
+            <div class="w-2/12 bg-white rounded-lg border border-gray-200 shadow-sm flex flex-col overflow-hidden">
                 <div class="p-4 border-b"><h2 class="font-bold text-lg">Data Recipe</h2></div>
                 <div id="recipe-pane" class="p-4 space-y-4 overflow-y-auto"></div>
             </div>
         </main>
     </div>
     <div id="notification" class="hidden fixed top-5 right-5 bg-green-500 text-white py-2 px-4 rounded-lg shadow-xl animate-bounce"><p id="notification-message"></p></div>
+
 <script>
 // --- STATE MANAGEMENT ---
 const state = { currentStage: -1, sourceSchema: [], targetSchema: [], sourceData: [], currentData: [], mappings: {}, recipe: [], profileReport: {} };
@@ -54,7 +62,7 @@ const recipePane = document.getElementById('recipe-pane');
 const centerPaneContainer = document.getElementById('center-pane-container');
 
 function renderAssistantMessage(html, actions = []) {
-    assistantPane.querySelectorAll('button').forEach(b => b.disabled = true);
+    assistantPane.querySelectorAll('button:not([id=finalize-button])').forEach(b => b.disabled = true);
     const messageDiv = document.createElement('div');
     messageDiv.className = 'assistant-message bg-gray-100 p-4 rounded-lg border';
     messageDiv.innerHTML = `<div class="prose prose-sm max-w-none">${html}</div>`;
@@ -89,6 +97,7 @@ function renderRecipe() {
         const status = state.currentStage === index ? 'active' : (stage.completed ? 'completed' : 'pending');
         stepDiv.className = `recipe-step p-3 rounded-r-lg ${status}`;
         stepDiv.innerHTML = `<h3 class="font-semibold text-sm">${index + 1}. ${stage.name}</h3>`;
+        if (status === 'completed') stepDiv.innerHTML += `<p class="text-xs text-green-600">Completed</p>`;
         recipePane.appendChild(stepDiv);
     });
 }
@@ -98,29 +107,23 @@ function renderCenterPane(title, contentHtml) {
 }
 
 function renderDataTable(data, headers, highlightColumns = []) {
-    const tableHtml = `<div class="overflow-auto h-full"><table class="w-full text-sm text-left"><thead class="bg-gray-50 text-xs text-gray-700 uppercase sticky top-0"><tr>${headers.map(h => `<th scope="col" class="px-6 py-3">${h}</th>`).join('')}</tr></thead><tbody>${data.map(row => `<tr class="bg-white border-b hover:bg-gray-50">${headers.map(header => { let v = row[header]; let c = `px-6 py-4 ${highlightColumns.includes(header) ? 'table-highlight font-semibold' : ''}`; if (v === null || v === undefined) { v = 'NULL'; c += ' text-red-500'; } return `<td class="${c}">${v}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>`;
+    const tableHtml = `<div class="overflow-auto h-full"><table class="w-full text-sm text-left"><thead class="bg-gray-50 text-xs text-gray-700 uppercase sticky top-0"><tr>${headers.map(h => `<th scope="col" class="px-6 py-3">${h}</th>`).join('')}</tr></thead><tbody>${data.map(row => `<tr class="bg-white border-b hover:bg-gray-50">${headers.map(header => { let v = row[header]; let c = `px-6 py-4`; if(highlightColumns.includes(header)) { c += ' table-highlight'; } if (v === null || v === undefined) { v = 'NULL'; c += ' text-red-500'; } return `<td class="${c}">${v}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>`;
     renderCenterPane('Data Preview', tableHtml);
+    if (highlightColumns.length > 0) {
+        setTimeout(() => {
+            document.querySelectorAll('.table-highlight').forEach(el => el.classList.remove('table-highlight'));
+        }, 1500);
+    }
 }
 
 function showNotification(message, type = 'success') {
     const notification = document.getElementById('notification');
     const notificationMessage = document.getElementById('notification-message');
-
-    // Reset styles
     notification.classList.remove('bg-green-500', 'bg-red-500');
-    
-    // Apply new style based on type
-    if (type === 'error') {
-        notification.classList.add('bg-red-500');
-    } else {
-        notification.classList.add('bg-green-500');
-    }
-    
+    notification.classList.add(type === 'error' ? 'bg-red-500' : 'bg-green-500');
     notificationMessage.textContent = message;
     notification.classList.remove('hidden');
-    setTimeout(() => {
-        notification.classList.add('hidden');
-    }, 4000);
+    setTimeout(() => { notification.classList.add('hidden'); }, 4000);
 }
 
 function editDescription(schemaType, index) {
@@ -131,42 +134,14 @@ function editDescription(schemaType, index) {
     cell.innerHTML = `<input type="text" id="edit-desc-input" class="w-full p-1 border rounded" value="${currentDesc}">`;
     const input = document.getElementById('edit-desc-input');
     input.focus();
-    const save = () => {
-        schema[index].description = input.value;
-        cell.innerHTML = input.value;
-        showNotification("Description updated!");
-    };
+    const save = () => { schema[index].description = input.value; cell.innerHTML = input.value; showNotification("Description updated!"); };
     input.onblur = save;
     input.onkeydown = (e) => { if (e.key === 'Enter') input.blur(); };
 }
 
 function updateMapping(target, source) {
-    if (source === 'none') { delete state.mappings[target]; } 
-    else { state.mappings[target] = source; }
+    if (source === 'none') { delete state.mappings[target]; } else { state.mappings[target] = source; }
     showNotification(`Mapping for ${target} updated.`);
-}
-
-function renderStage1UI() {
-    const html = `<p class="text-sm text-gray-600 mb-4">Review the AI-generated descriptions. Click the edit icon to make changes.</p><div class="space-y-4"><div><h3 class="font-semibold text-blue-600">Source Schema</h3><table class="w-full text-sm mt-2">${state.sourceSchema.map((c, i) => `<tr class="border-b"><td class="p-2 font-mono w-1/4">${c.name}</td><td class="p-2" id="desc-source-${i}">${c.description}</td><td class="p-2 w-10 text-center"><button onclick="editDescription('source', ${i})" class="text-gray-400 hover:text-blue-600">&#9998;</button></td></tr>`).join('')}</table></div><div><h3 class="font-semibold text-green-600">Target Schema</h3><table class="w-full text-sm mt-2">${state.targetSchema.map((c, i) => `<tr class="border-b"><td class="p-2 font-mono w-1/4">${c.name}</td><td class="p-2" id="desc-target-${i}">${c.description}</td><td class="p-2 w-10 text-center"><button onclick="editDescription('target', ${i})" class="text-gray-400 hover:text-blue-600">&#9998;</button></td></tr>`).join('')}</table></div></div>`;
-    renderCenterPane('Semantic Enrichment', html);
-    renderAssistantMessage(`<h4>Review Descriptions</h4><p>The descriptions are in the center pane. Please review and edit as needed, then approve to continue.</p>`, [{ label: "Approve Descriptions", handler: runStage2_Mapping, primary: true }]);
-}
-
-function renderStage2UI() {
-    const sourceOptions = state.sourceSchema.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
-    const mappingHtml = `<p class="text-sm text-gray-600 mb-4">Review the AI-suggested mappings. Use the dropdowns to make corrections or select '-- No Match --' to create a gap.</p><table class="w-full text-sm"><thead class="font-bold text-left"><tr><th class="p-2">Target Column</th><th class="p-2">Mapping</th><th class="p-2">Source Column</th></tr></thead><tbody>${state.targetSchema.map(targetCol => `
-        <tr class="border-b"><td class="p-2 font-mono w-1/3 text-green-600">${targetCol.name}</td><td class="p-2 text-center w-1/6">&larr;</td><td class="p-2 w-1/2"><select onchange="updateMapping('${targetCol.name}', this.value)" class="w-full p-2 border rounded bg-white"><option value="none">-- No Match --</option>${sourceOptions}</select></td></tr>`).join('')}</tbody></table>`;
-    renderCenterPane('Schema Mapping', mappingHtml);
-    state.targetSchema.forEach(targetCol => {
-        const select = centerPaneContainer.querySelector(`select[onchange="updateMapping('${targetCol.name}', this.value)"]`);
-        if(select) select.value = state.mappings[targetCol.name] || 'none';
-    });
-    renderAssistantMessage(`<h4>Review Mappings</h4><p>The proposed mappings are now in the center pane. Please adjust as needed and approve to continue.</p>`, [{ label: "Approve Mappings", handler: runStage3_Ingestion, primary: true }]);
-}
-
-function renderStage3UI() {
-    const reportHtml = `<p class="text-sm text-gray-600 mb-4">This report is based on a sample of the data and highlights key quality issues to address.</p><div class="space-y-3"><div class="bg-red-50 border border-red-200 p-3 rounded-lg"><h4 class="font-bold text-red-800">Missing Values</h4><p class="text-sm text-red-700">Column <strong class="font-mono">TotalRevenue</strong> has ${state.profileReport.null_counts.TotalRevenue || 0} missing value(s).</p></div><div class="bg-yellow-50 border border-yellow-200 p-3 rounded-lg"><h4 class="font-bold text-yellow-800">Inconsistent Formatting</h4><p class="text-sm text-yellow-700">Column <strong class="font-mono">LastSeenDate</strong> may contain multiple date formats.</p></div><div class="bg-yellow-50 border border-yellow-200 p-3 rounded-lg"><h4 class="font-bold text-yellow-800">Invalid Data</h4><p class="text-sm text-yellow-700">Column <strong class="font-mono">SignupDate</strong> may contain non-date values.</p></div></div>`;
-    renderCenterPane('Initial Data Health Report', reportHtml);
 }
 
 function toggleSuggestion(cardElement) {
@@ -178,208 +153,206 @@ function toggleSuggestion(cardElement) {
 
 function simpleMarkdown(text) {
     if (!text) return '';
-    return text
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/`(.*?)`/g, '<code class="text-xs bg-gray-200 text-red-600 p-0.5 rounded font-mono">$1</code>');
+    return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/`(.*?)`/g, '<code class="text-xs bg-gray-200 text-red-600 p-0.5 rounded font-mono">$1</code>');
+}
+
+function renderStage1UI() {
+    const html = `<p class="text-sm text-gray-600 mb-4">Review the AI-generated descriptions. Click the edit icon to make changes.</p><div class="space-y-4"><div><h3 class="font-semibold text-blue-600">Source Schema</h3><table class="w-full text-sm mt-2">${state.sourceSchema.map((c, i) => `<tr class="border-b"><td class="p-2 font-mono w-1/4">${c.name}</td><td class="p-2" id="desc-source-${i}">${c.description}</td><td class="p-2 w-10 text-center"><button onclick="editDescription('source', ${i})" class="text-gray-400 hover:text-blue-600">&#9998;</button></td></tr>`).join('')}</table></div><div><h3 class="font-semibold text-green-600">Target Schema</h3><table class="w-full text-sm mt-2">${state.targetSchema.map((c, i) => `<tr class="border-b"><td class="p-2 font-mono w-1/4">${c.name}</td><td class="p-2" id="desc-target-${i}">${c.description}</td><td class="p-2 w-10 text-center"><button onclick="editDescription('target', ${i})" class="text-gray-400 hover:text-blue-600">&#9998;</button></td></tr>`).join('')}</table></div></div>`;
+    renderCenterPane('Semantic Enrichment', html);
+    renderAssistantMessage(`<h4>Review Descriptions</h4><p>Please review and edit the descriptions as needed, then approve to continue.</p>`, [{ label: "Approve Descriptions", handler: runStage2_Mapping, primary: true }]);
+}
+
+function renderStage2UI() {
+    const sourceOptions = state.sourceSchema.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+    const mappingHtml = `<p class="text-sm text-gray-600 mb-4">Review AI-suggested mappings.</p><table class="w-full text-sm"><thead class="font-bold text-left"><tr><th class="p-2">Target Column</th><th class="p-2">Mapping</th><th class="p-2">Source Column</th></tr></thead><tbody>${state.targetSchema.map(targetCol => `<tr class="border-b"><td class="p-2 font-mono w-1/3 text-green-600">${targetCol.name}</td><td class="p-2 text-center w-1/6">&larr;</td><td class="p-2 w-1/2"><select onchange="updateMapping('${targetCol.name}', this.value)" class="w-full p-2 border rounded bg-white"><option value="none">-- No Match --</option>${sourceOptions}</select></td></tr>`).join('')}</tbody></table>`;
+    renderCenterPane('Schema Mapping', mappingHtml);
+    state.targetSchema.forEach(targetCol => {
+        const select = centerPaneContainer.querySelector(`select[onchange="updateMapping('${targetCol.name}', this.value)"]`);
+        if(select) select.value = state.mappings[targetCol.name] || 'none';
+    });
+    renderAssistantMessage(`<h4>Review Mappings</h4><p>Adjust mappings as needed and approve to continue.</p>`, [{ label: "Approve Mappings", handler: runStage3_Ingestion, primary: true }]);
 }
 
 // --- WORKFLOW STAGES ---
+window.onload = async () => {
+    try {
+        const res = await fetch('/api/load-and-profile', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error);
+        state.sourceSchema = data.sourceSchema; state.targetSchema = data.targetSchema; state.sourceData = data.dataSample; state.currentData = [...state.sourceData]; state.profileReport = data.profileReport;
+        runStage0_Prerequisites();
+        showNotification("Successfully loaded and profiled data!");
+    } catch (error) { alert(`Could not load data from the Python backend. Error: ${error.message}`); }
+};
+
 function runStage0_Prerequisites() {
     state.currentStage = 0; renderRecipe();
-    renderDataTable(state.currentData.slice(0, 10), Object.keys(state.currentData[0]));
-    renderAssistantMessage(`<h3>Welcome to the Interactive AI Data Refinery!</h3><p>This application will transform your raw data into a model-ready dataset.</p><h4>Stage 0: Prerequisites</h4><p>The system has loaded your source data and the target data blueprint.</p>`, [{ label: "Confirm & Begin", handler: runStage1_Enrichment, primary: true }]);
+    renderDataTable(state.currentData.slice(0, 10), state.sourceSchema.map(c => c.name));
+    renderAssistantMessage(`<h3>Welcome!</h3><p>Data loaded. Click below to enrich the schemas with AI-powered descriptions.</p>`, [{ label: "Generate AI Descriptions", handler: runStage1_Enrichment, primary: true }]);
 }
 
 async function runStage1_Enrichment() {
     state.currentStage = 1; renderRecipe(); assistantPane.innerHTML = '';
-    renderAssistantMessage(`<h4>Stage 1: Semantic Enrichment</h4><p>I will now use AI to generate business-friendly descriptions for your schema columns. This may take a moment as the server makes multiple API calls concurrently.</p>`, [{ label: "Generate Descriptions", handler: async (e) => {
-        const button = e.target; button.disabled = true; button.innerHTML = `<div class="loader w-4 h-4 border-2 rounded-full inline-block mr-2"></div> Generating...`;
-        try {
-            const res = await fetch('/api/generate-descriptions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sourceSchema: state.sourceSchema, targetSchema: state.targetSchema }) });
-            const data = await res.json(); if (!data.success) throw new Error(data.error);
-            state.sourceSchema = data.sourceSchema; state.targetSchema = data.targetSchema;
-            renderStage1UI(); showNotification("AI descriptions are ready for review!");
-        } catch (err) { alert("Error: " + err.message); button.disabled = false; button.innerHTML = 'Generate Descriptions'; }
-    }, primary: true }]);
+    renderAssistantMessage(`<h4>Stage 1: Semantic Enrichment</h4><p>Generating contextual descriptions... This may take a moment.</p>`);
+    try {
+        const res = await fetch('/api/generate-descriptions', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sourceSchema: state.sourceSchema, targetSchema: state.targetSchema, dataSample: state.currentData })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error);
+        state.sourceSchema = data.sourceSchema; state.targetSchema = data.targetSchema;
+        renderStage1UI();
+        showNotification("AI descriptions are ready for review!");
+    } catch (error) { renderAssistantMessage(`<h4>Error</h4><p>Could not generate descriptions: ${error.message}</p>`); }
 }
 
 async function runStage2_Mapping() {
     state.currentStage = 2; renderRecipe(); assistantPane.innerHTML = '';
-    renderAssistantMessage(`<h4>Stage 2: Schema Mapping</h4><p>Using the enriched descriptions, I will now suggest 1:1 mappings between your source and target schemas.</p>`, [{ label: "Generate Mappings", handler: async (e) => {
-        const button = e.target; button.disabled = true; button.innerHTML = `<div class="loader w-4 h-4 border-2 rounded-full inline-block mr-2"></div> Generating...`;
+    renderAssistantMessage(`<h4>Stage 2: Schema Mapping</h4><p>Generating AI-suggested mappings...</p>`, [{ label: "Generate Mappings", handler: async (e) => {
+        const button = e.target;
+        const originalText = button.innerHTML;
+        button.disabled = true; button.innerHTML = `<div class="loader w-4 h-4 border-2 rounded-full inline-block mr-2"></div> Generating...`;
         try {
             const res = await fetch('/api/suggest-mappings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sourceSchema: state.sourceSchema, targetSchema: state.targetSchema }) });
-            const data = await res.json(); if (!data.success) throw new Error(data.error);
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error);
             state.mappings = data.suggestedMappings;
-            renderStage2UI(); showNotification("AI-suggested mappings are ready!");
-        } catch (err) { alert("Error: " + err.message); button.disabled = false; button.innerHTML = 'Generate Mappings'; }
+            renderStage2UI();
+            showNotification("AI-suggested mappings are ready!");
+        } catch (err) {
+            alert("Error: " + err.message);
+            button.disabled = false; button.innerHTML = originalText;
+        }
     }, primary: true }]);
 }
 
 function runStage3_Ingestion() {
     state.currentStage = 3; renderRecipe(); assistantPane.innerHTML = '';
-    state.currentData = state.sourceData.map(row => { const newRow = {...row}; Object.entries(state.mappings).forEach(([t, s]) => { if(newRow.hasOwnProperty(s)) newRow[t] = newRow[s]; }); return newRow; });
-    renderStage3UI();
-    renderAssistantMessage(`<h4>Stage 3: Data Ingestion & Profiling</h4><p>I've applied your mappings and generated an initial Data Health Report in the center pane.</p>`, [{ label: "Get AI Suggestions", handler: runStage4_Transformation, primary: true }]);
+    renderDataTable(state.currentData.slice(0, 10), state.sourceSchema.map(c => c.name));
+    const reportSummaryHtml = `<h4>Data Health Report Summary</h4><p>I have analyzed the data and found several areas for improvement:</p><ul class="list-disc list-inside text-sm mt-2"><li><b>Missing Values:</b> Some columns contain empty cells.</li><li><b>Inconsistent Formatting:</b> Date or text columns may have mixed formats.</li><li><b>Potential Outliers:</b> Some numeric columns have values that could skew analysis.</li></ul><p class="mt-2">Click below to get AI-powered suggestions to clean the data.</p>`;
+    renderAssistantMessage(reportSummaryHtml, [{ label: "Suggest Transformations", handler: runStage4_Transformation, primary: true }]);
 }
 
 async function runStage4_Transformation() {
-    state.currentStage = 4; renderRecipe(); assistantPane.innerHTML = '';
-    document.getElementById('assistant-input-container').classList.remove('hidden');
-
-    renderAssistantMessage(`<h4>Stage 4: Conversational Transformation</h4><p>I am analyzing your data to suggest relevant transformations...</p>`);
-
+    state.currentStage = 4; renderRecipe(); assistantPane.innerHTML = ''; document.getElementById('assistant-input-container').classList.remove('hidden');
+    renderAssistantMessage(`<h4>Stage 4: Transformation</h4><p>Analyzing profile to suggest transformations...</p>`);
     try {
-        const res = await fetch('/api/suggest-transformations', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ profileReport: state.profileReport }) });
-        const data = await res.json(); if (!data.success) throw new Error(data.error);
-
-        // --- NEW: Grouping logic to combine context with actions ---
-        const rawSuggestions = data.suggestions.map(s => s.trim()).filter(s => s.length > 0);
-        const groupedSuggestions = [];
-        let i = 0;
-        while (i < rawSuggestions.length) {
-            const current = rawSuggestions[i];
-
-            // Filter out generic headers first
-            if (current.toLowerCase().startsWith('based on the data quality report') || /^\d+\.\s/.test(current)) {
-                i++;
-                continue;
-            }
-
-            // Check for a context + action pair.
-            // A "context" does not start with "Action:", but the next line does.
-            if (!current.toLowerCase().startsWith('action:') && (i + 1 < rawSuggestions.length) && rawSuggestions[i + 1].toLowerCase().startsWith('action:')) {
-                groupedSuggestions.push({
-                    context: current,
-                    action: rawSuggestions[i + 1],
-                    command: rawSuggestions[i + 1] // The command to execute is the "Action" part
-                });
-                i += 2; // Advance past both context and action
-            } else {
-                // This is a standalone action without preceding context
-                groupedSuggestions.push({
-                    context: '',
-                    action: current,
-                    command: current
-                });
-                i++;
-            }
-        }
-        // --- End of new logic ---
-
+        const res = await fetch('/api/suggest-transformations', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ profileReport: state.profileReport, dataSample: state.currentData }) });
+        const suggestions = await res.json();
+        if (!suggestions.success) throw new Error(suggestions.error);
         assistantPane.innerHTML = '';
-        renderAssistantMessage(`<h4>AI Suggestions</h4><p>Based on my analysis, here are the recommended actions. Select any to apply, or proceed when you're done.</p>`);
-
+        renderAssistantMessage(`<h4>AI Suggestions</h4><p>Select transformations to apply, or proceed when you're done.</p>`);
         const suggestionsContainer = document.createElement('div');
-        suggestionsContainer.className = 'mt-4 space-y-3'; // Added more space between cards
-
-        suggestionsContainer.innerHTML = groupedSuggestions.map(suggestion => {
-            // Render context paragraph only if it exists
-            const contextHtml = suggestion.context
-                ? `<p class="text-xs text-gray-500 mb-2 p-2 bg-gray-50 rounded-md">${simpleMarkdown(suggestion.context)}</p>`
-                : '';
-            
-            // The action text is always present
-            const actionHtml = `<p class="text-sm text-gray-800">${simpleMarkdown(suggestion.action)}</p>`;
-
-            return `
-            <div class="p-3 border rounded-md bg-white hover:border-blue-400 hover:shadow-sm cursor-pointer" onclick="toggleSuggestion(this)">
-                <div class="flex items-start">
-                    <input type="checkbox" name="transform" data-label="${suggestion.command}" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 mt-1 pointer-events-none">
-                    <div class="ml-3 w-full">
-                        ${contextHtml}
-                        ${actionHtml}
-                    </div>
-                </div>
-            </div>`;
+        suggestionsContainer.className = 'mt-4 space-y-3';
+        suggestionsContainer.innerHTML = suggestions.suggestions.map(suggestion => {
+            const contextHtml = suggestion.context ? `<p class="text-xs text-gray-500 mb-2 p-2 bg-gray-50 rounded-md">${simpleMarkdown(suggestion.context)}</p>` : '';
+            const actionHtml = `<p class="font-semibold text-sm text-gray-900">${simpleMarkdown(suggestion.title)}</p>`;
+            return `<div class="p-3 border rounded-md bg-white hover:border-blue-400 hover:shadow-sm cursor-pointer" onclick="toggleSuggestion(this)"><div class="flex items-start"><input type="checkbox" name="transform" data-label="${suggestion.action}" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 mt-1 pointer-events-none"><div class="ml-3 w-full">${actionHtml}${contextHtml}</div></div></div>`;
         }).join('');
-        
         assistantPane.appendChild(suggestionsContainer);
-
         const inputContainer = document.getElementById('assistant-input-container');
-        inputContainer.innerHTML = `
-            <input id="command-input" type="text" class="w-full p-2 border rounded-md text-sm mb-2" placeholder="Or type a custom command...">
-            <button id="run-command" class="w-full mb-2 bg-blue-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-blue-700">Apply Selected Transformations</button>
-            <button id="finalize-button" class="w-full bg-green-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-green-700">Finalize Recipe & Proceed &rarr;</button>
-        `;
+        inputContainer.innerHTML = `<input id="command-input" type="text" class="w-full p-2 border rounded-md text-sm mb-2" placeholder="Or type a custom command..."><button id="run-command" class="w-full mb-2 bg-blue-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-blue-700">Apply Selected Transformations</button><button id="finalize-button" class="w-full bg-green-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-green-700">Finalize Recipe & Proceed &rarr;</button>`;
         document.getElementById('run-command').onclick = applyTransformations;
         document.getElementById('finalize-button').onclick = runStage5_Finalize;
-
-    } catch (error) {
-        renderAssistantMessage(`<h4>Error</h4><p>I couldn't generate transformation suggestions: ${error.message}</p>`);
-    }
+    } catch (error) { renderAssistantMessage(`<h4>Error</h4><p>Could not generate transformation suggestions: ${error.message}</p>`); }
 }
 
 async function applyTransformations() {
-    const commandsToRun = [...Array.from(assistantPane.querySelectorAll('input[name="transform"]:checked'))].map(cb => cb.dataset.label);
+    const selectedCheckboxes = [...assistantPane.querySelectorAll('input[name="transform"]:checked')];
+    const commandsToRun = selectedCheckboxes.map(cb => cb.dataset.label);
     const customCommand = document.getElementById('command-input').value.trim();
-    if (customCommand) { commandsToRun.push(customCommand); }
-    if (commandsToRun.length === 0) { return; }
+    if (customCommand) commandsToRun.push(customCommand);
+    if (commandsToRun.length === 0) return;
 
     const runButton = document.getElementById('run-command');
-    runButton.disabled = true;
-    runButton.innerHTML = `<div class="loader w-4 h-4 border-2 rounded-full inline-block mr-2"></div> Applying...`;
+    runButton.disabled = true; runButton.innerHTML = `<div class="loader w-4 h-4 border-2 rounded-full inline-block mr-2"></div> Applying...`;
     
     let currentSample = [...state.currentData];
     let successCount = 0;
     let errorOccurred = false;
+    let successfulCommands = [];
 
     for (const command of commandsToRun) {
         try {
             const res = await fetch('/api/apply-transformation', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ command: command, dataSample: currentSample }) });
-            const data = await res.json(); if (!data.success) throw new Error(data.error);
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error);
             
             currentSample = data.transformedSample;
             state.recipe.push({ description: command, code: data.codeSnippet });
-            renderAssistantMessage(`<h4>Transformation Applied</h4><p><strong>Command:</strong> "${command}"</p><pre class="bg-gray-800 text-white p-2 rounded-md text-xs mt-1"><code>${data.codeSnippet}</code></pre>`);
+            renderAssistantMessage(`<h4>Transformation Applied</h4><pre class="bg-gray-800 text-white p-2 rounded-md text-xs mt-1"><code>${data.codeSnippet}</code></pre>`);
+            successfulCommands.push(command);
             successCount++;
         } catch (error) {
-            alert(`Error applying transformation: \n"${command}"\n\nDetails: ${error.message}`);
+            alert(`Error applying transformation:\n"${command}"\n\nDetails: ${error.message}`);
             errorOccurred = true;
             break;
         }
     }
 
     state.currentData = currentSample;
-    renderDataTable(state.currentData.slice(0, 10), Object.keys(state.currentData[0]));
+    const allColNames = [...new Set(state.sourceSchema.map(c => c.name).concat(state.targetSchema.map(c => c.name)))];
+    let highlightedCols = new Set();
+    successfulCommands.forEach(command => {
+        allColNames.forEach(colName => {
+            if (command.includes(`'${colName}'`) || command.includes(`\`${colName}\``)) { highlightedCols.add(colName); }
+        });
+    });
     
-    if (errorOccurred) {
-        showNotification(`Applied ${successCount} of ${commandsToRun.length} transformations before an error occurred.`, 'error');
-    } else if (successCount > 0) {
-        showNotification(`${successCount} transformation(s) applied successfully!`, 'success');
-    }
+    const newHeaders = state.currentData.length > 0 ? Object.keys(state.currentData[0]) : [];
+    renderDataTable(state.currentData.slice(0, 10), newHeaders, Array.from(highlightedCols));
+    
+    if (errorOccurred) { showNotification(`Applied ${successCount} of ${commandsToRun.length} before an error occurred.`, 'error'); } 
+    else if (successCount > 0) { showNotification(`${successCount} transformation(s) applied successfully!`, 'success'); }
     
     document.getElementById('command-input').value = '';
-    assistantPane.querySelectorAll('input[name="transform"]:checked').forEach(cb => {
+    
+    selectedCheckboxes.forEach(cb => {
         cb.checked = false;
         cb.closest('.p-3.border').classList.remove('bg-blue-50', 'border-blue-400');
     });
+
+    successfulCommands.forEach(command => {
+        const cardCheckbox = assistantPane.querySelector(`input[data-label="${command}"]`);
+        if (cardCheckbox) {
+            cardCheckbox.closest('.p-3.border').classList.add('card-disabled');
+        }
+    });
+
     runButton.disabled = false;
     runButton.innerHTML = 'Apply Selected Transformations';
 }
 
-function runStage5_Finalize() {
-    state.currentStage = 5; renderRecipe(); assistantPane.innerHTML = '';
-    renderAssistantMessage(`<h4>Stage 5: Final Validation & ETL</h4><p>The complete data recipe has been compiled. This script is version-controlled and ensures the entire process is repeatable.</p>`, [{label: "Run Full Pipeline", handler: async (e) => {
-        e.target.disabled = true; e.target.innerHTML = `<div class="loader w-4 h-4 border-2 rounded-full inline-block mr-2"></div> Running ETL Job...`;
+async function runStage5_Finalize() {
+    state.currentStage = 5;
+    renderRecipe();
+    assistantPane.innerHTML = '';
+    document.getElementById('assistant-input-container').classList.add('hidden');
+    const finalHeaders = state.currentData.length > 0 ? Object.keys(state.currentData[0]) : [];
+    renderDataTable(state.currentData.slice(0, 10), finalHeaders);
+    const finalRecipeCode = state.recipe.map(r => r.code).join('\n\n# ---\n\n');
+    renderAssistantMessage(`<h4>Stage 5: Final Validation & ETL</h4><p>The recipe is complete. This script will run on the full dataset.</p><pre class="bg-gray-800 text-white p-2 rounded-md text-xs mt-1 max-h-48 overflow-auto"><code>${finalRecipeCode}</code></pre>`, 
+    [{label: "Run Full Pipeline", handler: async (e) => {
+        const button = e.target;
+        const originalText = button.innerHTML;
+        button.disabled = true; button.innerHTML = `<div class="loader w-4 h-4 border-2 rounded-full inline-block mr-2"></div> Running ETL Job...`;
         try {
             const res = await fetch('/api/run-full-etl', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mappingConfig: state.mappings, recipe: state.recipe.map(r => r.code) }) });
-            const data = await res.json(); if (!data.success) throw new Error(data.error);
-            state.currentStage = 6; renderRecipe(); showNotification("Success! Model-Ready Dataset is created.");
-            renderAssistantMessage(`<div class="text-center"><h3 class="mt-2 text-lg font-medium">Workflow Complete!</h3><p class="mt-1 text-sm text-gray-500">${data.message}</p></div>`, [{label: "Download MRD (CSV)", handler: () => alert("This would trigger a download of the 'model_ready_dataset.csv' file."), primary: true}, {label: "Start Over", handler: () => location.reload()}]);
-        } catch (error) { alert("ETL Process Failed: " + error.message); e.target.disabled = false; e.target.innerHTML = 'Run Full Pipeline'; }
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error);
+            assistantPane.innerHTML = '';
+            state.currentStage = 6;
+            renderRecipe();
+            showNotification("Success! Model-Ready Dataset is created.");
+            renderAssistantMessage(`<div class="text-center"><h3 class="mt-2 text-lg font-medium">Workflow Complete!</h3><p class="mt-1 text-sm text-gray-500">${data.message}</p></div>`, 
+            [{label: "Download MRD (CSV)", handler: () => alert("This would trigger a download.")}, {label: "Start Over", handler: () => location.reload()}]);
+        } catch (error) {
+            alert("ETL Process Failed: " + error.message);
+            button.disabled = false; button.innerHTML = originalText;
+        }
     }, primary: true}]);
 }
-
-// --- INITIALIZE APP ---
-window.onload = async () => {
-    try {
-        const res = await fetch('/api/load-and-profile', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
-        const data = await res.json(); if (!data.success) throw new Error(data.error);
-        state.sourceSchema = data.sourceSchema; state.targetSchema = data.targetSchema; state.sourceData = data.dataSample; state.currentData = [...state.sourceData]; state.profileReport = data.profileReport;
-        runStage0_Prerequisites(); showNotification("Successfully loaded and profiled data!");
-    } catch (error) { alert("Could not load data from the Python backend. Make sure the Flask server is running and the necessary files exist."); }
-};
 </script>
 </body>
 </html>

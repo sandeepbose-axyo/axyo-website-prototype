@@ -1,0 +1,10 @@
+# requirements.txt
+flask
+pandas
+python-dotenv
+flask-wtf
+numpy
+aiohttp
+requests
+PyYAML
+faker

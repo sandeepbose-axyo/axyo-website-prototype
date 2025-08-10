@@ -3,209 +3,351 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Phoenix AI Advantage</title>
+    <title>Axyo | AI-powered Financial Co-pilot</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-dark: #0A101A;
-            --bg-medium: #1A2433;
-            --bg-light: #2C3A4F;
-            --accent-blue: #36A2EB;
-            --accent-glow: rgba(54, 162, 235, 0.5);
-            --text-light: #F0F4F8;
-            --text-medium: #A8B2C0;
-            --text-dark: #7F8C9B;
-        }
-
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            background-color: #030712; /* gray-950 */
+            color: #f9fafb; /* gray-50 */
         }
 
-        .infographic-container {
-            max-width: 900px;
-            margin: 2rem auto;
-            background: linear-gradient(180deg, var(--bg-medium) 0%, var(--bg-dark) 100%);
-            border: 1px solid var(--bg-light);
-            border-radius: 1rem;
-            padding: 3rem 4rem;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin-bottom: 2.5rem;
-            color: var(--accent-blue);
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-        }
-        
-        .flow-line {
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--bg-light), transparent);
-            margin: 4rem 0;
-        }
-        
-        .persona-card {
-            background-color: var(--bg-dark);
-            border: 1px solid var(--bg-light);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
+        .glass-card {
+            background: rgba(31, 41, 55, 0.3); /* gray-800 with 30% opacity */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.3s ease;
         }
-        .persona-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 0 20px var(--accent-glow);
+
+        .glass-card:hover {
+            background: rgba(55, 65, 81, 0.4); /* gray-700 with 40% opacity */
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
+        
+        .active-outcome-card {
+            transform: translateY(-2px);
+        }
+
+        .use-case-item.active-use-case {
+            background-color: rgba(255, 255, 255, 0.08);
+            border-left-width: 4px;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hero-gradient-text {
+            background: linear-gradient(to right, #a5b4fc, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .ai-panel-tab.active {
+            border-bottom-width: 2px;
+            color: #f9fafb;
+        }
+
     </style>
 </head>
-<body class="p-4">
+<body class="antialiased">
 
-    <div class="infographic-container">
-
-        <!-- The Why -->
-        <section class="text-center">
-            <h2 class="section-title">The Strategic Context</h2>
-            <div class="max-w-3xl mx-auto">
-                <h3 class="text-3xl font-extrabold text-white">Stop Running Your Business on Yesterday's News.</h3>
-                <p class="text-lg text-accent-blue mt-2 font-medium">It's time to go from a reactive, rearview mirror view to a proactive, forward-looking GPS.</p>
-                <p class="text-text-medium mt-4">Our strategy is designed to transform financial data from a source of stress into a business's greatest competitive advantage with an AI-Powered Co-Pilot.</p>
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-30 bg-black/30 backdrop-blur-sm border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <span class="text-2xl font-bold tracking-tight text-white">Axyo</span>
+                <a href="#" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-500 transition-colors">Request Demo</a>
             </div>
+        </div>
+    </header>
+
+    <main class="pt-16">
+        <!-- Hero Section -->
+        <section class="relative text-center py-24 sm:py-32 lg:py-40 px-4">
+             <div class="absolute inset-0 -z-10 bg-grid-white/[0.05]"></div>
+             <div class="absolute inset-x-0 top-0 -z-10 m-auto h-[30rem] w-[30rem] bg-indigo-900/40 rounded-full blur-3xl"></div>
+
+            <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">
+                From Watching the Score <br> to <span class="hero-gradient-text">Rewriting It.</span>
+            </h1>
+            <p class="mt-6 max-w-2xl mx-auto text-lg leading-8 text-gray-300">
+                Axyo is the AI-powered Financial Co-pilot for SMB Owners. It moves beyond reactive reports, giving you the foresight and control to make the critical decisions that drive your P&L.
+            </p>
         </section>
 
-        <div class="flow-line"></div>
+        <!-- Interactive Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Plug-and-Play AI. Every KPI.</h2>
+                <p class="mt-4 text-lg text-gray-400">No-Code AI for the Core Business Decisions that drive your P&L.</p>
+            </div>
 
-        <!-- The What: Core Themes -->
-        <section>
-            <h2 class="section-title">The Five Core Content Themes</h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 text-center">
-                <div class="p-4 rounded-lg bg-bg-dark border border-transparent hover:border-green-400/50 transition-colors flex flex-col items-center justify-center aspect-square">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mb-2 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9.5V3H7v6.5l5 5 5-5z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 14.5l5 5V21H7v-1.5l5-5z"/></svg>
-                    <p class="font-bold">Mastering Profitability</p>
+            <!-- Main Interactive Area -->
+            <div id="interactive-container" class="space-y-12">
+                <!-- Business Outcomes -->
+                <div id="outcomes-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
+                    <!-- Outcome cards injected by JS -->
                 </div>
-                <div class="p-4 rounded-lg bg-bg-dark border border-transparent hover:border-blue-400/50 transition-colors flex flex-col items-center justify-center aspect-square">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mb-2 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-                    <p class="font-bold">Commanding Cash Flow</p>
-                </div>
-                <div class="p-4 rounded-lg bg-bg-dark border border-transparent hover:border-yellow-400/50 transition-colors flex flex-col items-center justify-center aspect-square">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mb-2 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 1.5v21m-8.25-6.75L12 22.5l8.25-8.25M12 1.5L3.75 9.75m8.25-8.25L20.25 9.75" /></svg>
-                    <p class="font-bold">De-risking the Business</p>
-                </div>
-                 <div class="p-4 rounded-lg bg-bg-dark border border-transparent hover:border-purple-400/50 transition-colors flex flex-col items-center justify-center aspect-square">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mb-2 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
-                    <p class="font-bold">Optimizing Operations</p>
-                </div>
-                <div class="p-4 rounded-lg bg-bg-dark border border-transparent hover:border-pink-400/50 transition-colors flex flex-col items-center justify-center aspect-square col-span-2 lg:col-span-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mb-2 text-pink-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                    <p class="font-bold">Fueling Growth</p>
+
+                <!-- Use Case Details -->
+                <div id="details-container" class="min-h-[400px]">
+                    <!-- Details injected by JS -->
                 </div>
             </div>
         </section>
+    </main>
 
-        <div class="flow-line"></div>
+    <script>
+        // --- Data Store ---
+        const data = {
+            outcomes: [
+                { id: 'profitability', name: 'Driving Profitability', icon: `<path d="M15 7l-5.3 5.3a1 1 0 01-1.4 0L5 9" stroke-linecap="round"/><path d="M11.5 7H15v3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 21a9 9 0 100-18 9 9 0 000 18z" stroke-linecap="round"/>`, color: 'green', accent: 'emerald' },
+                { id: 'cash_flow', name: 'Mastering Cash Flow', icon: `<path d="M12 21a9 9 0 100-18 9 9 0 000 18z" stroke-linecap="round"/><path d="M12 8v8m-4-4h8" stroke-linecap="round"/>`, color: 'blue', accent: 'sky' },
+                { id: 'de_risking', name: 'De-risking the Business', icon: `<path d="M12 21a9 9 0 100-18 9 9 0 000 18z" stroke-linecap="round"/><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="currentColor" fill-opacity="0.2" stroke-width="0"/><path d="M9.5 11.5l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>`, color: 'yellow', accent: 'amber' },
+                { id: 'efficiency', name: 'Improving Efficiency', icon: `<path d="M12 21a9 9 0 100-18 9 9 0 000 18z" stroke-linecap="round"/><path d="M12 22a10 10 0 00-4.2-8.2A10 10 0 1112 22z" fill="currentColor" fill-opacity="0.2" stroke-width="0"/>`, color: 'cyan', accent: 'cyan' },
+                { id: 'growth', name: 'Accelerating Growth', icon: `<path d="M12 21a9 9 0 100-18 9 9 0 000 18z" stroke-linecap="round"/><path d="M12 16V8m4 4l-4-4-4 4" stroke-linecap="round" stroke-linejoin="round"/>`, color: 'purple', accent: 'violet' }
+            ],
+            useCases: {
+                profitability: [
+                    { id: 'hidden_loss', title: 'Identify & Eliminate "Hidden Loss" Projects', problem: 'The "Best Customer, Worst Margin" trap. An owner celebrates landing a huge client, only to realize months later that after accounting for extra support and scope creep, the project was barely profitable or even lost money.', solution: 'Axyo\'s **True Project/Client Profitability** engine uses AI to automatically allocate direct and shared costs. It enriches this by cross-referencing project details with **external public data**, such as flagging when labor costs on a project are 20% higher than the **Bureau of Labor Statistics\'** reported average for that role and location.', impact: 'Stop wasting resources on unprofitable work. Make data-driven decisions to either renegotiate terms, improve efficiency, or "fire" bad-fit clients to focus exclusively on high-margin activities.' },
+                    { id: 'optimize_pricing', title: 'Optimize Pricing Against Market Benchmarks', problem: 'Pricing new work based on gut feel without a clear understanding of true costs or market rates, leading to chronic under-pricing and margin erosion.', solution: 'Use the **AI Proposal Modeler** to simulate the profitability of a new project *before* sending the quote. The AI uses your internal historical data to forecast costs and, by connecting to **external industry and trade association data**, it can benchmark your proposed profit margin against industry averages. The Co-pilot can alert you: "This project\'s projected 15% margin is significantly below the 28% average for your sector."', impact: 'Price every deal for maximum profitability, eliminate guesswork, and have the confidence to walk away from work that doesn\'t meet your margin targets, backed by both internal and external data.' }
+                ],
+                cash_flow: [
+                    { id: 'cash_crisis', title: 'Avert Future Cash Crises with a "Cash Flow Crystal Ball"', problem: 'The "Profitable but Broke" paradox. The P&L statement shows a profit, but there\'s not enough cash in the bank to make payroll next month because of a mismatch in the timing of payments and collections.', solution: 'Axyo\'s **ML-Powered Cash Forecast** acts as a "crystal ball." It predicts your future cash balance by analyzing scheduled payments and predicting when specific customers will *actually* pay based on their history. It integrates **external macroeconomic data** (e.g., sector-specific payment trends, supply chain indices) to refine its predictions, alerting you if customers in your industry are beginning to slow payments nationwide.', impact: 'Proactively manage your cash position. Use the foresight to strategically delay a large payment or accelerate collections, turning a potential crisis into a non-event.' },
+                    { id: 'prioritize_collections', title: 'Automate & Prioritize Collections', problem: 'Wasting valuable time chasing all overdue invoices with equal effort, when only a few represent a real risk to cash flow.', solution: 'The **A/R at Risk Model** analyzes customer payment behavior and invoice characteristics to score overdue payments. The AI enriches this by checking **public data sources** for negative news, credit warnings, or even public bankruptcy filings related to a customer, elevating their risk score automatically. The **A/R Action Center** then creates a prioritized to-do list so you know exactly who to call first.', impact: 'Get cash in the door faster and more efficiently by focusing your limited time and energy on the collection activities with the highest and most immediate ROI.' }
+                ],
+                de_risking: [
+                    { id: 'concentration_risk', title: 'Neutralize the Customer Concentration "Time Bomb"', problem: 'A single client grows to represent 40-50% of revenue. This feels like success, but it creates a massive, often invisible, existential risk if that client leaves.', solution: 'The AI Co-pilot automatically calculates and flags your **Customer Concentration Risk**. It actively monitors **external news feeds and public financial reports** for your top clients, alerting you to potential risks like an acquisition, executive turnover, or financial distress long before they impact you.', impact: 'Make an abstract threat terrifyingly concrete. This galvanizes strategic action to diversify your client base and de-risk the business *before* a crisis hits.' },
+                    { id: 'bank_ready', title: 'Secure "Bank-Ready" Financing on Demand', problem: 'A golden opportunity arises, but it\'s locked behind a mountain of financial paperwork from a bank or investor. By the time you manually assemble the reports, the opportunity is gone.', solution: 'Axyo\'s **One-Click Reporting Engine** generates a complete, professional diligence package from your live data. The AI Co-pilot enhances this by including **external benchmarks**, showing how your key solvency ratios compare to your industry average, strengthening your case with lenders.', impact: 'Be "diligence-ready" at all times. Seize critical opportunities by providing lenders and investors with everything they need in minutes, not weeks.' }
+                ],
+                efficiency: [
+                    { id: 'saas_sprawl', title: 'Eliminate Redundant Spending & "SaaS Sprawl"', problem: 'The "death by a thousand cuts" from wasteful, overlapping, and unused software subscriptions that are nearly impossible to spot in a standard P&L statement.', solution: 'The **Intelligent GL** automatically categorizes all spending with granular detail. The AI Co-pilot then proactively flags "Top Expense Growth" categories and identifies likely redundancies. It can benchmark your spending against **external data from software marketplaces** (like G2) to alert you: "You are paying 25% more for your CRM than the average for a company your size."', impact: 'Cut thousands in wasted annual spending in minutes. Immediately extend your cash runway and improve profitability with a few simple clicks.' },
+                    { id: 'optimize_ap', title: 'Optimize Working Capital with Strategic Payments', problem: 'Paying all bills on their due date is inefficient. It can unnecessarily strain cash when some vendors could be paid later, while missing opportunities to capture early payment discounts from others.', solution: 'The **A/P Action Center** uses an AI recommendation engine that analyzes your cash forecast and vendor criticality. It incorporates **external industry data** on average payment cycles to recommend if you have room to extend payment terms without being an outlier in your sector, preserving cash while maintaining good supplier relationships.', impact: 'Turn your accounts payable from a simple payment queue into a strategic lever for optimizing cash on hand.' }
+                ],
+                growth: [
+                    { id: 'prospect_targeting', title: 'AI-Powered Prospect Targeting', problem: 'Focusing sales and marketing efforts on acquiring high-revenue but low-margin customers, leading to "busy but broke" growth.', solution: 'By identifying the **True Profitability** of every client, the AI helps you build a data-driven profile of your ideal customer. The AI Co-pilot then uses this profile to query **external B2B databases** (e.g., Apollo.io, ZoomInfo) to generate a targeted list of high-potential "lookalike" prospects who fit your most profitable customer profile.', impact: 'Make your growth engine dramatically more efficient. Stop chasing vanity revenue and focus all your resources on acquiring the customers that will drive long-term, profitable growth.' },
+                    { id: 'target_marketing', title: 'Hyper-Target Digital Marketing Spend', problem: 'Wasting marketing dollars on digital ad campaigns that attract unprofitable customers or have a low return on investment (ROI).', solution: 'Axyo connects your internal financial data to your marketing efforts. The AI analyzes the **Lifetime Value (LTV) and profitability** of customers acquired from different ad campaigns. It can cross-reference this with **external ad platform data** (like Google Ads) to provide clear recommendations, such as "Shift budget from Campaign A (high cost-per-click, low LTV) to Campaign B (low cost-per-click, high LTV)."', impact: 'Eliminate wasteful marketing spend. Maximize your ROI by ensuring every dollar is spent attracting the most profitable and valuable customers to your business.' },
+                    { id: 'derisk_investment', title: 'De-risk Major Growth Investments', problem: 'Making a critical, anxiety-inducing growth decision—like hiring two expensive engineers—based on a flawed, rearview-mirror runway calculation.', solution: 'The **Intelligent What-if Analysis** tool allows you to model the precise, real-time impact of a major investment on your cash forecast. The AI Co-pilot validates your assumptions against **external public data**, such as pulling average salaries for that role and location from Glassdoor or LinkedIn to ensure your hiring budget is realistic.', impact: 'Make high-stakes growth decisions with confidence and clarity. Eliminate financial uncertainty by fully understanding the trade-offs and true cash impact of your most important strategic moves.' }
+                ]
+            }
+        };
 
-        <!-- The How: Persona Roadmap -->
-        <section>
-            <h2 class="section-title">Targeted Content for Each Persona</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        // --- DOM Elements ---
+        const outcomesContainer = document.getElementById('outcomes-container');
+        const detailsContainer = document.getElementById('details-container');
+
+        let activeOutcome = data.outcomes[0].id;
+        let activeUseCase = data.useCases[activeOutcome][0].id;
+
+        // --- Utility Functions ---
+        function formatText(text) {
+            return text.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>');
+        }
+
+        // --- Render Functions ---
+        function renderOutcomes() {
+            outcomesContainer.innerHTML = data.outcomes.map(outcome => `
+                <div 
+                    class="outcome-card glass-card rounded-lg p-4 cursor-pointer text-center flex flex-col items-center justify-center space-y-3"
+                    data-outcome="${outcome.id}"
+                    style="${outcome.id === activeOutcome ? `background: rgba(var(--${outcome.accent}-rgb), 0.15); border-color: rgba(var(--${outcome.accent}-rgb), 0.4); transform: translateY(-2px);` : ''}"
+                >
+                    <svg class="h-8 w-8 text-${outcome.accent}-400" style="${outcome.id === activeOutcome ? `filter: drop-shadow(0 0 6px rgba(var(--${outcome.accent}-rgb), 0.5));` : ''}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        ${outcome.icon}
+                    </svg>
+                    <span class="font-semibold text-sm text-white">${outcome.name}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderDetails() {
+            const cases = data.useCases[activeOutcome];
+            const currentOutcome = data.outcomes.find(o => o.id === activeOutcome);
+            detailsContainer.innerHTML = `
+                <div class="details-content grid grid-cols-1 lg:grid-cols-3 gap-8 fade-in">
+                    <!-- Left: Use Case List -->
+                    <div class="lg:col-span-1">
+                        <h3 class="text-xl font-bold text-white mb-4">Actionable Use Cases</h3>
+                        <div id="use-case-list" class="space-y-2">
+                            ${cases.map(uc => `
+                                <div class="use-case-item p-4 rounded-lg cursor-pointer transition-colors duration-200 hover:bg-white/5 border-l-4 border-transparent" data-usecase="${uc.id}" style="${uc.id === activeUseCase ? `background-color: rgba(var(--${currentOutcome.accent}-rgb), 0.1); border-color: rgb(var(--${currentOutcome.accent}-rgb-light));` : ''}">
+                                    <p class="font-semibold text-white">${uc.title}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Right: AI Co-pilot Panel -->
+                    <div id="ai-panel" class="lg:col-span-2 glass-card rounded-lg">
+                        ${renderAIPanel()}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAIPanel() {
+            const useCase = data.useCases[activeOutcome].find(uc => uc.id === activeUseCase);
+            const currentOutcome = data.outcomes.find(o => o.id === activeOutcome);
+            return `
+                <div class="p-6">
+                    <h4 class="text-2xl font-bold text-white mb-4">${useCase.title}</h4>
+                    
+                    <!-- AI Panel Tabs -->
+                    <div class="border-b border-white/10 mb-6">
+                        <nav id="ai-panel-tabs" class="-mb-px flex space-x-6" aria-label="Tabs">
+                            <button class="ai-panel-tab whitespace-nowrap py-3 px-1 border-transparent font-medium text-sm text-gray-400 hover:text-white active" data-tab="details" style="border-color: rgb(var(--${currentOutcome.accent}-rgb-light));">Details</button>
+                            <button class="ai-panel-tab whitespace-nowrap py-3 px-1 border-transparent font-medium text-sm text-gray-400 hover:text-white" data-tab="actions">Possible Actions</button>
+                            <button class="ai-panel-tab whitespace-nowrap py-3 px-1 border-transparent font-medium text-sm text-gray-400 hover:text-white" data-tab="scenarios">What-If Scenarios</button>
+                        </nav>
+                    </div>
+
+                    <!-- AI Panel Content -->
+                    <div id="ai-panel-content" class="min-h-[250px]">
+                        <!-- Content injected by tab clicks -->
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAIPanelContent(tabId) {
+            const contentEl = document.getElementById('ai-panel-content');
+            const useCase = data.useCases[activeOutcome].find(uc => uc.id === activeUseCase);
+            const currentOutcome = data.outcomes.find(o => o.id === activeOutcome);
+            let html = '';
+            
+            switch (tabId) {
+                case 'details':
+                    html = `
+                        <div class="space-y-6 text-gray-300 leading-relaxed fade-in">
+                            <div>
+                                <h5 class="font-semibold text-${currentOutcome.accent}-400 mb-2">The Problem</h5>
+                                <p>${formatText(useCase.problem)}</p>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-${currentOutcome.accent}-400 mb-2">The AI-Powered Actionable Use Case</h5>
+                                <p>${formatText(useCase.solution)}</p>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-${currentOutcome.accent}-400 mb-2">The Impact</h5>
+                                <p>${formatText(useCase.impact)}</p>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'actions':
+                    html = `
+                        <div class="fade-in">
+                        <h5 class="font-semibold text-${currentOutcome.accent}-400 mb-4">Possible Actions & Interactions</h5>
+                        <ul class="space-y-4 text-gray-300">
+                            <li class="flex items-start space-x-3"><svg class="h-5 w-5 text-${currentOutcome.accent}-400 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" /></svg><span><strong>Drill-Down to Components:</strong> See the specific transactions and costs that make up the insight.</span></li>
+                            <li class="flex items-start space-x-3"><svg class="h-5 w-5 text-${currentOutcome.accent}-400 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v18M6.75 3v18M10.5 3v18M14.25 3v18M18 3v18M21 3v18" /></svg><span><strong>View Historical Trend:</strong> See how this metric has performed over time to identify patterns.</span></li>
+                            <li class="flex items-start space-x-3"><svg class="h-5 w-5 text-${currentOutcome.accent}-400 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg><span><strong>Benchmark Performance:</strong> Compare your numbers against industry averages or your own history.</span></li>
+                            <li class="flex items-start space-x-3"><svg class="h-5 w-5 text-${currentOutcome.accent}-400 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0011.667 0l3.181-3.183m-4.991-2.691v4.992" /></svg><span><strong>Set Alert Threshold:</strong> Get notified proactively when a metric crosses a critical line you define.</span></li>
+                        </ul>
+                        </div>
+                    `;
+                    break;
+                case 'scenarios':
+                     html = `
+                        <div class="fade-in">
+                        <h5 class="font-semibold text-${currentOutcome.accent}-400 mb-4">Intelligent What-If Analysis</h5>
+                        <p class="mb-6 text-gray-300">Model the real-time impact of your decisions on your cash flow and runway.</p>
+                        <ul class="space-y-4 text-gray-300">
+                            <li class="flex items-start space-x-3"><svg class="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" /></svg><span>Model <strong>hiring</strong> new employees and see the immediate runway impact.</span></li>
+                            <li class="flex items-start space-x-3"><svg class="h-5 w-5 text-red-400 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" /></svg><span>Model <strong>losing</strong> a major customer and quantify your exact risk.</span></li>
+                            <li class="flex items-start space-x-3"><svg class="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3a.75.75 0 01.75.75v1.5h1.5a.75.75 0 010 1.5h-1.5v1.5a.75.75 0 01-1.5 0v-1.5h-1.5a.75.75 0 010-1.5h1.5v-1.5A.75.75 0 0110 3zM8.06 9.94a.75.75 0 010-1.06l1.5-1.5a.75.75 0 011.06 0l1.5 1.5a.75.75 0 01-1.06 1.06L10 9.06l-.94.94a.75.75 0 01-1.06 0zM11.94 14.06a.75.75 0 01-1.06 0l-1.5-1.5a.75.75 0 010-1.06l1.5-1.5a.75.75 0 011.06 1.06L10 12.94l.94.94a.75.75 0 010 1.06z" /></svg><span>Model <strong>delaying payments</strong> or <strong>accelerating collections</strong> to navigate a cash crunch.</span></li>
+                        </ul>
+                        </div>
+                    `;
+                    break;
+            }
+            contentEl.innerHTML = html;
+        }
+
+        // --- Event Handlers ---
+        function handleOutcomeClick(e) {
+            const card = e.target.closest('.outcome-card');
+            if (card) {
+                activeOutcome = card.dataset.outcome;
+                activeUseCase = data.useCases[activeOutcome][0].id;
+                updateApp();
+            }
+        }
+
+        function handleUseCaseClick(e) {
+            const item = e.target.closest('.use-case-item');
+            if (item) {
+                activeUseCase = item.dataset.usecase;
+                const currentOutcome = data.outcomes.find(o => o.id === activeOutcome);
+                document.querySelectorAll('.use-case-item').forEach(i => {
+                    i.classList.remove('active-use-case');
+                    i.style.backgroundColor = '';
+                    i.style.borderColor = 'transparent';
+                });
+                item.classList.add('active-use-case');
+                item.style.backgroundColor = `rgba(var(--${currentOutcome.accent}-rgb), 0.1)`;
+                item.style.borderColor = `rgb(var(--${currentOutcome.accent}-rgb-light))`;
                 
-                <!-- Tech Founder -->
-                <div class="persona-card">
-                    <div class="flex items-center gap-4 mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-accent-blue flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                        <div>
-                            <h3 class="font-bold text-lg">The Tech Founder</h3>
-                            <p class="text-sm text-text-dark">SaaS & Tech-Enabled Services</p>
-                        </div>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="flex items-center gap-2"><div class="w-5 h-5 flex-shrink-0 bg-pink-500/20 text-pink-400 rounded-full flex items-center justify-center text-xs">🚀</div><p class="text-sm">Fueling Growth</p></div>
-                        <div class="flex items-center gap-2"><div class="w-5 h-5 flex-shrink-0 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center text-xs">💰</div><p class="text-sm">Mastering Profitability</p></div>
-                        <div class="flex items-center gap-2"><div class="w-5 h-5 flex-shrink-0 bg-purple-500/20 text-purple-400 rounded-full flex items-center justify-center text-xs">⚙️</div><p class="text-sm">Optimizing Operations</p></div>
-                    </div>
-                </div>
+                document.getElementById('ai-panel').innerHTML = renderAIPanel();
+                renderAIPanelContent('details'); // Default to details tab
+            }
+        }
 
-                <!-- Professional Services Leader -->
-                <div class="persona-card">
-                    <div class="flex items-center gap-4 mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-accent-blue flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-2a6 6 0 00-12 0v2" /></svg>
-                        <div>
-                            <h3 class="font-bold text-lg">The Professional Services Leader</h3>
-                            <p class="text-sm text-text-dark">Agencies & Consultants</p>
-                        </div>
-                    </div>
-                     <div class="space-y-3">
-                        <div class="flex items-center gap-2"><div class="w-5 h-5 flex-shrink-0 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center text-xs">💰</div><p class="text-sm">Mastering Profitability</p></div>
-                        <div class="flex items-center gap-2"><div class="w-5 h-5 flex-shrink-0 bg-blue-500/20 text-blue-400 rounded-full flex items-center justify-center text-xs">💧</div><p class="text-sm">Commanding Cash Flow</p></div>
-                        <div class="flex items-center gap-2"><div class="w-5 h-5 flex-shrink-0 bg-pink-500/20 text-pink-400 rounded-full flex items-center justify-center text-xs">🚀</div><p class="text-sm">Fueling Growth</p></div>
-                    </div>
-                </div>
+        function handleAIPanelTabClick(e) {
+            const button = e.target.closest('.ai-panel-tab');
+            if (button) {
+                const currentOutcome = data.outcomes.find(o => o.id === activeOutcome);
+                document.querySelectorAll('.ai-panel-tab').forEach(b => {
+                    b.classList.remove('active');
+                    b.style.borderColor = 'transparent';
+                });
+                button.classList.add('active');
+                button.style.borderColor = `rgb(var(--${currentOutcome.accent}-rgb-light))`;
+                renderAIPanelContent(button.dataset.tab);
+            }
+        }
+        
+        function defineColorVars() {
+            const style = document.createElement('style');
+            style.innerHTML = `
+                :root {
+                    --emerald-rgb: 52, 211, 153; --emerald-rgb-light: 110, 231, 183;
+                    --sky-rgb: 59, 130, 246; --sky-rgb-light: 125, 211, 252;
+                    --amber-rgb: 251, 191, 36; --amber-rgb-light: 252, 211, 77;
+                    --cyan-rgb: 34, 211, 238; --cyan-rgb-light: 103, 232, 249;
+                    --violet-rgb: 139, 92, 246; --violet-rgb-light: 167, 139, 250;
+                }
+            `;
+            document.head.appendChild(style);
+        }
 
-                <!-- Trades & Contracts Specialist -->
-                <div class="persona-card">
-                    <div class="flex items-center gap-4 mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-accent-blue flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        <div>
-                            <h3 class="font-bold text-lg">The Trades & Contracts Specialist</h3>
-                            <p class="text-sm text-text-dark">Contractors & Builders</p>
-                        </div>
-                    </div>
-                     <div class="space-y-3">
-                        <div class="flex items-center gap-2"><div class="w-5 h-5 flex-shrink-0 bg-blue-500/20 text-blue-400 rounded-full flex items-center justify-center text-xs">💧</div><p class="text-sm">Commanding Cash Flow</p></div>
-                        <div class="flex items-center gap-2"><div class="w-5 h-5 flex-shrink-0 bg-yellow-500/20 text-yellow-400 rounded-full flex items-center justify-center text-xs">🛡️</div><p class="text-sm">De-risking the Business</p></div>
-                        <div class="flex items-center gap-2"><div class="w-5 h-5 flex-shrink-0 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center text-xs">💰</div><p class="text-sm">Mastering Profitability</p></div>
-                    </div>
-                </div>
+        // --- Main App Logic ---
+        function updateApp() {
+            renderOutcomes();
+            renderDetails();
+            renderAIPanelContent('details');
+        }
 
-                <!-- Established Family-Owned Business -->
-                <div class="persona-card">
-                    <div class="flex items-center gap-4 mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-accent-blue flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-                        <div>
-                            <h3 class="font-bold text-lg">The Established Family-Owned Business</h3>
-                            <p class="text-sm text-text-dark">Manufacturers & Distributors</p>
-                        </div>
-                    </div>
-                     <div class="space-y-3">
-                        <div class="flex items-center gap-2"><div class="w-5 h-5 flex-shrink-0 bg-yellow-500/20 text-yellow-400 rounded-full flex items-center justify-center text-xs">🛡️</div><p class="text-sm">De-risking the Business</p></div>
-                        <div class="flex items-center gap-2"><div class="w-5 h-5 flex-shrink-0 bg-blue-500/20 text-blue-400 rounded-full flex items-center justify-center text-xs">💧</div><p class="text-sm">Commanding Cash Flow</p></div>
-                        <div class="flex items-center gap-2"><div class="w-5 h-5 flex-shrink-0 bg-pink-500/20 text-pink-400 rounded-full flex items-center justify-center text-xs">🚀</div><p class="text-sm">Fueling Growth</p></div>
-                    </div>
-                </div>
+        function initializeApp() {
+            defineColorVars();
+            updateApp();
+            outcomesContainer.addEventListener('click', handleOutcomeClick);
+            detailsContainer.addEventListener('click', handleUseCaseClick);
+            detailsContainer.addEventListener('click', handleAIPanelTabClick);
+        }
 
-            </div>
-        </section>
-
-        <div class="flow-line"></div>
-
-        <!-- The Journey -->
-        <section class="text-center">
-            <h2 class="section-title">The Engagement Journey</h2>
-            <div class="grid md:grid-cols-5 items-center gap-4">
-                <div class="md:col-span-2 text-left p-6 bg-bg-dark rounded-lg">
-                    <div class="flex items-center gap-3 mb-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-accent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20.25a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75.75H12a.75.75 0 01-.75-.75v-.008z" /><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9.75h7.5v6h-7.5V9.75z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 1.5l.75 2.25 2.25.75-2.25.75L12 6.75l-.75-2.25L9 3.75l2.25-.75L12 1.5z" /></svg>
-                        <h3 class="font-bold text-xl">1. The Livecast</h3>
-                    </div>
-                    <p class="text-text-medium text-sm">A high-level, strategic webinar featuring industry experts. This is not a sales pitch; it's a valuable educational session designed to build trust by solving real problems and answering the question, "Why should I care about this topic?"</p>
-                </div>
-                 <div class="text-2xl text-accent-blue font-thin transform md:rotate-0 rotate-90 mx-auto">→</div>
-                <div class="md:col-span-2 text-left p-6 bg-bg-dark rounded-lg">
-                    <div class="flex items-center gap-3 mb-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-accent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-2.25 3h5.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        <h3 class="font-bold text-xl">2. The AI Co-Pilot Clinic</h3>
-                    </div>
-                    <p class="text-text-medium text-sm">An exclusive, hands-on workshop where attendees use the Axyo FCC with their *own* data. This is where theory becomes reality, delivering a powerful "aha!" moment and demonstrating undeniable value.</p>
-                </div>
-            </div>
-        </section>
-    </div>
-
+        // --- Start the App ---
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
 </body>
 </html>

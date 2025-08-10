@@ -1,0 +1,26 @@
+CustomerID,SignupDate,last_seen,total_spend,transaction_count,user_location,is_active_user,city,state
+2024-01-15,July 5,2025.0,150.75,5,"Phoenix, AZ",True,Phoenix,AZ
+2023-11-20,June 28,2025.0,89.99,2,"Los Angeles, CA",True,Los Angeles,CA
+2024-03-01,July 1,2025.0,250.0,10,"New York, NY",True,New York,NY
+2022-05-10,December 12,2023.0,550.4,15,"Chicago, IL",False,Chicago,IL
+2024-02-18,May 30,2025.0,,0,"Houston, TX",True,Houston,TX
+2023-08-05,July 15,2025.0,320.5,8,"Miami, FL",True,Miami,FL
+not available,July 20,2025.0,12.25,1,"Seattle, WA",True,Seattle,WA
+2024-06-01,July 25,2025.0,75.0,3,Boston,True,Boston,
+2023-01-30,July 22,2025.0,180.9,6,"Dallas, TX",True,Dallas,TX
+2024-04-10,July 18,2025.0,45.3,2,"Salt Lake City, UT",True,Salt Lake City,UT
+2023-09-01,June 15,2025.0,112.0,4,"San Francisco, CA",True,San Francisco,CA
+2024-05-20,07/28/2025,22.5,1.0,"Denver, CO",true,,true,
+2021-12-12,Jan 5,2024.0,850.0,25,"Atlanta, GA",False,Atlanta,GA
+2024-07-01,July 29,2025.0,5.0,1,"Philadelphia, PA",True,Philadelphia,PA
+2023-10-05,May 1,2025.0,,3,"Washington, DC",True,Washington,DC
+2024-03-15,07/10/2025,99.99,2.0,"Detroit, MI",true,,true,
+2022-08-20,July 3,2025.0,410.6,11,"Minneapolis, MN",True,Minneapolis,MN
+invalid-date,July 19,2025.0,33.2,1,"Portland, OR",True,Portland,OR
+2024-01-01,June 1,2025.0,145.0,6,"San Diego, CA",True,San Diego,CA
+2023-06-12,July 26,2025.0,280.1,9,"Tampa, FL",True,Tampa,FL
+2024-02-28,July 27,2025.0,68.5,3,"Charlotte, NC",True,Charlotte,NC
+2023-04-18,April 10,2025.0,199.99,7,"St. Louis, MO",True,St. Louis,MO
+2022-11-05,July 1,2025.0,305.0,12,"Pittsburgh, PA",True,Pittsburgh,PA
+2024-07-05,07/30/2025,15.0,1.0,"Orlando, FL",true,,true,
+2023-03-03,July 14,2025.0,,2,"Las Vegas, NV",True,Las Vegas,NV

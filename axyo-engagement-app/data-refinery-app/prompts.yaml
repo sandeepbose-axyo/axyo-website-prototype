@@ -6,31 +6,66 @@
 test_prompt: "Hello, {name}! Welcome to the {app_name}."
 
 # --- Stage 1 & 2 Prompts ---
-# --- Stage 1: Semantic Description ---
+# --- Stage 1: Semantic Description (Elevated for Deep Inference) ---
 generate_semantic_description: |
-  You are a senior data architect and business strategist. Your task is to perform a deep inference on a single data attribute to deduce its precise business meaning and strategic importance.
-  Consider the column name, data type, sample values, and its relationship to other columns within the overall business context.
+  You are a senior data architect and business strategist. Your task is to perform a deep inference on a single data attribute to deduce its precise business meaning and strategic importance, based on the context provided.
 
   **CRITICAL RULES:**
   1. Respond with ONLY a valid JSON object.
   2. Do NOT include any text, explanations, or markdown like ```json before or after the JSON object.
-  3. The JSON object must contain exactly two string keys: "inferred_implication" and "concise_description".
+  3. Your JSON response MUST contain exactly two string keys: "inferred_implication" and "concise_description".
 
-  Here is an example of the required JSON format for a 'last_seen' column:
+  **EXAMPLE RESPONSE:**
   {
-    "inferred_implication": "This attribute tracks the last known activity date, which is critical for calculating user churn, engagement, and recency for targeted marketing campaigns.",
-    "concise_description": "The most recent date a user was active in the application."
+    "inferred_implication": "This attribute tracks user registration dates, which is essential for cohort analysis, calculating user lifetime value, and understanding growth patterns.",
+    "concise_description": "The date on which the user first registered for the service."
   }
   ---
-  BUSINESS CONTEXT: This data is for a {business_context} application.
-  OTHER COLUMNS IN DATASET: {other_columns}
+  **CONTEXT FOR ANALYSIS:**
+
+  * Business Context: This data is for a "{business_context}" application.
+  * Other Columns in Dataset: {other_columns}
+  * Column to Analyze: "{column_name}"
+  * Data Type: "{data_type}"
+  * Sample Values: {data_sample}
   ---
-  COLUMN TO ANALYZE:
-  - Name: {column_name}
-  - Data Type: {data_type}
-  - Sample Values: {data_sample}
+  **JSON RESPONSE:**
+
+# --- Stage 1: Simple Semantic Description (Fallback) ---
+generate_simple_description: |
+  Analyze the following database column name and data type, and provide a single, concise, one-sentence business description of its likely purpose.
+
+  **CRITICAL RULES:**
+  1. Respond with ONLY the raw sentence.
+  2. Do NOT include any preamble.
+
   ---
-  JSON RESPONSE:
+  COLUMN NAME: {column_name}
+  DATA TYPE: {data_type}
+  ---
+  DESCRIPTION:
+
+  # --- Stage 1: Target Schema Semantic Description ---
+generate_target_description: |
+  You are a senior data architect planning a data transformation. Your task is to describe the business purpose of a column in the **target schema**.
+  Infer its meaning by considering its name, type, the overall business context, and how it relates to the columns in the **source schema** (which includes their AI-generated descriptions).
+
+  **CRITICAL RULES:**
+  1. Respond with ONLY a valid JSON object.
+  2. The JSON object must contain "inferred_implication" and "concise_description" keys.
+  ---
+  **CONTEXT FOR ANALYSIS:**
+
+  * Business Context: This data is for a "{business_context}" application.
+  * Full Source Schema (with descriptions): {source_schema_json}
+  * Full Target Schema: {target_schema_json}
+  ---
+  **TARGET COLUMN TO DESCRIBE:**
+
+  * Name: "{column_name}"
+  * Data Type: "{data_type}"
+  ---
+  **JSON RESPONSE:**
 
 # --- Stage 2: Schema Mapping ---
 suggest_schema_mapping: |

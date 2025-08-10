@@ -1,30 +1,53 @@
-# ==============================================================================
-# File 6 of 8: services/etl_services.py
-# Location: refinery_app/services/etl_services.py
-# ==============================================================================
-
+# filename: services/etl_services.py
 import pandas as pd
+import numpy as np
+from multiprocessing import Process, Queue
+from services.data_services import DataSourceConnector
 
 class RecipeCompiler:
-    def compile_script(self, mapping_config: dict, code_snippets: list[str]) -> str:
-        rename_dict = {source: target for target, source in mapping_config.items()}
-        rename_str = f"df = df.rename(columns={rename_dict})"
-        
-        full_script = "# --- Auto-generated ETL Script ---\n\n"
-        full_script += "# Step 1: Rename columns based on mapping\n"
-        full_script += rename_str + "\n\n"
-        full_script += "# Step 2: Apply user-defined transformations\n"
-        full_script += "\n".join(code_snippets)
-        return full_script
+    """Compiles the final Python script from mappings and transformation steps."""
+    def compile_script(self, mapping_config: dict, recipe_steps: list[str]) -> str:
+        script_parts = [
+            "# --- Auto-generated ETL Script ---",
+            "import pandas as pd", "import numpy as np\n"
+        ]
+        if mapping_config:
+            rename_dict_str = "{\n" + ",\n".join([f"    '{source}': '{target}'" for target, source in mapping_config.items()]) + "\n}"
+            script_parts.append("# Step 1: Apply column mappings")
+            script_parts.append(f"df = df.rename(columns={rename_dict_str})\n")
+        if recipe_steps:
+            script_parts.append("# Step 2: Apply transformation recipe")
+            script_parts.extend(recipe_steps)
+        return "\n".join(script_parts)
 
 class AsyncFullETLRunner:
-    def run_etl(self, final_etl_script: str, connector, output_path: str) -> (bool, str):
+    """Executes the full ETL script in a sandboxed process."""
+    def _worker(self, queue, script, connector, output_path):
         try:
-            df = connector.get_data()
-            local_scope = {'df': df, 'pd': pd}
-            exec(final_etl_script, {}, local_scope)
-            final_df = local_scope['df']
+            df = connector.get_dataframe()
+            initial_rows = len(df)
+            exec_globals = {'pd': pd, 'np': np, 'df': df}
+            exec(script, exec_globals)
+            final_df = exec_globals['df']
             final_df.to_csv(output_path, index=False)
-            return True, f"Successfully processed {len(final_df)} rows and saved to {output_path}"
+            message = f"Successfully processed {initial_rows} rows and saved to {output_path}."
+            queue.put({'success': True, 'message': message})
         except Exception as e:
-            return False, f"ETL process failed: {e}"
+            queue.put({'success': False, 'message': f"ETL script failed: {e}"})
+
+    def run_etl(self, script: str, connector: DataSourceConnector, output_path: str, timeout_seconds: int = 60) -> tuple[bool, str]:
+        q = Queue()
+        process = Process(target=self._worker, args=(q, script, connector, output_path))
+        process.start()
+        process.join(timeout=timeout_seconds)
+
+        if process.is_alive():
+            process.terminate()
+            process.join()
+            return False, "Full ETL process timed out after 60 seconds."
+        
+        if q.empty():
+            return False, "ETL process failed without returning a message."
+
+        result = q.get()
+        return result['success'], result['message']
