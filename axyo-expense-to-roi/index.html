@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axyo AI: From Expense to ROI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #000000; 
+            color: #e2e8f0;
+        }
+        .glass-card {
+            background: rgba(13, 13, 13, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 350px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #0D0DC1, #E565AE);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bg-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .shape-1 {
+            position: absolute;
+            top: 10vh;
+            left: 5vw;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(13, 13, 193, 0.3) 0%, rgba(13, 13, 193, 0) 70%);
+            filter: blur(50px);
+            animation: float 15s ease-in-out infinite;
+        }
+        .shape-2 {
+            position: absolute;
+            bottom: 5vh;
+            right: 10vw;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(229, 101, 174, 0.3) 0%, rgba(229, 101, 174, 0) 70%);
+            filter: blur(50px);
+            animation: float 20s ease-in-out infinite reverse;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px) translateX(0px); }
+            50% { transform: translateY(-30px) translateX(20px); }
+            100% { transform: translateY(0px) translateX(0px); }
+        }
+    </style>
+</head>
+<body class="bg-black text-slate-300">
+
+    <div class="bg-shapes">
+        <div class="shape-1"></div>
+        <div class="shape-2"></div>
+    </div>
+
+    <div class="relative container mx-auto p-4 sm:p-8">
+
+        <header class="text-center my-16 md:my-24">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-slate-100 leading-tight">From <span class="gradient-text">Expense</span> to <span class="gradient-text">ROI</span></h1>
+            <p class="mt-4 text-lg md:text-xl text-slate-400 max-w-3xl mx-auto">The New Standard for Business AI</p>
+        </header>
+
+        <section class="my-20">
+            <h2 class="text-3xl font-bold text-center mb-4 text-slate-100">The Three Hurdles of Business AI</h2>
+            <p class="text-center text-slate-400 mb-12 max-w-2xl mx-auto">Every business leader knows they need to use AI, but most efforts get stuck, leading to wasted investment and a growing competitive gap.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="glass-card p-8 rounded-2xl text-center">
+                    <i class="ph-light ph-stop-circle text-5xl text-pink-500 mb-4"></i>
+                    <h3 class="text-xl font-bold text-slate-100 mb-2">The Hurdle of Inaction</h3>
+                    <p class="text-slate-400">Paralyzed by cost and complexity, many companies do nothing, while their competitors get smarter and faster every day.</p>
+                </div>
+                <div class="glass-card p-8 rounded-2xl text-center">
+                    <i class="ph-light ph-compass-tool text-5xl text-yellow-500 mb-4"></i>
+                    <h3 class="text-xl font-bold text-slate-100 mb-2">The Hurdle of Misalignment</h3>
+                    <p class="text-slate-400">Investing in AI without a clear link to core business strategy, chasing hype instead of high-value problems.</p>
+                </div>
+                <div class="glass-card p-8 rounded-2xl text-center">
+                    <i class="ph-light ph-chart-line-down text-5xl text-blue-500 mb-4"></i>
+                    <h3 class="text-xl font-bold text-slate-100 mb-2">The Hurdle of Measurement</h3>
+                    <p class="text-slate-400">Launching initiatives with no way to demonstrate impact, making it impossible to prove ROI or justify investment.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="my-24">
+             <h2 class="text-3xl font-bold text-center mb-4 text-slate-100">Quantifying the Hurdles</h2>
+             <p class="text-center text-slate-400 mb-12 max-w-2xl mx-auto">Recent data from top analysts reveals the true scale of these challenges.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                <div class="glass-card p-8 rounded-2xl">
+                    <h3 class="text-xl font-bold text-center text-slate-100 mb-2">The Inaction Epidemic</h3>
+                    <p class="text-sm text-center text-slate-400 mb-6">A staggering number of small businesses are opting out of AI completely, creating a massive competitive risk.</p>
+                    <div class="chart-container">
+                        <canvas id="inactionChart"></canvas>
+                    </div>
+                    <p class="text-xs text-center text-slate-500 mt-4">Source: NEXT (via Ainvest), April 2025</p>
+                </div>
+                <div class="glass-card p-8 rounded-2xl">
+                    <h3 class="text-xl font-bold text-center text-slate-100 mb-2">The Misalignment Failure Rate</h3>
+                     <p class="text-sm text-center text-slate-400 mb-6">The vast majority of GenAI projects fail to deliver meaningful business impact due to a disconnect from core strategy.</p>
+                    <div class="chart-container">
+                        <canvas id="misalignmentChart"></canvas>
+                    </div>
+                    <p class="text-xs text-center text-slate-500 mt-4">Source: MIT, "The GenAI Divide," 2025</p>
+                </div>
+                 <div class="glass-card p-8 rounded-2xl">
+                    <h3 class="text-xl font-bold text-center text-slate-100 mb-2">The Measurement Gap</h3>
+                    <p class="text-sm text-center text-slate-400 mb-6">Most businesses cannot connect their AI spending to a tangible return, making it impossible to justify investment.</p>
+                    <div class="chart-container">
+                        <canvas id="measurementChart"></canvas>
+                    </div>
+                    <p class="text-xs text-center text-slate-500 mt-4">Source: Boston Consulting Group (via Forbes), Jan 2025</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="my-24 bg-blue-900/10 border border-blue-500/20 text-white p-12 rounded-2xl shadow-2xl">
+            <h2 class="text-3xl font-bold text-center mb-4 text-slate-100">The Unspoken Rule of Business Success</h2>
+            <blockquote class="text-center text-xl md:text-2xl italic text-slate-300 max-w-4xl mx-auto">
+                "You must be able to draw a straight line from the investment to a specific number in your financial plan. This rule is no different for AI."
+            </blockquote>
+            <p class="text-center text-slate-400 mt-6 max-w-3xl mx-auto">If you can't connect AI to a key outcome, you're not making a strategic investment; you're just running an expensive experiment.</p>
+        </section>
+
+        <section class="my-24">
+            <h2 class="text-3xl font-bold text-center mb-4 text-slate-100">The Solution: The Axyo AI Command Center</h2>
+            <p class="text-center text-slate-400 mb-12 max-w-2xl mx-auto">Axyo provides a direct path from AI chaos to financial clarity, turning your role from a spectator to a player.</p>
+            <div class="flex flex-col md:flex-row items-stretch justify-center gap-8">
+                <div class="glass-card p-8 rounded-2xl w-full md:w-1/3 text-center flex flex-col items-center">
+                    <i class="ph-light ph-crosshair text-5xl text-blue-400 mb-4"></i>
+                    <h3 class="text-xl font-bold text-slate-100 mb-2">1. Prioritize with Confidence</h3>
+                    <p class="text-slate-400">Start with your financial health to pinpoint the highest-impact AI opportunities.</p>
+                </div>
+                <div class="glass-card p-8 rounded-2xl w-full md:w-1/3 text-center flex flex-col items-center">
+                    <i class="ph-light ph-rocket-launch text-5xl text-pink-400 mb-4"></i>
+                    <h3 class="text-xl font-bold text-slate-100 mb-2">2. Act with Speed</h3>
+                    <p class="text-slate-400">Launch tailored AI applications in minutes, not months, putting insights into action immediately.</p>
+                </div>
+                <div class="glass-card p-8 rounded-2xl w-full md:w-1/3 text-center flex flex-col items-center">
+                    <i class="ph-light ph-chart-bar text-5xl text-yellow-400 mb-4"></i>
+                    <h3 class="text-xl font-bold text-slate-100 mb-2">3. Measure with Certainty</h3>
+                    <p class="text-slate-400">Create an unbreakable link between AI actions and financial results to see real-time ROI.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="my-24">
+            <h2 class="text-3xl font-bold text-center mb-12 text-slate-100">The Transformation: From Watching to Shaping</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="glass-card p-8 rounded-2xl">
+                    <h3 class="text-xl font-bold text-center text-slate-100 mb-2">Before Axyo: "Watching the Score"</h3>
+                    <p class="text-sm text-center text-slate-400 mb-6">Key metrics like customer retention remain flat as disconnected AI projects fail to impact the business.</p>
+                    <div class="chart-container">
+                        <canvas id="beforeChart"></canvas>
+                    </div>
+                </div>
+                <div class="glass-card p-8 rounded-2xl">
+                    <h3 class="text-xl font-bold text-center text-slate-100 mb-2">After Axyo: "Shaping the Score"</h3>
+                    <p class="text-sm text-center text-slate-400 mb-6">Targeted AI apps drive measurable improvements in the metrics that matter most to your P&L.</p>
+                    <div class="chart-container">
+                        <canvas id="afterChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center my-16">
+             <h2 class="text-3xl md:text-4xl font-extrabold text-slate-100 leading-tight">This is the new standard for <span class="gradient-text">Business AI.</span></h2>
+             <p class="mt-4 text-lg text-slate-400">Axyo AI Command Center: The fastest path from investment to impact.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const palette = {
+            primary: '#0D0DC1', // Iris
+            secondary: '#E565AE', // Flamingo
+            accent: '#FF6B0A', // Gold (using a more vibrant orange for better contrast)
+            grid: 'rgba(255, 255, 255, 0.1)',
+            text: '#cbd5e1' // slate-300
+        };
+
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            } else {
+                return label;
+            }
+        };
+
+        const defaultChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: palette.text,
+                        font: { family: "'Manrope', sans-serif", size: 12 }
+                    }
+                },
+                tooltip: {
+                    callbacks: { title: tooltipTitleCallback },
+                    backgroundColor: '#000000',
+                    titleFont: { family: "'Manrope', sans-serif", size: 14 },
+                    bodyFont: { family: "'Manrope', sans-serif", size: 12 },
+                    padding: 12,
+                    cornerRadius: 8,
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 1
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: palette.text, font: { family: "'Manrope', sans-serif" } },
+                    grid: { display: false }
+                },
+                y: {
+                    ticks: { color: palette.text, font: { family: "'Manrope', sans-serif" } },
+                    grid: { color: palette.grid }
+                }
+            }
+        };
+
+        const doughnutOptions = { ...defaultChartOptions, cutout: '70%', scales: { x: { display: false }, y: { display: false } } };
+
+        new Chart(document.getElementById('inactionChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Do Not Plan to Use AI', 'Plan to Use or Using AI'],
+                datasets: [{
+                    label: '% of Small Businesses',
+                    data: [58, 42],
+                    backgroundColor: [palette.secondary, palette.primary],
+                    borderColor: '#000000',
+                    borderWidth: 4
+                }]
+            },
+            options: doughnutOptions
+        });
+
+        new Chart(document.getElementById('misalignmentChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Failing to Accelerate Revenue', 'Achieving Revenue Acceleration'],
+                datasets: [{
+                    label: '% of GenAI Projects',
+                    data: [95, 5],
+                    backgroundColor: [palette.secondary, palette.accent],
+                    borderColor: '#000000',
+                    borderWidth: 4
+                }]
+            },
+            options: doughnutOptions
+        });
+
+        new Chart(document.getElementById('measurementChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Not Seeing ROI', 'Seeing ROI'],
+                datasets: [{
+                    label: '% of Businesses',
+                    data: [75, 25],
+                    backgroundColor: [palette.secondary, '#5DCDD3'], // Using Sapphire
+                    borderColor: '#000000',
+                    borderWidth: 4
+                }]
+            },
+            options: doughnutOptions
+        });
+        
+        const lineChartConfig = (data, color, label) => ({
+            type: 'line',
+            data: {
+                labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                datasets: [{
+                    label: label,
+                    data: data,
+                    borderColor: color,
+                    backgroundColor: color + '33', // Add alpha for fill
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: color,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                ...defaultChartOptions,
+                plugins: { ...defaultChartOptions.plugins, legend: { display: false } },
+                scales: {
+                    y: {
+                        ...defaultChartOptions.scales.y,
+                        beginAtZero: false,
+                        title: { display: true, text: 'Customer Retention Rate (%)', color: palette.text }
+                    },
+                    x: { ...defaultChartOptions.scales.x }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('beforeChart'), lineChartConfig([85, 84, 84.5, 83], palette.secondary, 'Retention Rate'));
+        new Chart(document.getElementById('afterChart'), lineChartConfig([83, 84, 88, 92], palette.primary, 'Retention Rate'));
+
+    </script>
+</body>
+</html>
