@@ -37,7 +37,7 @@
             }
         }
         .gradient-text {
-            background: linear-gradient(90deg, #0D0DC1, #E565AE);
+            background: linear-gradient(90deg, #0D0DC1 30%, #a75fb5 70%, #E565AE 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -75,6 +75,15 @@
             50% { transform: translateY(-30px) translateX(20px); }
             100% { transform: translateY(0px) translateX(0px); }
         }
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(2rem);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .scroll-animate.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body class="bg-black text-slate-300">
@@ -87,64 +96,58 @@
     <div class="relative container mx-auto p-4 sm:p-8">
 
         <header class="text-center my-16 md:my-24">
-            <h1 class="text-4xl md:text-6xl font-extrabold text-slate-100 leading-tight">From <span class="gradient-text">Expense</span> to <span class="gradient-text">ROI</span></h1>
+            <h1 class="text-5xl md:text-7xl font-extrabold text-slate-100 leading-tight">From <span class="gradient-text">Expense</span> to <span class="gradient-text">ROI</span></h1>
             <p class="mt-4 text-lg md:text-xl text-slate-400 max-w-3xl mx-auto">The New Standard for Business AI</p>
         </header>
 
-        <section class="my-20">
-            <h2 class="text-3xl font-bold text-center mb-4 text-slate-100">The Three Hurdles of Business AI</h2>
-            <p class="text-center text-slate-400 mb-12 max-w-2xl mx-auto">Every business leader knows they need to use AI, but most efforts get stuck, leading to wasted investment and a growing competitive gap.</p>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="glass-card p-8 rounded-2xl text-center">
-                    <i class="ph-light ph-stop-circle text-5xl text-pink-500 mb-4"></i>
-                    <h3 class="text-xl font-bold text-slate-100 mb-2">The Hurdle of Inaction</h3>
-                    <p class="text-slate-400">Paralyzed by cost and complexity, many companies do nothing, while their competitors get smarter and faster every day.</p>
+        <section class="my-24 scroll-animate">
+             <hr class="border-slate-800 mb-16 max-w-2xl mx-auto">
+             <h2 class="text-4xl font-bold text-center mb-4 text-slate-100">The Three Hurdles of Business AI, Quantified</h2>
+             <p class="text-center text-slate-400 mb-12 max-w-3xl mx-auto">Every business leader knows they need AI, but most efforts get stuck. Recent data from top analysts reveals the true scale of these challenges.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="glass-card p-8 rounded-2xl flex flex-col">
+                    <div class="text-center">
+                        <i class="ph-light ph-stop-circle text-5xl text-pink-500 mb-4"></i>
+                        <h3 class="text-2xl font-bold text-slate-100 mb-2">The Hurdle of Inaction</h3>
+                        <p class="text-sm text-slate-400 mb-6">Paralyzed by cost and complexity, a staggering <strong class="text-slate-200">58% of small business owners do not plan to use AI at all.</strong> In fact, adoption has slumped from 42% to just 28% in the last year, showing a clear retreat from the challenge.</p>
+                    </div>
+                    <div class="mt-auto">
+                        <div class="chart-container">
+                            <canvas id="inactionChart"></canvas>
+                        </div>
+                        <p class="text-xs text-center text-slate-500 mt-4">Source: NEXT (via Ainvest), April 2025</p>
+                    </div>
                 </div>
-                <div class="glass-card p-8 rounded-2xl text-center">
-                    <i class="ph-light ph-compass-tool text-5xl text-yellow-500 mb-4"></i>
-                    <h3 class="text-xl font-bold text-slate-100 mb-2">The Hurdle of Misalignment</h3>
-                    <p class="text-slate-400">Investing in AI without a clear link to core business strategy, chasing hype instead of high-value problems.</p>
+                <div class="glass-card p-8 rounded-2xl flex flex-col">
+                    <div class="text-center">
+                        <i class="ph-light ph-compass-tool text-5xl text-yellow-500 mb-4"></i>
+                        <h3 class="text-2xl font-bold text-slate-100 mb-2">The Hurdle of Misalignment</h3>
+                        <p class="text-sm text-slate-400 mb-6">Investing without a clear link to business strategy leads to a dramatic failure rate: a 2025 MIT report revealed that <strong class="text-slate-200">95% of GenAI projects are failing</strong> to achieve meaningful revenue acceleration.</p>
+                    </div>
+                    <div class="mt-auto">
+                        <div class="chart-container">
+                            <canvas id="misalignmentChart"></canvas>
+                        </div>
+                        <p class="text-xs text-center text-slate-500 mt-4">Source: MIT, "The GenAI Divide," 2025</p>
+                    </div>
                 </div>
-                <div class="glass-card p-8 rounded-2xl text-center">
-                    <i class="ph-light ph-chart-line-down text-5xl text-blue-500 mb-4"></i>
-                    <h3 class="text-xl font-bold text-slate-100 mb-2">The Hurdle of Measurement</h3>
-                    <p class="text-slate-400">Launching initiatives with no way to demonstrate impact, making it impossible to prove ROI or justify investment.</p>
+                 <div class="glass-card p-8 rounded-2xl flex flex-col">
+                    <div class="text-center">
+                        <i class="ph-light ph-chart-line-down text-5xl text-blue-500 mb-4"></i>
+                        <h3 class="text-2xl font-bold text-slate-100 mb-2">The Hurdle of Measurement</h3>
+                        <p class="text-sm text-slate-400 mb-6">The inability to connect spending to a tangible return is pervasive, with a 2025 BCG analysis finding that <strong class="text-slate-200">75% of businesses are not seeing an ROI</strong> from their AI initiatives.</p>
+                    </div>
+                    <div class="mt-auto">
+                        <div class="chart-container">
+                            <canvas id="measurementChart"></canvas>
+                        </div>
+                        <p class="text-xs text-center text-slate-500 mt-4">Source: Boston Consulting Group (via Forbes), Jan 2025</p>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section class="my-24">
-             <h2 class="text-3xl font-bold text-center mb-4 text-slate-100">Quantifying the Hurdles</h2>
-             <p class="text-center text-slate-400 mb-12 max-w-2xl mx-auto">Recent data from top analysts reveals the true scale of these challenges.</p>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
-                <div class="glass-card p-8 rounded-2xl">
-                    <h3 class="text-xl font-bold text-center text-slate-100 mb-2">The Inaction Epidemic</h3>
-                    <p class="text-sm text-center text-slate-400 mb-6">A staggering number of small businesses are opting out of AI completely, creating a massive competitive risk.</p>
-                    <div class="chart-container">
-                        <canvas id="inactionChart"></canvas>
-                    </div>
-                    <p class="text-xs text-center text-slate-500 mt-4">Source: NEXT (via Ainvest), April 2025</p>
-                </div>
-                <div class="glass-card p-8 rounded-2xl">
-                    <h3 class="text-xl font-bold text-center text-slate-100 mb-2">The Misalignment Failure Rate</h3>
-                     <p class="text-sm text-center text-slate-400 mb-6">The vast majority of GenAI projects fail to deliver meaningful business impact due to a disconnect from core strategy.</p>
-                    <div class="chart-container">
-                        <canvas id="misalignmentChart"></canvas>
-                    </div>
-                    <p class="text-xs text-center text-slate-500 mt-4">Source: MIT, "The GenAI Divide," 2025</p>
-                </div>
-                 <div class="glass-card p-8 rounded-2xl">
-                    <h3 class="text-xl font-bold text-center text-slate-100 mb-2">The Measurement Gap</h3>
-                    <p class="text-sm text-center text-slate-400 mb-6">Most businesses cannot connect their AI spending to a tangible return, making it impossible to justify investment.</p>
-                    <div class="chart-container">
-                        <canvas id="measurementChart"></canvas>
-                    </div>
-                    <p class="text-xs text-center text-slate-500 mt-4">Source: Boston Consulting Group (via Forbes), Jan 2025</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="my-24 bg-blue-900/10 border border-blue-500/20 text-white p-12 rounded-2xl shadow-2xl">
+        <section class="my-24 bg-slate-800 border border-slate-700 text-white p-12 rounded-2xl shadow-2xl scroll-animate">
             <h2 class="text-3xl font-bold text-center mb-4 text-slate-100">The Unspoken Rule of Business Success</h2>
             <blockquote class="text-center text-xl md:text-2xl italic text-slate-300 max-w-4xl mx-auto">
                 "You must be able to draw a straight line from the investment to a specific number in your financial plan. This rule is no different for AI."
@@ -152,8 +155,9 @@
             <p class="text-center text-slate-400 mt-6 max-w-3xl mx-auto">If you can't connect AI to a key outcome, you're not making a strategic investment; you're just running an expensive experiment.</p>
         </section>
 
-        <section class="my-24">
-            <h2 class="text-3xl font-bold text-center mb-4 text-slate-100">The Solution: The Axyo AI Command Center</h2>
+        <section class="my-24 scroll-animate">
+            <hr class="border-slate-800 mb-16 max-w-2xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-4 text-slate-100">The Solution: The Axyo AI Command Center</h2>
             <p class="text-center text-slate-400 mb-12 max-w-2xl mx-auto">Axyo provides a direct path from AI chaos to financial clarity, turning your role from a spectator to a player.</p>
             <div class="flex flex-col md:flex-row items-stretch justify-center gap-8">
                 <div class="glass-card p-8 rounded-2xl w-full md:w-1/3 text-center flex flex-col items-center">
@@ -174,8 +178,9 @@
             </div>
         </section>
 
-        <section class="my-24">
-            <h2 class="text-3xl font-bold text-center mb-12 text-slate-100">The Transformation: From Watching to Shaping</h2>
+        <section class="my-24 scroll-animate">
+            <hr class="border-slate-800 mb-16 max-w-2xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-12 text-slate-100">The Transformation: From Watching to Shaping</h2>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div class="glass-card p-8 rounded-2xl">
                     <h3 class="text-xl font-bold text-center text-slate-100 mb-2">Before Axyo: "Watching the Score"</h3>
@@ -185,7 +190,7 @@
                     </div>
                 </div>
                 <div class="glass-card p-8 rounded-2xl">
-                    <h3 class="text-xl font-bold text-center text-slate-100 mb-2">After Axyo: "Shaping the Score"</h3>
+                    <h3 class="text-xl font-bold text-center text-slate-100 mb-2">After Axyo: "Shaping the Outcomes"</h3>
                     <p class="text-sm text-center text-slate-400 mb-6">Targeted AI apps drive measurable improvements in the metrics that matter most to your P&L.</p>
                     <div class="chart-container">
                         <canvas id="afterChart"></canvas>
@@ -194,18 +199,25 @@
             </div>
         </section>
 
-        <footer class="text-center my-16">
-             <h2 class="text-3xl md:text-4xl font-extrabold text-slate-100 leading-tight">This is the new standard for <span class="gradient-text">Business AI.</span></h2>
+        <footer class="text-center my-16 scroll-animate">
+             <hr class="border-slate-800 mb-16 max-w-2xl mx-auto">
+             <h2 class="text-4xl md:text-5xl font-extrabold text-slate-100 leading-tight">This is the new standard for <span class="gradient-text">Business AI.</span></h2>
              <p class="mt-4 text-lg text-slate-400">Axyo AI Command Center: The fastest path from investment to impact.</p>
         </footer>
 
     </div>
 
     <script>
+        const pastelPalette = {
+            primary: '#8586d6', // Lighter Iris
+            secondary: '#f2b2d4', // Lighter Flamingo
+            accent: '#ffb57a', // Lighter Gold/Orange
+            sapphire: '#aee6e8', // Lighter Sapphire
+        };
+
         const palette = {
             primary: '#0D0DC1', // Iris
             secondary: '#E565AE', // Flamingo
-            accent: '#FF6B0A', // Gold (using a more vibrant orange for better contrast)
             grid: 'rgba(255, 255, 255, 0.1)',
             text: '#cbd5e1' // slate-300
         };
@@ -263,7 +275,7 @@
                 datasets: [{
                     label: '% of Small Businesses',
                     data: [58, 42],
-                    backgroundColor: [palette.secondary, palette.primary],
+                    backgroundColor: [pastelPalette.secondary, pastelPalette.primary],
                     borderColor: '#000000',
                     borderWidth: 4
                 }]
@@ -278,7 +290,7 @@
                 datasets: [{
                     label: '% of GenAI Projects',
                     data: [95, 5],
-                    backgroundColor: [palette.secondary, palette.accent],
+                    backgroundColor: [pastelPalette.secondary, pastelPalette.accent],
                     borderColor: '#000000',
                     borderWidth: 4
                 }]
@@ -293,7 +305,7 @@
                 datasets: [{
                     label: '% of Businesses',
                     data: [75, 25],
-                    backgroundColor: [palette.secondary, '#5DCDD3'], // Using Sapphire
+                    backgroundColor: [pastelPalette.secondary, pastelPalette.sapphire],
                     borderColor: '#000000',
                     borderWidth: 4
                 }]
@@ -331,8 +343,20 @@
             }
         });
 
-        new Chart(document.getElementById('beforeChart'), lineChartConfig([85, 84, 84.5, 83], palette.secondary, 'Retention Rate'));
-        new Chart(document.getElementById('afterChart'), lineChartConfig([83, 84, 88, 92], palette.primary, 'Retention Rate'));
+        new Chart(document.getElementById('beforeChart'), lineChartConfig([85, 84, 84.5, 83], pastelPalette.secondary, 'Retention Rate'));
+        new Chart(document.getElementById('afterChart'), lineChartConfig([83, 84, 88, 92], pastelPalette.primary, 'Retention Rate'));
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.scroll-animate').forEach(el => {
+            observer.observe(el);
+        });
 
     </script>
 </body>
