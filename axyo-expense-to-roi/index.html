@@ -122,26 +122,26 @@
                     <div class="text-center">
                         <i class="ph-light ph-compass-tool text-5xl text-yellow-500 mb-4"></i>
                         <h3 class="text-2xl font-bold text-slate-100 mb-2">The Hurdle of Misalignment</h3>
-                        <p class="text-sm text-slate-400 mb-6">Investing without a clear link to business strategy leads to a dramatic failure rate: a 2025 MIT report revealed that <strong class="text-slate-200">95% of GenAI projects are failing</strong> to achieve meaningful revenue acceleration.</p>
+                        <p class="text-sm text-slate-400 mb-6">Many companies start their AI journey running in the wrong direction. <strong class="text-slate-200">42% of organizations cite an "inadequate financial justification or business case"</strong> as a major adoption challenge.</p>
                     </div>
                     <div class="mt-auto">
                         <div class="chart-container">
                             <canvas id="misalignmentChart"></canvas>
                         </div>
-                        <p class="text-xs text-center text-slate-500 mt-4">Source: MIT, "The GenAI Divide," 2025</p>
+                        <p class="text-xs text-center text-slate-500 mt-4">Source: IBM, "AI adoption challenges," 2025</p>
                     </div>
                 </div>
                  <div class="glass-card p-8 rounded-2xl flex flex-col">
                     <div class="text-center">
                         <i class="ph-light ph-chart-line-down text-5xl text-blue-500 mb-4"></i>
                         <h3 class="text-2xl font-bold text-slate-100 mb-2">The Hurdle of Measurement</h3>
-                        <p class="text-sm text-slate-400 mb-6">The inability to connect spending to a tangible return is pervasive, with a 2025 BCG analysis finding that <strong class="text-slate-200">75% of businesses are not seeing an ROI</strong> from their AI initiatives.</p>
+                        <p class="text-sm text-slate-400 mb-6">Because they start without a clear business case, the vast majority fail to deliver value. A 2025 MIT report revealed that <strong class="text-slate-200">95% of GenAI projects are failing</strong> to achieve meaningful revenue.</p>
                     </div>
                     <div class="mt-auto">
                         <div class="chart-container">
                             <canvas id="measurementChart"></canvas>
                         </div>
-                        <p class="text-xs text-center text-slate-500 mt-4">Source: Boston Consulting Group (via Forbes), Jan 2025</p>
+                        <p class="text-xs text-center text-slate-500 mt-4">Source: MIT, "The GenAI Divide," 2025</p>
                     </div>
                 </div>
             </div>
@@ -240,7 +240,9 @@
                     position: 'bottom',
                     labels: {
                         color: palette.text,
-                        font: { family: "'Manrope', sans-serif", size: 12 }
+                        font: { family: "'Manrope', sans-serif", size: 12 },
+                        boxWidth: 12,
+                        padding: 20
                     }
                 },
                 tooltip: {
@@ -271,7 +273,7 @@
         new Chart(document.getElementById('inactionChart'), {
             type: 'doughnut',
             data: {
-                labels: ['Do Not Plan to Use AI', 'Plan to Use or Using AI'],
+                labels: ['No AI Plan', 'Has AI Plan'],
                 datasets: [{
                     label: '% of Small Businesses',
                     data: [58, 42],
@@ -286,10 +288,10 @@
         new Chart(document.getElementById('misalignmentChart'), {
             type: 'doughnut',
             data: {
-                labels: ['Failing to Accelerate Revenue', 'Achieving Revenue Acceleration'],
+                labels: ['No Business Case', 'Has Business Case'],
                 datasets: [{
-                    label: '% of GenAI Projects',
-                    data: [95, 5],
+                    label: '% of Organizations',
+                    data: [42, 58],
                     backgroundColor: [pastelPalette.secondary, pastelPalette.accent],
                     borderColor: '#000000',
                     borderWidth: 4
@@ -301,10 +303,10 @@
         new Chart(document.getElementById('measurementChart'), {
             type: 'doughnut',
             data: {
-                labels: ['Not Seeing ROI', 'Seeing ROI'],
+                labels: ['No Revenue Impact', 'Revenue Impact'],
                 datasets: [{
-                    label: '% of Businesses',
-                    data: [75, 25],
+                    label: '% of GenAI Projects',
+                    data: [95, 5],
                     backgroundColor: [pastelPalette.secondary, pastelPalette.sapphire],
                     borderColor: '#000000',
                     borderWidth: 4
