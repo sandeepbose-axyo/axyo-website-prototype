@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Workshop Deck</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Added Chart.js for the new carousel charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .slide {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s;
+            padding: 2rem 2rem 6rem 2rem; /* Added bottom padding for footer */
+            opacity: 0;
+            visibility: hidden;
+        }
+        .slide.active {
+            transform: translateX(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        .slide.prev-slide {
+            transform: translateX(-100%);
+        }
+        .slide.next-slide {
+            transform: translateX(100%);
+        }
+        .slide-content {
+            width: 100%;
+            max-width: 1200px;
+        }
+        .nav-button {
+            position: absolute;
+            bottom: 5rem; /* Adjusted position to be above the footer */
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            border-radius: 9999px;
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 30;
+            transition: background 0.2s;
+        }
+        .nav-button:hover {
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .prev { left: 2rem; }
+        .next { right: 2rem; }
+        .fade-in {
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+        .modal-overlay.visible .modal-content {
+            transform: scale(1);
+        }
+        
+        /* Carousel Styles for Slide 6 */
+        .kpi-carousel-container {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 2rem;
+            align-items: center;
+        }
+        .kpi-carousel-text-panel {
+            position: relative;
+            height: 300px; /* Fixed height for smooth transitions */
+        }
+        .kpi-carousel-text {
+            position: absolute;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            visibility: hidden;
+        }
+        .kpi-carousel-text.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .kpi-carousel-visuals {
+            overflow: hidden;
+            position: relative;
+            border-radius: 1.5rem;
+        }
+        .kpi-carousel-track {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .kpi-carousel-card {
+            width: 100%;
+            flex-shrink: 0;
+            padding: 1.5rem;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .kpi-carousel-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .kpi-carousel-nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 9999px;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .kpi-carousel-nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .kpi-carousel-nav-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        /* Styles for Data Fusion Diagram on Card 3 */
+        .data-source {
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.875rem;
+        }
+        /* New styles for the flipper cards on Slide 2 */
+.flip-card {
+    background-color: transparent;
+    width: 100%;
+    height: 300px; /* Set a fixed height for the cards */
+    perspective: 1000px; /* 3D effect */
+    cursor: pointer;
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+/* This class is added by JS on click */
+.flip-card.is-flipped .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden; /* Safari */
+    backface-visibility: hidden;
+    border-radius: 1.5rem; /* Corresponds to rounded-3xl */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    text-align: center;
+}
+
+.flip-card-back {
+    transform: rotateY(180deg);
+}
+/* Styles for revealable content */
+.reveal-on-click {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out, visibility 0.5s;
+}
+.reveal-on-click.revealed {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+
+    <div id="presentation-container" class="relative w-full h-screen">
+
+        <!-- Slide 1: Title Slide -->
+        <div class="slide active" data-slide="1">
+            <div class="absolute inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 opacity-80"></div>
+            <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1554141322-20a20f089c26?q=80&w=2080&auto=format&fit=crop'); background-blend-mode: overlay; opacity: 0.1;"></div>
+            <div class="slide-content text-center relative z-10">
+                <div class="glassmorphism rounded-3xl p-8 md:p-16 max-w-4xl mx-auto fade-in">
+                    <h2 class="text-xl md:text-2xl font-semibold text-indigo-300 tracking-widest uppercase">MICA Workshop</h2>
+                    <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold my-4 leading-tight">
+                        From Customer Insights to Intelligent Action
+                    </h1>
+                    <p class="text-lg md:text-xl text-gray-300 mt-6 max-w-2xl mx-auto">
+                        Harnessing Generative AI's Creativity and Predictive AI's Foresight
+                    </p>
+                    <div class="mt-12 border-t border-indigo-400/30 pt-6">
+                        <p class="text-lg font-semibold">Sandeep Bose</p>
+                        <img src="images/Axyo logo, name on the side, transparent - for dark bg.png" alt="Axyo Logo" class="h-20 mx-auto mb-4">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!-- Slide 2: Agenda (Interactive Flipper Cards) -->
+<div class="slide" data-slide="2">
+    <div class="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-900 to-black"></div>
+    <div class="slide-content text-center relative z-10">
+        <h2 class="text-xl md:text-2xl font-semibold text-purple-300 tracking-widest uppercase mb-4">Our Journey Today</h2>
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-12">Three Steps to Intelligent Action</h1>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <!-- Card 1 -->
+            <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front glassmorphism border border-purple-500/50 bg-purple-500/10">
+                        <svg class="w-16 h-16 mb-4 text-purple-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" /></svg>
+                        <h3 class="text-4xl font-bold">1. The Problem</h3>
+                    </div>
+                    <div class="flip-card-back glassmorphism border border-purple-400 bg-purple-900/20">
+                        <p class="text-2xl font-semibold text-gray-200">Exploring the limits of traditional analytics and why they leave us asking, "So what?"</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front glassmorphism border border-pink-500/50 bg-pink-500/10">
+                         <svg class="w-16 h-16 mb-4 text-pink-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+                         <h3 class="text-4xl font-bold text-center">2. The Dream & Hurdle</h3>
+                    </div>
+                    <div class="flip-card-back glassmorphism border border-pink-400 bg-pink-900/20">
+                        <p class="text-2xl font-semibold text-gray-200">Using GenAI as a "strategic co-pilot" to chase the "Segment of One"—and the challenge it creates.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="flip-card" onclick="this.classList.toggle('is-flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front glassmorphism border border-indigo-500/50 bg-indigo-500/10">
+                        <svg class="w-16 h-16 mb-4 text-indigo-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <h3 class="text-4xl font-bold">3. The Real Solution</h3>
+                    </div>
+                    <div class="flip-card-back glassmorphism border border-indigo-400 bg-indigo-900/20">
+                        <p class="text-2xl font-semibold text-gray-200">Mastering intelligent action by focusing on timing, framing, and discovery.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+        
+        <!-- Slide 3: Part 1 Intro -->
+        <div class="slide" data-slide="3">
+            <div class="absolute inset-0 bg-gradient-to-br from-gray-900 to-slate-800"></div>
+            <div class="slide-content text-left relative z-10 grid md:grid-cols-2 gap-16 items-center">
+                <div class="fade-in">
+                    <h2 class="text-lg font-semibold text-purple-300 tracking-widest uppercase">Part 1: The Problem</h2>
+                    <h1 class="text-5xl font-extrabold mt-4">The Rear-View Mirror & The Data-First Fallacy</h1>
+                    <p class="text-xl text-gray-300 mt-6">Traditional analytics are great for looking backwards, but they often lead to a dead end: insights without a clear path to action.</p>
+                </div>
+                <div class="flex justify-center items-center fade-in" style="animation-delay: 0.5s;">
+                    <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2070&auto=format&fit=crop" class="rounded-3xl shadow-2xl shadow-purple-900/20" alt="Code on a screen" onerror="this.onerror=null;this.src='https://placehold.co/600x400/111827/FFFFFF?text=Image';">
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: The Rear-View Mirror -->
+        <div class="slide" data-slide="4">
+            <div class="absolute inset-0 bg-gray-900"></div>
+            <div class="slide-content text-center relative z-10">
+                <h1 class="text-5xl font-extrabold mb-8">The "Rear-View Mirror"</h1>
+                <p class="text-2xl text-gray-300 max-w-4xl mx-auto mb-12">Traditional BI is excellent at answering "What happened?" but it's reactive. By the time you have an insight, the opportunity may have passed.</p>
+                <div class="glassmorphism rounded-3xl p-8 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="text-left">
+                        <h3 class="text-2xl font-bold text-purple-300 mb-4">Typical Questions We Can Answer:</h3>
+                        <ul class="space-y-3 text-lg text-gray-200">
+                            <li class="flex items-start"><span class="text-purple-400 mr-3 mt-1">&#10148;</span> What were our top-selling products last quarter?</li>
+                            <li class="flex items-start"><span class="text-purple-400 mr-3 mt-1">&#10148;</span> Which marketing campaign had the highest Click-Through Rate?</li>
+                            <li class="flex items-start"><span class="text-purple-400 mr-3 mt-1">&#10148;</span> What is the demographic profile of our average customer?</li>
+                        </ul>
+                    </div>
+                    <div class="flex justify-center">
+                        <img src="images/rearview mirror.jpg" class="rounded-2xl shadow-lg" alt="Rear-view mirror" onerror="this.onerror=null;this.src='https://placehold.co/600x400/111827/FFFFFF?text=Image';">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: The "So What?" Problem -->
+        <div class="slide" data-slide="5">
+            <div class="absolute inset-0 bg-gradient-to-br from-purple-900 via-black to-slate-900"></div>
+            <div class="slide-content text-center relative z-10">
+                <h2 class="text-2xl font-semibold text-pink-300 tracking-widest uppercase mb-4">Interactive Exercise</h2>
+                <h1 class="text-5xl font-extrabold mb-8">The "So What?" Problem</h1>
+                <div class="glassmorphism rounded-3xl p-12 max-w-4xl mx-auto text-left">
+                    <p class="text-xl mb-6">Imagine you are the marketing team at our fictional brand, <strong class="text-pink-300">"Aura"</strong>.</p>
+                    <p class="text-2xl font-semibold bg-gray-800/50 p-6 rounded-xl">Your data science team hands you a list of 5,000 customers who have a 92% probability of churning in the next 30 days.</p>
+                    <p class="text-3xl font-bold mt-8 text-center text-pink-300 animate-pulse">Now what do you do?</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW Slide 6: The Insight-to-Action Gap -->
+<div class="slide" data-slide="6">
+    <div class="absolute inset-0 bg-gray-900"></div>
+    <div class="slide-content text-center relative z-10">
+        <h1 class="text-5xl font-extrabold mb-8 fade-in">The Insight-to-Action Gap</h1>
+        <p class="text-2xl text-gray-300 max-w-4xl mx-auto mb-12 fade-in" style="animation-delay: 0.2s;">The real problem isn't getting more data. It's the struggle to turn the insights we already have into confident, timely, and effective action.</p>
+        <div class="flex justify-center items-center space-x-4 max-w-4xl mx-auto fade-in" style="animation-delay: 0.4s;">
+            <div class="text-center p-4">
+                <div class="text-2xl font-bold bg-blue-500/20 text-blue-300 p-6 rounded-xl">Data</div>
+            </div>
+            <div class="text-4xl text-gray-500 animate-pulse">&rarr;</div>
+            <div class="text-center p-4">
+                <div class="text-2xl font-bold bg-purple-500/20 text-purple-300 p-6 rounded-xl">Insight</div>
+            </div>
+            <div class="text-4xl text-red-500 mx-4 font-extrabold">X</div>
+            <div class="text-center p-4">
+                <div class="text-2xl font-bold bg-gray-700 text-gray-500 p-6 rounded-xl">Action</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- Slide 7: Super KPI Carousel (UPGRADED) -->
+        <div class="slide" data-slide="6">
+            <div class="absolute inset-0 bg-gray-900"></div>
+            <div class="slide-content relative z-10 w-full">
+                <div class="text-center mb-10">
+                    <h1 class="text-5xl font-extrabold mb-4">From Static KPIs to Super KPIs</h1>
+                    <p class="text-xl text-gray-300 max-w-4xl mx-auto">A standard KPI tells you what happened. A Super KPI is a living command center that lets you shape what happens next.</p>
+                </div>
+
+                <div class="kpi-carousel-container max-w-6xl mx-auto">
+                    <!-- Left Panel: Text Descriptions & Controls -->
+                    <div class="kpi-carousel-text-controls">
+                        <div class="kpi-carousel-text-panel">
+                            <div class="kpi-carousel-text active" data-text-for="0">
+                                <span class="text-sm font-semibold text-purple-300">STEP 1: THE "WHAT"</span>
+                                <h3 class="text-3xl font-bold mt-2">Standard KPI</h3>
+                                <p class="text-gray-300 mt-4 text-lg">We start with a basic, rear-view metric. It's a number, a single data point that tells us what happened. It's important, but it lacks story and context.</p>
+                            </div>
+                            <div class="kpi-carousel-text" data-text-for="1">
+                                <span class="text-sm font-semibold text-purple-300">STEP 2: THE "WHY"</span>
+                                <h3 class="text-3xl font-bold mt-2">Diagnosis</h3>
+                                <p class="text-gray-300 mt-4 text-lg">The system automatically surfaces trends, anomalies, and correlations. It moves beyond "what" to "why," explaining the drivers behind the number.</p>
+                            </div>
+                            <div class="kpi-carousel-text" data-text-for="2">
+                                <span class="text-sm font-semibold text-pink-300">STEP 3: THE "WHOLE PICTURE"</span>
+                                <h3 class="text-3xl font-bold mt-2">Context</h3>
+                                <p class="text-gray-300 mt-4 text-lg">Proactively combine internal data (CRM, ERP) with external signals (market trends, weather) to create a complete, 360° view of performance drivers.</p>
+                            </div>
+                            <div class="kpi-carousel-text" data-text-for="3">
+                                <span class="text-sm font-semibold text-pink-300">STEP 4: THE "WHAT'S NEXT"</span>
+                                <h3 class="text-3xl font-bold mt-2">Foresight</h3>
+                                <p class="text-gray-300 mt-4 text-lg">Generate transparent, driver-based predictions. The system not only shows the future forecast but also ranks the factors contributing to it.</p>
+                            </div>
+                            <div class="kpi-carousel-text" data-text-for="4">
+                                <span class="text-sm font-semibold text-indigo-300">STEP 5: "SHAPE THE OUTCOME"</span>
+                                <h3 class="text-3xl font-bold mt-2">Command</h3>
+                                <p class="text-gray-300 mt-4 text-lg">Turn the KPI into an interactive control center. Run intelligent "what-if" scenarios and conduct sensitivity analysis to see the impact of your decisions before you make them.</p>
+                            </div>
+                        </div>
+                        <div class="kpi-carousel-controls">
+                            <!-- New Navigation Buttons -->
+                            <button id="kpi-prev-btn" class="kpi-carousel-nav-btn disabled">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            </button>
+                            <button id="kpi-next-btn" class="kpi-carousel-nav-btn">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Right Panel: Visual Carousel -->
+                    <div class="kpi-carousel-visuals glassmorphism">
+                        <div id="kpi-carousel-track" class="kpi-carousel-track">
+                            <!-- Card 1: Standard KPI -->
+                            <div class="kpi-carousel-card">
+                                <p class="text-lg text-gray-400 text-center">Last Month's Sales</p>
+                                <p class="text-8xl font-extrabold text-white text-center">$500,000</p>
+                            </div>
+                            <!-- Card 2: Diagnosis (Upgraded) -->
+                            <div class="kpi-carousel-card p-6 flex flex-col">
+                                <div class="flex-grow h-2/3">
+                                    <canvas id="kpi-chart-diagnosis"></canvas>
+                                </div>
+                                <div class="flex-shrink-0 h-1/3 pt-4 mt-4 border-t border-gray-600/50 text-center">
+                                    <h4 class="font-semibold text-gray-300 mb-2">Key Insights</h4>
+                                    <div class="text-sm grid grid-cols-2 gap-2 text-left">
+                                        <p><span class="font-bold text-purple-300">Trend:</span> Stable Growth</p>
+                                        <p><span class="font-bold text-red-400">Anomaly:</span> Dip in Week 3</p>
+                                        <p><span class="font-bold text-teal-300">Correlation:</span> High with Campaign B</p>
+                                        <p><span class="font-bold text-gray-400">Note:</span> Seasonality adjusted</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Card 3: Context (Upgraded & Centered) -->
+                            <div class="kpi-carousel-card p-6 flex flex-col items-center justify-center">
+                                <div class="w-full max-w-md">
+                                    <div class="text-center mb-6">
+                                        <h4 class="font-bold text-xl text-white">Data Fusion</h4>
+                                        <p class="text-sm text-gray-400">Internal & External Signals</p>
+                                    </div>
+                                    <div class="w-full flex items-center">
+                                        <div class="space-y-2 text-right flex-1">
+                                            <div class="data-source text-blue-300 border-blue-500/50">CRM Data</div>
+                                            <div class="data-source text-green-300 border-green-500/50">ERP Data</div>
+                                            <div class="data-source text-yellow-300 border-yellow-500/50">Web Analytics</div>
+                                        </div>
+                                        <svg class="w-12 h-12 text-gray-500 mx-2 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M4 12h16m-7-7l7 7-7 7"/></svg>
+                                        <div class="w-24 h-24 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-300 font-bold text-lg flex-shrink-0">
+                                            Super KPI
+                                        </div>
+                                        <svg class="w-12 h-12 text-gray-500 mx-2 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M20 12H4m7 7l-7-7 7-7"/></svg>
+                                        <div class="space-y-2 text-left flex-1">
+                                            <div class="data-source text-pink-300 border-pink-500/50">Market Trends</div>
+                                            <div class="data-source text-teal-300 border-teal-500/50">Weather Data</div>
+                                            <div class="data-source text-orange-300 border-orange-500/50">Economic Data</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Card 4: Foresight (Upgraded) -->
+                            <div class="kpi-carousel-card p-6 flex flex-col">
+                                <div class="flex-grow h-1/2">
+                                    <canvas id="kpi-chart-foresight"></canvas>
+                                </div>
+                                <div class="flex-shrink-0 h-1/2 pt-4 mt-4 border-t border-gray-600/50">
+                                    <h4 class="text-center font-semibold text-gray-300 mb-2">Ranked Contributing Factors</h4>
+                                    <canvas id="kpi-chart-factors"></canvas>
+                                </div>
+                            </div>
+                            <!-- Card 5: Command (LAYOUT FIXED) -->
+                            <div class="kpi-carousel-card p-0 relative overflow-hidden">
+                                <div class="p-4 h-full w-full">
+                                    <canvas id="kpi-chart-command"></canvas>
+                                </div>
+                                <div class="absolute bottom-0 left-0 right-0 p-4 bg-gray-900 bg-opacity-50">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="kpi-command-slider-spend" class="text-sm text-gray-300">Marketing Boost: <span id="kpi-slider-value-spend" class="font-bold text-white">0%</span></label>
+                                            <input type="range" id="kpi-command-slider-spend" min="-10" max="10" value="0" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer mt-1">
+                                        </div>
+                                        <div>
+                                            <label for="kpi-command-slider-discount" class="text-sm text-gray-300">Discount %: <span id="kpi-slider-value-discount" class="font-bold text-white">0%</span></label>
+                                            <input type="range" id="kpi-command-slider-discount" min="0" max="15" value="0" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer mt-1">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       <!-- Slide 7: Part 2 Intro -->
+        <div class="slide" data-slide="7">
+            <div class="absolute inset-0 bg-gradient-to-br from-slate-800 to-gray-900"></div>
+            <div class="slide-content text-left relative z-10 grid md:grid-cols-2 gap-16 items-center">
+                <div class="fade-in">
+                    <h2 class="text-lg font-semibold text-pink-300 tracking-widest uppercase">Part 2: The Dream & The Hurdle</h2>
+                    <h1 class="text-5xl font-extrabold mt-4">The AI Co-Pilot & The "Segment of One"</h1>
+                    <p class="text-xl text-gray-300 mt-6">Let's shift from analyzing the past to architecting the future, using AI as a creative partner to achieve perfect customer understanding.</p>
+                </div>
+                <div class="flex justify-center items-center fade-in" style="animation-delay: 0.5s;">
+                    <img src="https://images.unsplash.com/photo-1677756119517-756a188d2d94?q=80&w=2070&auto=format&fit=crop" class="rounded-3xl shadow-2xl shadow-pink-900/20" alt="AI art" onerror="this.onerror=null;this.src='https://placehold.co/600x400/111827/FFFFFF?text=Image';">
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: AI Co-Pilot for Brainstorming (Reframed) -->
+        <div class="slide" data-slide="8">
+            <div class="absolute inset-0 bg-gray-900"></div>
+            <div class="slide-content text-center relative z-10">
+                <h1 class="text-5xl font-extrabold mb-8">AI as a Strategic Co-Pilot</h1>
+                <p class="text-2xl text-gray-300 max-w-4xl mx-auto mb-12">Instead of asking AI for answers, we use it to ask better questions. It becomes a tireless brainstorming partner, helping us see beyond our own biases.</p>
+                <div class="glassmorphism rounded-3xl p-8 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="text-left">
+                        <h3 class="text-2xl font-bold text-indigo-300 mb-4">The Process:</h3>
+                        <p class="text-lg text-gray-200">We give the AI a rich business context—our goals, our brand, our challenges. In return, it generates a vast landscape of potential customer segments and motivations we may have never considered.</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-center">
+                        <span class="bg-indigo-500/20 text-indigo-200 py-2 px-4 rounded-full">The Conscious Maximalists</span>
+                        <span class="bg-indigo-500/20 text-indigo-200 py-2 px-4 rounded-full">The Upcyclers</span>
+                        <span class="bg-indigo-500/20 text-indigo-200 py-2 px-4 rounded-full">The Gift Givers</span>
+                        <span class="bg-indigo-500/20 text-indigo-200 py-2 px-4 rounded-full">Capsule Wardrobe Builders</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: From Micro-Segments to Segment of One (NEW) -->
+        <div class="slide" data-slide="9">
+            <div class="absolute inset-0 bg-gray-900"></div>
+            <div class="slide-content text-center relative z-10">
+                <h1 class="text-5xl font-extrabold mb-12">The Leap to a "Segment of One"</h1>
+                <div class="flex items-center justify-center max-w-4xl mx-auto">
+                    <div class="text-center p-4">
+                        <h3 class="text-2xl font-bold">Micro-Segments</h3>
+                        <p class="text-gray-400">Groups based on shared motivations</p>
+                        <div class="mt-4 space-y-2">
+                           <div class="bg-indigo-500/20 text-indigo-200 p-3 rounded-lg">"The Upcyclers"</div>
+                           <div class="bg-indigo-500/20 text-indigo-200 p-3 rounded-lg">"The Gift Givers"</div>
+                        </div>
+                    </div>
+                    <div class="text-5xl font-bold text-pink-400 mx-8 animate-pulse">&rarr;</div>
+                    <div class="text-center p-4">
+                        <h3 class="text-2xl font-bold">Segment of One</h3>
+                        <p class="text-gray-400">Individuals scored for unique intent</p>
+                        <div class="mt-4 space-y-2">
+                           <div class="bg-pink-500/20 text-pink-200 p-3 rounded-lg">Customer #1234</div>
+                           <div class="bg-pink-500/20 text-pink-200 p-3 rounded-lg">Customer #5678</div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-xl text-gray-300 mt-12 max-w-3xl mx-auto">Generative AI helps us define the <strong class="text-indigo-300">"who."</strong> Predictive AI takes over to understand the <strong class="text-pink-300">"individual,"</strong> scoring every single customer against these segments to predict their specific, next best action.</p>
+            </div>
+        </div>
+
+<!-- Slide 11: The "But Wait..." Moment -->
+<div class="slide" data-slide="11" onclick="document.getElementById('twist-card').classList.add('revealed')">
+    <div class="absolute inset-0 bg-gradient-to-br from-pink-900 via-black to-slate-900"></div>
+    <div class="slide-content text-center relative z-10">
+        <h1 class="text-6xl font-extrabold mb-8 fade-in">The Dream is Achieved.</h1>
+        <p class="text-2xl text-gray-300 max-w-4xl mx-auto fade-in" style="animation-delay: 0.2s;">We now have a unique, predictive understanding of every single customer.</p>
+        <div class="my-12 text-7xl animate-pulse fade-in" style="animation-delay: 0.4s;">...</div>
+        <div id="twist-card" class="glassmorphism rounded-3xl p-12 max-w-4xl mx-auto reveal-on-click">
+            <h2 class="text-4xl font-bold text-pink-300">But Wait...</h2>
+            <p class="text-2xl mt-4">Aura only sells 200 items. Our actions are finite. What is the point of infinite understanding if our ability to act is limited?</p>
+        </div>
+    </div>
+</div>
+
+        <!-- Slide 12: Part 3 Intro / The "Aha!" Moment -->
+        <div class="slide" data-slide="11">
+            <div class="absolute inset-0 bg-gradient-to-br from-slate-800 to-gray-900"></div>
+            <div class="slide-content text-left relative z-10 grid md:grid-cols-2 gap-16 items-center">
+                <div class="fade-in">
+                    <h2 class="text-lg font-semibold text-indigo-300 tracking-widest uppercase">Part 3: The Real Solution</h2>
+                    <h1 class="text-5xl font-extrabold mt-4">The Goal is Intelligent Action</h1>
+                    <p class="text-xl text-gray-300 mt-6">The goal was never to create a million different offers. It's to masterfully deliver the <strong class="text-white">right action</strong>, to the <strong class="text-white">right person</strong>, at the <strong class="text-white">right time</strong>, with the <strong class="text-white">right message</strong>.</p>
+                </div>
+                <div class="flex justify-center items-center fade-in" style="animation-delay: 0.5s;">
+                    <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2070&auto=format&fit=crop" class="rounded-3xl shadow-2xl shadow-indigo-900/20" alt="People collaborating" onerror="this.onerror=null;this.src='https://placehold.co/600x400/111827/FFFFFF?text=Image';">
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: The Three Pillars (INTERACTIVE) -->
+        <div class="slide" data-slide="12">
+            <div class="absolute inset-0 bg-gray-900"></div>
+            <div class="slide-content text-center relative z-10">
+                <h1 class="text-5xl font-extrabold mb-12">The Three Pillars of Intelligent Action</h1>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    <div class="glassmorphism rounded-3xl p-8 text-center border border-gray-700 hover:border-purple-400 transition-all duration-300 transform hover:-translate-y-2 cursor-pointer" onclick="showModal('pillar1')">
+                        <div class="flex justify-center items-center h-20 w-20 rounded-full bg-purple-500/20 mx-auto mb-6"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-300"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 6v6l4 2"></path></svg></div>
+                        <h3 class="text-2xl font-bold mb-2">Matching & Timing</h3>
+                        <p class="text-gray-300">Finding the one right key on the ring for a specific lock, at the perfect moment.</p>
+                    </div>
+                    <div class="glassmorphism rounded-3xl p-8 text-center border border-gray-700 hover:border-pink-400 transition-all duration-300 transform hover:-translate-y-2 cursor-pointer" onclick="showModal('pillar2')">
+                        <div class="flex justify-center items-center h-20 w-20 rounded-full bg-pink-500/20 mx-auto mb-6"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-pink-300"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div>
+                        <h3 class="text-2xl font-bold mb-2">Framing & Communication</h3>
+                        <p class="text-gray-300">The product is the same, but the story we tell about it must be unique to the customer's motivation.</p>
+                    </div>
+                    <div class="glassmorphism rounded-3xl p-8 text-center border border-gray-700 hover:border-indigo-400 transition-all duration-300 transform hover:-translate-y-2 cursor-pointer" onclick="showModal('pillar3')">
+                         <div class="flex justify-center items-center h-20 w-20 rounded-full bg-indigo-500/20 mx-auto mb-6"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-300"><path d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"></path></svg></div>
+                        <h3 class="text-2xl font-bold mb-2">Discovery & Navigation</h3>
+                        <p class="text-gray-300">Solving the paradox of choice by surfacing what's most relevant from your catalog.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: The Actionable Framework (INTERACTIVE) -->
+        <div class="slide" data-slide="13">
+            <div class="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-900 to-black"></div>
+            <div class="slide-content text-center relative z-10">
+                <h1 class="text-5xl font-extrabold mb-12">The AI Co-Pilot Framework</h1>
+                <div class="max-w-4xl mx-auto space-y-4">
+                    <div class="glassmorphism rounded-2xl p-6 flex items-center gap-6 text-left hover:border-purple-400 border border-transparent transition-all cursor-pointer" onclick="showModal('framework1')">
+                        <div class="text-4xl font-bold text-purple-300">1</div>
+                        <div><h3 class="text-2xl font-bold">Human-Centric Blueprint</h3><p class="text-gray-300">Start with business outcomes and use AI to brainstorm possibilities. Humans make the final strategic choice.</p></div>
+                    </div>
+                    <div class="glassmorphism rounded-2xl p-6 flex items-center gap-6 text-left hover:border-pink-400 border border-transparent transition-all cursor-pointer" onclick="showModal('framework2')">
+                        <div class="text-4xl font-bold text-pink-300">2</div>
+                        <div><h3 class="text-2xl font-bold">360° Customer View</h3><p class="text-gray-300">Collect data *with purpose* based on your strategy, fusing 1st and 3rd-party sources.</p></div>
+                    </div>
+                    <div class="glassmorphism rounded-2xl p-6 flex items-center gap-6 text-left hover:border-indigo-400 border border-transparent transition-all cursor-pointer" onclick="showModal('framework3')">
+                        <div class="text-4xl font-bold text-indigo-300">3</div>
+                        <div><h3 class="text-2xl font-bold">Dual AI Engine</h3><p class="text-gray-300">Use Predictive AI to find the "next best action" and Generative AI to craft the perfect message.</p></div>
+                    </div>
+                    <div class="glassmorphism rounded-2xl p-6 flex items-center gap-6 text-left hover:border-teal-400 border border-transparent transition-all cursor-pointer" onclick="showModal('framework4')">
+                        <div class="text-4xl font-bold text-teal-300">4</div>
+                        <div><h3 class="text-2xl font-bold">Intelligent Feedback Loop</h3><p class="text-gray-300">Capture every outcome to continuously train the model, making the system smarter over time.</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 15: Q&A -->
+        <div class="slide" data-slide="14">
+            <div class="absolute inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 opacity-80"></div>
+               <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1554141322-20a20f089c26?q=80&w=2080&auto=format&fit=crop'); background-blend-mode: overlay; opacity: 0.1;"></div>
+            <div class="slide-content text-center relative z-10">
+                <div class="glassmorphism rounded-3xl p-8 md:p-16 max-w-4xl mx-auto">
+                    <h1 class="text-7xl font-extrabold my-4">Q&A</h1>
+                    <p class="text-2xl text-gray-300 mt-6">Thank You</p>
+                    <div class="mt-12 border-t border-indigo-400/30 pt-6">
+                        <p class="text-xl font-semibold">Sandeep Bose</p>
+                        <img src="images/Axyo logo, name on the side, transparent - for dark bg.png" alt="Axyo Logo" class="h-20 mx-auto mb-4">
+                        <p class="text-lg text-gray-300 mt-2">sandeep.bose@axyo.ai</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 16: Hidden Thank You (for sharing) -->
+        <div class="slide" data-slide="15">
+             <div class="absolute inset-0 bg-gray-900"></div>
+               <div class="slide-content text-center relative z-10">
+                   <h1 class="text-5xl font-extrabold">Thank You</h1>
+               </div>
+        </div>
+    </div>
+
+    <!-- Modal for Interactive Elements -->
+    <div id="interactive-modal" class="modal-overlay" onclick="hideModal()">
+        <div class="modal-content glassmorphism rounded-3xl p-8 md:p-12 max-w-3xl w-full text-left border border-gray-600" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h2 id="modal-title" class="text-4xl font-extrabold"></h2>
+                    <p id="modal-subtitle" class="text-lg text-gray-300 mt-2"></p>
+                </div>
+                <button onclick="hideModal()" class="text-gray-400 hover:text-white text-4xl leading-none">&times;</button>
+            </div>
+            <div id="modal-body" class="text-lg text-gray-200 space-y-4"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="slide-footer" class="fixed bottom-0 left-0 right-0 w-full p-4 text-white text-sm z-20 flex justify-between items-center bg-black bg-opacity-20 backdrop-blur-sm">
+        <div class="flex items-center gap-2">
+            <img src="images/Axyo logo, no name, transparent.png" alt="Axyo Logo" class="h-10">
+        </div>
+        <div class="text-gray-400">
+            <span>© 2025 Axyo Inc. All rights reserved</span>
+        </div>
+        <div id="footer-slide-counter" class="text-gray-300 font-medium">
+            <!-- Slide counter will be injected here -->
+        </div>
+    </footer>
+
+    <!-- Navigation -->
+    <div class="nav-button prev" onclick="changeSlide(-1)">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+    </div>
+    <div class="nav-button next" onclick="changeSlide(1)">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+    </div>
+
+    <script>
+        // Global variables for presentation
+        let currentSlide = 1;
+        let slides;
+        let totalSlides;
+
+        // --- Global variables for KPI Carousel on Slide 6 ---
+        let kpiCarouselIndex = 0;
+        const KPI_SLIDE_COUNT = 5;
+        let kpiCharts = {}; // To hold our chart instances
+
+        const modalData = {
+            'pillar1': {
+                title: "Pillar 1: Matching & Timing",
+                subtitle: "The Right Action at the Right Moment",
+                body: `<p>Think of a telecom company with three data plans. Instead of blasting an 'Upgrade to Unlimited!' offer to everyone, AI identifies a customer who consistently hits their data limit mid-month.</p><p>The system then sends a perfectly timed offer to upgrade to the next tier—not the most expensive one—right when the customer is feeling the pain point. This is <strong class="text-purple-300">relevance</strong>, and it dramatically increases conversion.</p>`
+            },
+            'pillar2': {
+                title: "Pillar 2: Framing & Communication",
+                subtitle: "The Right Story for the Right Person",
+                body: `<p>This is where marketing and communication strategy shines. The product doesn't change, but the narrative does. Our sustainable brand, Aura, sells the exact same t-shirt.</p><p>To one segment, it's framed as a <strong class="text-pink-300">durable, long-lasting investment</strong>. To another, it's a <strong class="text-pink-300">fresh, ethical fashion statement</strong>. AI allows us to have these nuanced conversations at a scale of millions, speaking directly to each customer's unique motivation.</p>`
+            },
+            'pillar3': {
+                title: "Pillar 3: Discovery & Navigation",
+                subtitle: "Solving the Paradox of Choice",
+                body: `<p>Think of Netflix or Spotify. Their value isn't just their large (but finite) library; it's their ability to make you feel like it was curated just for you.</p><p>AI-driven personalization acts as a curator for your brand. It helps customers <strong class="text-indigo-300">discover</strong> the most relevant items from your catalog they never would have found on their own. This increases sales, engagement, and makes the customer feel deeply understood.</p>`
+            },
+            'framework1': {
+                title: "1. Human-Centric Blueprint",
+                subtitle: "Strategy Before Data",
+                body: `<p>This is the most critical step. Instead of starting with a vast data lake, we start with a clear business objective. We use our domain expertise—and our AI Co-Pilot—to hypothesize what customer features and segments <strong class="text-purple-300">should</strong> be important.</p><p>This human-led, context-aware approach acts as a strategic blueprint. It prevents us from getting lost in noisy data and ensures that our AI initiatives are always grounded in real business problems, not just interesting technical challenges.</p>`
+            },
+            'framework2': {
+                title: "2. 360° Customer View",
+                subtitle: "Data With Purpose",
+                body: `<p>With our strategic blueprint in hand, we now gather data <strong class="text-pink-300">with purpose</strong>. The goal isn't just to collect everything, but to acquire the specific data points needed to validate our hypotheses.</p><p>This involves fusing our own first-party data (like purchase history) with relevant third-party data (like life events or market trends). This creates a rich, multi-dimensional profile for each customer that goes far beyond simple demographics.</p>`
+            },
+            'framework3': {
+                title: "3. Dual AI Engine",
+                subtitle: "Prediction Meets Generation",
+                body: `<p>This is where we execute at scale. The engine has two parts:</p>
+                                <ul class="list-disc list-inside mt-4 space-y-2">
+                                  <li><strong class="text-indigo-300">Predictive AI:</strong> This engine sifts through the 360° customer data to score and rank every individual against thousands of potential actions. It answers the question: "For this customer, right now, what is the single best action we can take?"</li>
+                                  <li><strong class="text-indigo-300">Generative AI:</strong> This engine takes the 'next best action' and crafts the actual message. It dynamically generates the email subject line, the push notification, or the web banner, framed perfectly for that customer's micro-segment.</li>
+                                </ul>`
+            },
+            'framework4': {
+                title: "4. Intelligent Feedback Loop",
+                subtitle: "Learning From Every Interaction",
+                body: `<p>A static model is a dying model. The framework becomes truly intelligent by creating a <strong class="text-teal-300">feedback loop</strong>. Every customer interaction—a click, a purchase, an ignore—is captured as a new data point.</p><p>This outcome data is fed back into the AI engine, continuously refining its understanding of the segments and improving the accuracy of its predictions. The system gets smarter with every single interaction, ensuring that the insights from today drive even better actions tomorrow.</p>`
+            }
+        };
+
+        function showModal(id) {
+            const data = modalData[id];
+            if (!data) return;
+            document.getElementById('modal-title').innerHTML = data.title;
+            document.getElementById('modal-subtitle').innerHTML = data.subtitle;
+            document.getElementById('modal-body').innerHTML = data.body;
+            document.getElementById('interactive-modal').classList.add('visible');
+        }
+
+        function hideModal() {
+            document.getElementById('interactive-modal').classList.remove('visible');
+        }
+        
+        // --- KPI Carousel Functions (Updated for Manual Navigation) ---
+
+        function setupKpiCarousel() {
+            if (!document.getElementById('kpi-carousel-track')) return; // Only run if on slide 6
+
+            // Setup listeners for new nav buttons
+            document.getElementById('kpi-next-btn').addEventListener('click', () => changeKpiSlide(1));
+            document.getElementById('kpi-prev-btn').addEventListener('click', () => changeKpiSlide(-1));
+            
+            // Setup listeners for the command sliders
+            document.getElementById('kpi-command-slider-spend').addEventListener('input', updateKpiCommandChart);
+            document.getElementById('kpi-command-slider-discount').addEventListener('input', updateKpiCommandChart);
+            
+            renderAllKpiCharts();
+            goToKpiSlide(0);
+        }
+
+        function changeKpiSlide(direction) {
+            const newIndex = kpiCarouselIndex + direction;
+            if (newIndex >= 0 && newIndex < KPI_SLIDE_COUNT) {
+                goToKpiSlide(newIndex);
+            }
+        }
+
+        function goToKpiSlide(index) {
+            kpiCarouselIndex = index;
+            const track = document.getElementById('kpi-carousel-track');
+            const textPanels = document.querySelectorAll('.kpi-carousel-text');
+            const nextBtn = document.getElementById('kpi-next-btn');
+            const prevBtn = document.getElementById('kpi-prev-btn');
+
+            track.style.transform = `translateX(-${index * 100}%)`;
+            textPanels.forEach((panel, i) => panel.classList.toggle('active', i === index));
+            
+            // Update button states
+            prevBtn.classList.toggle('disabled', index === 0);
+            nextBtn.classList.toggle('disabled', index === KPI_SLIDE_COUNT - 1);
+        }
+        
+        // --- Chart Rendering Functions for Slide 6 ---
+        
+        function renderAllKpiCharts() {
+            if (Object.keys(kpiCharts).length > 0) {
+                // Destroy existing charts if they exist to prevent memory leaks
+                Object.values(kpiCharts).forEach(chart => chart.destroy());
+            }
+
+            const chartOptions = {
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { 
+                    x: { ticks: { color: 'rgba(255,255,255,0.7)' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                    y: { ticks: { color: 'rgba(255,255,255,0.7)' }, grid: { color: 'rgba(255,255,255,0.1)' }, beginAtZero: false }
+                },
+                animation: { duration: 1000 }
+            };
+
+            const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+            const historicalData = [420, 450, 520, 480, 510, 500];
+            const goalData = [440, 460, 500, 510, 525, 525];
+
+            // Card 2: Diagnosis Chart (Upgraded)
+            const ctxDiagnosis = document.getElementById('kpi-chart-diagnosis').getContext('2d');
+            kpiCharts.diagnosis = new Chart(ctxDiagnosis, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        { label: 'Sales (k)', data: historicalData, borderColor: '#a78bfa', tension: 0.4, pointBackgroundColor: '#a78bfa', pointRadius: 4 },
+                        { label: 'Goal (k)', data: goalData, borderColor: '#f472b6', borderDash: [5, 5], tension: 0.4, pointRadius: 0 }
+                    ]
+                },
+                options: { ...chartOptions, plugins: { legend: { display: true, labels: { color: 'white' } } } }
+            });
+             // Manually set anomaly styling after creation for full control
+            kpiCharts.diagnosis.data.datasets[0].pointRadius = historicalData.map((_, i) => i === 3 ? 8 : 4);
+            kpiCharts.diagnosis.data.datasets[0].pointBackgroundColor = historicalData.map((_, i) => i === 3 ? '#ef4444' : '#a78bfa');
+            kpiCharts.diagnosis.update();
+
+
+            // Card 4: Foresight Chart (Upgraded with Factors)
+            const ctxForesight = document.getElementById('kpi-chart-foresight').getContext('2d');
+            kpiCharts.foresight = new Chart(ctxForesight, {
+                type: 'line',
+                data: {
+                    labels: [...labels, 'Jul', 'Aug'],
+                    datasets: [
+                        { label: 'Sales (k)', data: historicalData, borderColor: '#a78bfa', tension: 0.4 },
+                        { label: 'Forecast (k)', data: [null, null, null, null, null, 500, 480, 490], borderColor: '#fb7185', borderDash: [8, 8], tension: 0.4, pointBackgroundColor: '#fb7185' }
+                    ]
+                },
+                options: { ...chartOptions, scales: { y: { min: 350 } } }
+            });
+
+            const ctxFactors = document.getElementById('kpi-chart-factors').getContext('2d');
+            kpiCharts.factors = new Chart(ctxFactors, {
+                type: 'bar',
+                data: {
+                    labels: ['Seasonality', 'Competitor Action', 'Marketing Campaign B'],
+                    datasets: [{
+                        label: 'Impact',
+                        data: [0.65, 0.4, -0.25],
+                        backgroundColor: ['#2dd4bf', '#a78bfa', '#f472b6'],
+                        borderRadius: 4,
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: 'rgba(255,255,255,0.7)' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                        y: { ticks: { color: 'rgba(255,255,255,0.7)' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                    }
+                }
+            });
+
+            // Card 5: Command Chart (FIXED)
+            const ctxCommand = document.getElementById('kpi-chart-command').getContext('2d');
+            kpiCharts.command = new Chart(ctxCommand, {
+                type: 'line',
+                data: {
+                    labels: [...labels, 'Jul', 'Aug'],
+                    datasets: [
+                        { 
+                            label: 'History', 
+                            data: historicalData, 
+                            borderColor: '#a78bfa', 
+                            tension: 0.4 
+                        },
+                        { 
+                            label: 'Original Forecast', 
+                            data: [null, null, null, null, null, 500, 480, 490], 
+                            borderColor: 'rgba(255,255,255,0.3)', 
+                            borderDash: [8, 8], 
+                            tension: 0.4, 
+                            pointRadius: 0 
+                        },
+                        { 
+                            label: 'Simulated Forecast', 
+                            data: [null, null, null, null, null, 500, 480, 490], 
+                            borderColor: '#6366f1', 
+                            tension: 0.4, 
+                            pointBackgroundColor: '#6366f1', 
+                            borderWidth: 3 
+                        }
+                    ]
+                },
+                // Added layout padding to prevent controls from overlapping the x-axis
+                options: { ...chartOptions, scales: { y: { min: 350 } }, layout: { padding: { bottom: 80 } } }
+            });
+        }
+
+        function updateKpiCommandChart() {
+            const spendSlider = document.getElementById('kpi-command-slider-spend');
+            const discountSlider = document.getElementById('kpi-command-slider-discount');
+            const spendValueLabel = document.getElementById('kpi-slider-value-spend');
+            const discountValueLabel = document.getElementById('kpi-slider-value-discount');
+            
+            const spendBoost = parseInt(spendSlider.value);
+            const discount = parseInt(discountSlider.value);
+
+            spendValueLabel.textContent = `${spendBoost >= 0 ? '+' : ''}${spendBoost}%`;
+            discountValueLabel.textContent = `${discount}%`;
+
+            const originalForecast = [null, null, null, null, null, 500, 480, 490];
+            
+            // A more impactful simulation formula
+            const simulatedForecast = originalForecast.map(val => {
+                if (val === null) return null;
+                // Marketing has a strong positive effect
+                const marketingMultiplier = 1 + (spendBoost / 100) * 1.5;
+                // Discount has a moderate positive effect (simulating higher volume)
+                const discountMultiplier = 1 + (discount / 100) * 0.75;
+                return val * marketingMultiplier * discountMultiplier;
+            });
+            
+            kpiCharts.command.data.datasets[2].data = simulatedForecast;
+            kpiCharts.command.update({
+                duration: 400, // Smooth transition for the update
+                easing: 'easeInOutCubic'
+            });
+        }
+
+        // --- Main Presentation Logic ---
+        function initSlides() {
+            slides = document.querySelectorAll('.slide');
+            totalSlides = slides.length;
+            updateSlides();
+            setupKpiCarousel();
+        }
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                const slideEl = slide;
+                const slideIndex = index + 1;
+                slideEl.classList.remove('active', 'prev-slide', 'next-slide');
+
+                if (slideIndex === currentSlide) {
+                    slideEl.classList.add('active');
+                    if (slideIndex === 6) {
+                       // Reset carousel to first slide when navigating to it
+                       goToKpiSlide(0);
+                       // Re-render charts in case the canvas was hidden
+                       renderAllKpiCharts();
+                    }
+                    const animatedElements = slideEl.querySelectorAll('.fade-in');
+                    animatedElements.forEach(el => {
+                        el.style.animation = 'none';
+                        el.offsetHeight; /* trigger reflow */
+                        el.style.animation = null; 
+                    });
+                } else if (slideIndex < currentSlide) {
+                    slideEl.classList.add('prev-slide');
+                } else {
+                    slideEl.classList.add('next-slide');
+                }
+            });
+            
+            document.getElementById('footer-slide-counter').innerText = `${currentSlide} / ${totalSlides}`;
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide > totalSlides) currentSlide = 1;
+            if (currentSlide < 1) currentSlide = totalSlides;
+            updateSlides();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') changeSlide(1);
+            else if (e.key === 'ArrowLeft') changeSlide(-1);
+            else if (e.key === 'Escape') hideModal();
+        });
+
+        window.onload = initSlides;
+    </script>
+</body>
+</html>
