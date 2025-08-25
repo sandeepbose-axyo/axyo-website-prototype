@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The AI ROI Mandate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            background-color: #0a0a0a; /* A deep, near-black for sophistication */
+        }
+        .glassmorphism {
+            background: rgba(17, 24, 39, 0.6); /* Darker, more subtle glass */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .slide {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.7s;
+            padding: 2rem 2rem 6rem 2rem;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .slide.active {
+            transform: translateX(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        .slide.prev-slide {
+            transform: translateX(-100%);
+        }
+        .slide.next-slide {
+            transform: translateX(100%);
+        }
+        .slide-content {
+            width: 100%;
+            max-width: 1200px;
+        }
+        .nav-button {
+            position: absolute;
+            bottom: 5rem;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            border-radius: 9999px;
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 30;
+            transition: background 0.2s;
+        }
+        .nav-button:hover {
+            background: rgba(0, 0, 0, 0.6);
+        }
+        .prev { left: 2rem; }
+        .next { right: 2rem; }
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Flippable cards for Act II */
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 350px;
+            perspective: 1500px;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.7s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.is-flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            text-align: center;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            transform: scale(0.95);
+            transition: transform 0.3s;
+        }
+        .modal-overlay.visible .modal-content {
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body class="bg-black text-gray-200">
+
+    <div id="presentation-container" class="relative w-full h-screen">
+
+<!-- Slide 1: Title Slide -->
+<div class="slide active" data-slide="1" style="justify-content: flex-start; padding-top: 15vh;">
+    <!-- Background container for images and gradient -->
+    <div class="absolute inset-0">
+        <!-- The two images placed side-by-side -->
+        <div class="absolute top-0 left-0 right-0 h-full grid grid-cols-2">
+            <img src="images/creativehype.jpg" 
+                 alt="Abstract, colorful AI-generated art" 
+                 class="w-full h-full object-cover"
+                 onerror="this.onerror=null;this.src='https://placehold.co/1000x1000/1e1b4b/ffffff?text=Creative+Hype';">
+            <img src="images/decliningstock.jpg" 
+                 alt="A declining stock market chart" 
+                 class="w-full h-full object-cover"
+                 onerror="this.onerror=null;this.src='https://placehold.co/1000x1000/4c0519/ffffff?text=P&L+Impact';">
+        </div>
+        <!-- Gradient overlay that starts dark at the top and fades out, making the background brighter overall -->
+        <div class="absolute inset-0 bg-gradient-to-b from-gray-900 via-gray-900/60 to-transparent"></div>
+    </div>
+
+    <!-- The slide content, now layered on top in the upper part of the slide -->
+    <div class="slide-content text-center relative z-10 fade-in-up">
+        <!-- The central title block, with a clean look -->
+        <div class="bg-transparent p-8 md:p-12 max-w-4xl mx-auto">
+            <h1 class="text-5xl md:text-6xl lg:text-7xl font-black my-2 leading-tight text-gray-100">
+                From Creative Hype to P&L Impact
+            </h1>
+            <p class="text-lg md:text-xl text-gray-300 mt-4 max-w-3xl mx-auto">
+                A New Mandate for AI in Business Strategy
+            </p>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Slide 2: A Tale of Two Realities (Interactive) -->
+<div class="slide" data-slide="2" onclick="revealSlide2(event)">
+    <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-black"></div>
+    <div class="slide-content text-center relative z-10">
+        
+        <div class="fade-in-up">
+            <h2 class="text-2xl md:text-3xl font-bold text-indigo-300 tracking-wider uppercase">Act I: The Great Disconnect</h2>
+            <h1 class="text-5xl md:text-7xl font-black my-6">A Tale of Two Realities</h1>
+        </div>
+
+        <!-- This container will hold the interactive elements -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center max-w-5xl mx-auto">
+            
+            <!-- Part 1: The Creative Explosion (Visible initially) -->
+            <div id="slide2-part1" class="fade-in-up" style="animation-delay: 0.4s;">
+                <img src="images/creativehype.jpg" 
+                     alt="A vibrant, abstract image representing AI's creative potential"
+                     class="rounded-2xl shadow-2xl shadow-indigo-900/50 aspect-video object-cover"
+                     onerror="this.onerror=null;this.src='https://placehold.co/800x450/1e1b4b/ffffff?text=Creative+Potential';">
+                <p class="text-xl text-gray-300 mt-4">"Generative AI has unlocked a creative explosion."</p>
+            </div>
+
+            <!-- Part 2: The Black Hole (Hidden initially) -->
+            <div id="slide2-part2" class="opacity-0 transition-opacity duration-700">
+                 <img src="images/decliningstock.jpg" 
+                     alt="A stark, abstract image representing a business black hole"
+                     class="rounded-2xl shadow-2xl shadow-red-900/50 aspect-video object-cover"
+                     onerror="this.onerror=null;this.src='https://placehold.co/800x450/4c0519/ffffff?text=Business+Results';">
+                <p class="text-xl font-bold text-red-400 mt-4">"BUT... the business results are a black hole."</p>
+            </div>
+        </div>
+
+        <!-- Part 3: The Analogy (Hidden initially) -->
+        <div id="slide2-part3" class="mt-12 glassmorphism rounded-2xl p-8 max-w-3xl mx-auto opacity-0 transition-opacity duration-700" style="transition-delay: 300ms;">
+            <p class="text-2xl italic">"It's like we've all been given Ferraris, but 95% of us are crashing them in the driveway."</p>
+        </div>
+
+        <!-- Click prompt -->
+        <div id="click-prompt" class="absolute bottom-8 left-1/2 -translate-x-1/2 text-gray-500 text-sm animate-pulse">
+            Click to continue...
+        </div>
+
+    </div>
+    <script>
+        // Simple state machine for slide 2 reveals
+        let slide2RevealState = 0;
+        function revealSlide2(event) {
+            const part2 = document.getElementById('slide2-part2');
+            const part3 = document.getElementById('slide2-part3');
+            const prompt = document.getElementById('click-prompt');
+
+            if (!part2 || !part3 || !prompt) return;
+
+            slide2RevealState++;
+            if (slide2RevealState === 1) {
+                part2.classList.remove('opacity-0');
+            } else if (slide2RevealState === 2) {
+                part3.classList.remove('opacity-0');
+                prompt.style.display = 'none'; // Hide prompt after final reveal
+            }
+        }
+        // We need a way to reset the state when the slide becomes inactive
+        // This will be handled in the main slide navigation logic.
+    </script>
+</div>
+
+
+<!-- Slide 3: The AI Graveyard (Interactive) -->
+<div class="slide" data-slide="3" onclick="revealSlide3()">
+    <!-- A dark, atmospheric background image -->
+    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1559925823-e1634d47b73b?q=80&w=1934&auto=format&fit=crop');" onerror="this.style.backgroundColor='#111827'"></div>
+    <div class="absolute inset-0 bg-gray-900/80 backdrop-blur-sm"></div>
+    
+    <div class="slide-content text-center relative z-10 h-full flex flex-col justify-start pt-32">
+        <!-- Title appears first -->
+        <div class="fade-in-up">
+            <h1 class="text-5xl md:text-7xl font-black text-gray-300">The AI Graveyard is Getting Crowded.</h1>
+        </div>
+
+        <!-- Statistics Container - This is now the interactive part -->
+        <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto text-center content-center">
+            <!-- Stat 1 (Hidden) -->
+            <div id="slide3-stat1" class="opacity-0 transition-opacity duration-700">
+                <p class="text-8xl lg:text-9xl font-black text-red-500">95%</p>
+                <p class="text-xl mt-2 text-gray-300 max-w-sm mx-auto">of GenAI projects fail to deliver results. <span class="text-sm text-gray-400">(MIT)</span></p>
+            </div>
+            <!-- Stat 2 (Hidden) -->
+            <div id="slide3-stat2" class="opacity-0 transition-opacity duration-700" style="transition-delay: 300ms;">
+                <p class="text-8xl lg:text-9xl font-black text-red-500">75%</p>
+                <p class="text-xl mt-2 text-gray-300 max-w-sm mx-auto">of companies see NO return on their AI investment. <span class="text-sm text-gray-400">(BCG)</span></p>
+            </div>
+        </div>
+
+        <div class="h-48 flex-shrink-0"></div>
+        <!-- Tombstones Container (Visible with initial animation) -->
+        <div class="absolute bottom-0 left-0 right-0 h-48 flex justify-center items-end gap-8">
+            <div class="fade-in-up bg-gray-700/50 w-52 h-28 rounded-t-full p-4 text-center flex flex-col justify-center border-t border-b-4 border-gray-600" style="animation-delay: 0.4s;"><p class="font-bold text-lg">Cool AI Pilot</p></div>
+            <div class="fade-in-up bg-gray-700/50 w-60 h-36 rounded-t-full p-4 text-center flex flex-col justify-center border-t border-b-4 border-gray-600" style="animation-delay: 0.6s;"><p class="font-bold text-xl">Big Data Project</p></div>
+            <div class="fade-in-up bg-gray-700/50 w-52 h-28 rounded-t-full p-4 text-center flex flex-col justify-center border-t border-b-4 border-gray-600" style="animation-delay: 0.8s;"><p class="font-bold text-lg">Innovation Lab</p></div>
+        </div>
+
+        <!-- Click prompt -->
+        <div id="click-prompt-3" class="absolute bottom-8 left-1/2 -translate-x-1/2 text-gray-500 text-sm animate-pulse">
+            Click to reveal stats...
+        </div>
+    </div>
+    <script>
+        let slide3RevealState = 0;
+        function revealSlide3() {
+            const stat1 = document.getElementById('slide3-stat1');
+            const stat2 = document.getElementById('slide3-stat2');
+            const prompt = document.getElementById('click-prompt-3');
+
+            if (!stat1 || !stat2 || !prompt) return;
+
+            slide3RevealState++;
+            if (slide3RevealState === 1) {
+                stat1.classList.remove('opacity-0');
+            } else if (slide3RevealState === 2) {
+                stat2.classList.remove('opacity-0');
+                prompt.style.display = 'none';
+            }
+        }
+    </script>
+</div>
+
+
+
+<!-- Slide 4: The Core Question (Interactive) -->
+<div class="slide" data-slide="4" onclick="revealSlide4()">
+    <div class="absolute inset-0 bg-gray-900"></div>
+    <div class="slide-content text-center relative z-10">
+
+        <div class="fade-in-up">
+            <h1 class="text-5xl md:text-6xl font-black text-gray-300">So, What's Really Going On?</h1>
+            <p class="mt-4 text-2xl text-gray-400">This isn't a tech problem. It's a strategy problem.</p>
+        </div>
+
+        <!-- Visual Metaphor Container -->
+        <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto items-center">
+            <!-- The Engine (Visible) -->
+            <div class="fade-in-up" style="animation-delay: 0.4s;">
+                <img src="https://images.unsplash.com/photo-1677756119517-756a188d2d94?q=80&w=800&auto=format&fit=crop" 
+                     alt="A glowing, powerful AI core representing technology"
+                     class="rounded-2xl shadow-2xl shadow-blue-900/50 aspect-video object-cover"
+                     onerror="this.onerror=null;this.src='https://placehold.co/800x450/1e3a8a/ffffff?text=The+Engine';">
+            </div>
+
+            <!-- The GPS (Hidden) -->
+            <div id="slide4-gps" class="opacity-0 transition-opacity duration-700">
+                <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=800&auto=format&fit=crop" 
+                     alt="Tangled lines of code representing a broken GPS/strategy"
+                     class="rounded-2xl shadow-2xl shadow-red-900/50 aspect-video object-cover"
+                     onerror="this.onerror=null;this.src='https://placehold.co/800x450/7f1d1d/ffffff?text=The+GPS';">
+            </div>
+        </div>
+
+        <!-- The Insight (Hidden) -->
+        <div id="slide4-insight" class="mt-8 opacity-0 transition-opacity duration-700">
+            <div class="glassmorphism rounded-2xl p-6 max-w-3xl mx-auto">
+                <p class="text-2xl font-bold">"The issue isn't the engine; it's the GPS. We have no destination."</p>
+            </div>
+        </div>
+        
+        <!-- The Final Question (Hidden) -->
+        <p id="slide4-question" class="mt-8 text-2xl text-indigo-300 font-semibold opacity-0 transition-opacity duration-700" style="transition-delay: 300ms;">
+            Why is there such a chasm between what we can create and the value we can capture?
+        </p>
+
+        <!-- Click prompt -->
+        <div id="click-prompt-4" class="absolute bottom-8 left-1/2 -translate-x-1/2 text-gray-500 text-sm animate-pulse">
+            Click to continue...
+        </div>
+    </div>
+    <script>
+        let slide4RevealState = 0;
+        function revealSlide4() {
+            const gps = document.getElementById('slide4-gps');
+            const insight = document.getElementById('slide4-insight');
+            const question = document.getElementById('slide4-question');
+            const prompt = document.getElementById('click-prompt-4');
+
+            if (!gps || !insight || !question || !prompt) return;
+
+            slide4RevealState++;
+            if (slide4RevealState === 1) {
+                gps.classList.remove('opacity-0');
+                insight.classList.remove('opacity-0');
+            } else if (slide4RevealState === 2) {
+                question.classList.remove('opacity-0');
+                prompt.style.display = 'none';
+            }
+        }
+    </script>
+</div>
+
+        
+<!-- Slide 5: The Four Horsemen -->
+<div class="slide" data-slide="5">
+    <div class="absolute inset-0 bg-gradient-to-br from-gray-900 to-black"></div>
+    <div class="slide-content text-center relative z-10">
+        <div class="fade-in-up">
+            <h2 class="text-2xl md:text-3xl font-bold text-red-400 tracking-wider uppercase">Act II: The Four Horsemen of the AI Apocalypse</h2>
+            <h1 class="text-5xl md:text-6xl font-black my-6 text-gray-300">It's Not a Thousand Problems. It's These Four.</h1>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12 max-w-7xl mx-auto">
+            <!-- Card 1: The Data Swamp -->
+            <div class="flip-card fade-in-up" style="animation-delay: 0.4s;" onclick="this.classList.toggle('is-flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front glassmorphism border border-red-500/30 flex-col justify-center items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mb-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" /></svg>
+                        <h3 class="text-2xl font-bold">1. The Data Swamp</h3>
+                    </div>
+                    <div class="flip-card-back glassmorphism border border-red-400 bg-red-900/20">
+                        <p class="text-xl font-semibold">The "Data-First" trap. You build a beautiful, eight-lane superhighway to nowhere, creating a multi-million dollar asset that produces no value.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: The Broken GPS (FIXED ICON) -->
+            <div class="flip-card fade-in-up" style="animation-delay: 0.6s;" onclick="this.classList.toggle('is-flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front glassmorphism border border-yellow-500/30 flex-col justify-center items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mb-4 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.37-1.625-.94L12 6M9 6.75L12 6m0 0l3-1.5m-3 1.5V15m0 0l3 1.5m0 0l3.75 1.875a.48.48 0 010 .752L12 21.75l-3.75-1.875a.48.48 0 010-.752L12 18.75v-3.75z" />
+                        </svg>
+                        <h3 class="text-2xl font-bold">2. The Broken GPS</h3>
+                    </div>
+                    <div class="flip-card-back glassmorphism border border-yellow-400 bg-yellow-900/20">
+                        <p class="text-xl font-semibold">Disconnected pipelines and the "Generative-Only" fallacy. A brainstormer on steroids with no adult supervision.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: The Fear Factor -->
+            <div class="flip-card fade-in-up" style="animation-delay: 0.8s;" onclick="this.classList.toggle('is-flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front glassmorphism border border-blue-500/30 flex-col justify-center items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mb-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
+                        <h3 class="text-2xl font-bold">3. The Fear Factor</h3>
+                    </div>
+                    <div class="flip-card-back glassmorphism border border-blue-400 bg-blue-900/20">
+                        <p class="text-xl font-semibold">The paralysis of inaction. So scared of failing, you guarantee it by doing nothing. A rational response to watching everyone else crash.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Corporate Immune System (FIXED ICON) -->
+            <div class="flip-card fade-in-up" style="animation-delay: 1.0s;" onclick="this.classList.toggle('is-flipped')">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front glassmorphism border border-purple-500/30 flex-col justify-center items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mb-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h3 class="text-2xl font-bold">4. Corporate Immune System</h3>
+                    </div>
+                    <div class="flip-card-back glassmorphism border border-purple-400 bg-purple-900/20">
+                        <p class="text-xl font-semibold">Your company's culture is trying to kill your future. An AI-driven business is transparent, which terrifies managers who hide in the shadows.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        
+        <!-- Slide 6: The Solution Intro -->
+        <div class="slide" data-slide="6">
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-900 via-gray-900 to-black"></div>
+            <div class="slide-content text-center relative z-10">
+                <h2 class="text-2xl md:text-3xl font-bold text-blue-300 tracking-wider uppercase fade-in-up">Act III: The New Mandate</h2>
+                <h1 class="text-5xl md:text-7xl font-black my-6 fade-in-up" style="animation-delay: 0.2s;">The Solution: Flip the Model</h1>
+                <div class="mt-12 glassmorphism rounded-2xl p-8 max-w-4xl mx-auto fade-in-up" style="animation-delay: 0.4s;">
+                    <p class="text-3xl font-bold">Don't start with data. Start with a number on your P&L.</p>
+                </div>
+            </div>
+        </div>
+
+<!-- Slide 7: The Solution: Flip the Model (Interactive) -->
+<div class="slide" data-slide="7" onclick="revealSlide7()">
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-900/30 via-gray-900 to-black"></div>
+    <div class="slide-content text-center relative z-10">
+
+        <div class="fade-in-up">
+            <h2 class="text-2xl md:text-3xl font-bold text-blue-300 tracking-wider uppercase">Act III: The New Mandate</h2>
+            <h1 class="text-5xl md:text-6xl font-black my-6 text-gray-300">The Solution: Flip the Model</h1>
+        </div>
+
+        <!-- This container will hold both diagrams, stacked on top of each other -->
+        <div class="mt-12 max-w-4xl mx-auto relative h-64">
+
+            <!-- The Old Way (Visible initially) -->
+            <div id="slide7-old-way" class="absolute inset-0 transition-opacity duration-500">
+                <h3 class="text-3xl font-bold text-red-400 mb-6">The Old Way: The Data-First Trap</h3>
+                <div class="flex justify-between items-center h-full">
+                    <div class="text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mx-auto text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" /></svg>
+                        <p class="mt-2 text-lg font-semibold">Data</p>
+                    </div>
+                    <!-- Tangled Path SVG -->
+                    <svg class="w-1/2 h-full text-red-800" viewBox="0 0 100 50">
+                        <path d="M5,25 C 25,5 25,45 50,25 C 75,5 75,45 95,25" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="4" />
+                        <path d="M5,25 C 25,45 25,5 50,25 C 75,45 75,5 95,25" stroke="currentColor" stroke-width="2" fill="none" />
+                    </svg>
+                    <div class="text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mx-auto text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.79 4 4s-1.79 4-4 4c-1.742 0-3.223-.835-3.772-2M12 12h.008v.008H12V12z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 2a10 10 0 100 20 10 10 0 000-20z" /></svg>
+                        <p class="mt-2 text-lg font-semibold">Value?</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- The New Way (Hidden initially) -->
+            <div id="slide7-new-way" class="absolute inset-0 opacity-0 transition-opacity duration-500">
+                <h3 class="text-3xl font-bold text-blue-300 mb-6">The New Way: The Outcome-First Mandate</h3>
+                <div class="flex justify-between items-center h-full">
+                    <div class="text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mx-auto text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                        <p class="mt-2 text-lg font-semibold">P&L / KPI</p>
+                    </div>
+                    <!-- Straight Arrow SVG -->
+                    <svg class="w-1/2 h-full text-blue-500" viewBox="0 0 100 50">
+                        <line x1="5" y1="25" x2="90" y2="25" stroke="currentColor" stroke-width="4" />
+                        <polyline points="85,20 95,25 85,30" stroke="currentColor" stroke-width="4" fill="none" />
+                    </svg>
+                    <div class="text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mx-auto text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                        <p class="mt-2 text-lg font-semibold">Value!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- The Analogy (Hidden initially) -->
+        <div id="slide7-analogy" class="mt-8 glassmorphism rounded-2xl p-6 max-w-3xl mx-auto opacity-0 transition-opacity duration-700" style="transition-delay: 300ms;">
+            <p class="text-2xl italic">"Stop driving aimlessly. Type in a precise destination before you start the engine."</p>
+        </div>
+
+        <!-- Click prompt -->
+        <div id="click-prompt-7" class="absolute bottom-8 left-1/2 -translate-x-1/2 text-gray-500 text-sm animate-pulse">
+            Click to flip the model...
+        </div>
+    </div>
+    <script>
+        let slide7Revealed = false;
+        function revealSlide7() {
+            if (slide7Revealed) return;
+            const oldWay = document.getElementById('slide7-old-way');
+            const newWay = document.getElementById('slide7-new-way');
+            const analogy = document.getElementById('slide7-analogy');
+            const prompt = document.getElementById('click-prompt-7');
+
+            if (!oldWay || !newWay || !analogy || !prompt) return;
+
+            oldWay.classList.add('opacity-0');
+            newWay.classList.remove('opacity-0');
+            analogy.classList.remove('opacity-0');
+            prompt.style.display = 'none';
+            slide7Revealed = true;
+        }
+    </script>
+</div>
+
+
+<!-- Slide 8: The Engine for Action (Interactive) -->
+<div class="slide" data-slide="8" onclick="revealSlide8()">
+    <div class="absolute inset-0 bg-gray-900"></div>
+    <div class="slide-content text-center relative z-10">
+
+        <div class="fade-in-up">
+            <h1 class="text-5xl font-extrabold">The Engine for Action</h1>
+            <p class="mt-4 text-2xl text-gray-400 max-w-4xl mx-auto">An insight is worthless without a closed-loop system for action.</p>
+        </div>
+
+        <!-- Engine Diagram Container -->
+        <div class="mt-16 max-w-4xl mx-auto relative h-80">
+            
+            <!-- Layer 1: SVG Paths (Background) -->
+            <div class="absolute inset-0">
+                <svg class="w-full h-full overflow-visible">
+                    <!-- Path 1 -> 2 -->
+                    <path id="s8-path1" d="M 230 128 Q 350 128, 420 40" stroke="#1d4ed8" stroke-width="3" fill="none" stroke-dasharray="1000" stroke-dashoffset="1000" style="transition: stroke-dashoffset 1s ease-in-out;"></path>
+                    <!-- Path 2 -> 3 -->
+                    <path id="s8-path2" d="M 500 40 Q 570 128, 690 128" stroke="#1d4ed8" stroke-width="3" fill="none" stroke-dasharray="1000" stroke-dashoffset="1000" style="transition: stroke-dashoffset 1s ease-in-out;"></path>
+                    <!-- Path 3 -> 1 (Feedback Loop) -->
+                    <path id="s8-path3" d="M 690 160 C 500 280, 420 280, 230 160" stroke="#059669" stroke-width="3" fill="none" stroke-dasharray="1000" stroke-dashoffset="1000" style="transition: stroke-dashoffset 1s ease-in-out;"></path>
+                </svg>
+            </div>
+
+            <!-- Layer 2: Nodes (Foreground) -->
+            <div class="absolute inset-0">
+                <div id="s8-node1" class="absolute top-1/2 -translate-y-1/2 left-0 w-56 h-32 glassmorphism rounded-2xl p-4 flex flex-col justify-center items-center opacity-0 transition-all duration-500 transform scale-90">
+                    <h3 class="text-xl font-bold text-blue-300">1. Actionable Prescription</h3>
+                    <p class="mt-1 text-sm text-gray-400">"Do X to these 4,217 customers."</p>
+                </div>
+                <div id="s8-node2" class="absolute top-0 left-1/2 -translate-x-1/2 w-56 h-32 glassmorphism rounded-2xl p-4 flex flex-col justify-center items-center opacity-0 transition-all duration-500 transform scale-90">
+                    <h3 class="text-xl font-bold text-blue-300">2. Automated Execution</h3>
+                    <p class="mt-1 text-sm text-gray-400">The engine acts, not just recommends.</p>
+                </div>
+                <div id="s8-node3" class="absolute top-1/2 -translate-y-1/2 right-0 w-56 h-32 glassmorphism rounded-2xl p-4 flex flex-col justify-center items-center opacity-0 transition-all duration-500 transform scale-90">
+                    <h3 class="text-xl font-bold text-blue-300">3. Measured Impact</h3>
+                    <p class="mt-1 text-sm text-gray-400">The engine learns from every action.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- The Analogy (Hidden) -->
+        <div id="slide8-analogy" class="mt-12 glassmorphism rounded-2xl p-6 max-w-3xl mx-auto opacity-0 transition-opacity duration-700" style="transition-delay: 500ms;">
+            <p class="text-2xl italic">"This is the difference between a weather report and a self-driving car."</p>
+        </div>
+
+        <!-- Click prompt -->
+        <div id="click-prompt-8" class="absolute bottom-8 left-1/2 -translate-x-1/2 text-gray-500 text-sm animate-pulse">
+            Click to build the engine...
+        </div>
+    </div>
+    <script>
+        let slide8RevealState = 0;
+        function revealSlide8() {
+            const nodes = [document.getElementById('s8-node1'), document.getElementById('s8-node2'), document.getElementById('s8-node3')];
+            const paths = [document.getElementById('s8-path1'), document.getElementById('s8-path2'), document.getElementById('s8-path3')];
+            const analogy = document.getElementById('slide8-analogy');
+            const prompt = document.getElementById('click-prompt-8');
+
+            if (!nodes[0] || !paths[0] || !analogy || !prompt) return;
+
+            slide8RevealState++;
+            if (slide8RevealState === 1) {
+                nodes[0].classList.remove('opacity-0', 'scale-90');
+            } else if (slide8RevealState === 2) {
+                paths[0].style.strokeDashoffset = 0;
+                setTimeout(() => nodes[1].classList.remove('opacity-0', 'scale-90'), 500);
+            } else if (slide8RevealState === 3) {
+                paths[1].style.strokeDashoffset = 0;
+                setTimeout(() => nodes[2].classList.remove('opacity-0', 'scale-90'), 500);
+            } else if (slide8RevealState === 4) {
+                paths[2].style.strokeDashoffset = 0;
+                analogy.classList.remove('opacity-0');
+                prompt.style.display = 'none';
+                // Add a final "pulse" effect
+                setTimeout(() => {
+                    nodes.forEach(n => n.classList.add('shadow-lg', 'shadow-blue-500/50', 'border', 'border-blue-400'));
+                }, 1000);
+            }
+        }
+    </script>
+</div>
+
+
+<!-- Slide 9: The Beachhead Project (Interactive) -->
+<div class="slide" data-slide="9" onclick="revealSlide9()">
+    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1589852331398-10250ac5f5a8?q=80&w=2070&auto=format&fit=crop');" onerror="this.style.backgroundColor='#111827'"></div>
+    <div class="absolute inset-0 bg-black/70"></div>
+    <div class="slide-content text-center relative z-10">
+
+        <div class="fade-in-up">
+            <h1 class="text-5xl font-extrabold">How to Start: The Beachhead Project</h1>
+            <p class="mt-4 text-2xl text-gray-400 max-w-4xl mx-auto">Don't boil the ocean. Win a small war first.</p>
+        </div>
+
+        <!-- The Goal (Hidden) -->
+        <div id="slide9-goal" class="mt-12 glassmorphism rounded-2xl p-8 max-w-3xl mx-auto opacity-0 transition-opacity duration-700">
+            <p class="text-3xl font-bold">"Your first project's goal isn't just ROI; it's building <strong class="text-green-400">belief</strong>."</p>
+        </div>
+
+        <!-- The Flywheel (Hidden) -->
+        <div id="slide9-flywheel" class="mt-12 max-w-4xl mx-auto opacity-0 transition-opacity duration-700" style="transition-delay: 300ms;">
+            <div class="flex justify-between items-center text-center">
+                <div class="w-1/3">
+                    <div class="bg-green-500/20 text-green-300 p-6 rounded-xl border border-green-500/30">
+                        <h3 class="text-xl font-bold">Beachhead Project</h3>
+                        <p class="text-sm">High-Impact, Low-Complexity</p>
+                    </div>
+                </div>
+                <div class="w-1/3 text-4xl text-gray-500 font-thin">&rarr;</div>
+                <div class="w-1/3">
+                    <div class="bg-green-500/20 text-green-300 p-6 rounded-xl border border-green-500/30">
+                        <h3 class="text-xl font-bold">Quick, Decisive Win</h3>
+                        <p class="text-sm">(ROI & Belief)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center text-4xl text-gray-500 my-4">&darr;</div>
+            <div class="flex justify-center">
+                 <div class="w-1/3">
+                    <div class="bg-green-500/20 text-green-300 p-6 rounded-xl border border-green-500/30">
+                        <h3 class="text-xl font-bold">Fund Next Project</h3>
+                        <p class="text-sm">(Create Flywheel Effect)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Click prompt -->
+        <div id="click-prompt-9" class="absolute bottom-8 left-1/2 -translate-x-1/2 text-gray-500 text-sm animate-pulse">
+            Click to continue...
+        </div>
+    </div>
+    <script>
+        let slide9RevealState = 0;
+        function revealSlide9() {
+            const goal = document.getElementById('slide9-goal');
+            const flywheel = document.getElementById('slide9-flywheel');
+            const prompt = document.getElementById('click-prompt-9');
+
+            if (!goal || !flywheel || !prompt) return;
+
+            slide9RevealState++;
+            if (slide9RevealState === 1) {
+                goal.classList.remove('opacity-0');
+            } else if (slide9RevealState === 2) {
+                flywheel.classList.remove('opacity-0');
+                prompt.style.display = 'none';
+            }
+        }
+    </script>
+</div>
+
+
+<!-- Slide 10: The MICA Mandate (Interactive) -->
+<div class="slide" data-slide="10">
+    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1534723452862-4c874018d66d?q=80&w=2070&auto-format&fit=crop');" onerror="this.style.backgroundColor='#111827'"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-black via-gray-900/80 to-gray-900/80"></div>
+    
+    <div class="slide-content text-center relative z-10">
+<div class="fade-in-up">
+    <h1 class="text-5xl md:text-6xl font-black text-gray-100">The MICA Mandate</h1>
+    <p class="mt-4 text-2xl text-gray-300 max-w-4xl mx-auto">The world has enough AI hype artists. It needs a new kind of leader.</p>
+</div>
+
+        <!-- Central Diagram -->
+        <div class="mt-16 max-w-5xl mx-auto relative h-96">
+            <!-- Central Hub -->
+            <div class="absolute inset-0 flex justify-center items-center">
+                <div class="w-96 h-96 rounded-full bg-purple-500/10 animate-pulse"></div>
+            </div>
+            <div class="absolute inset-0 flex justify-center items-center fade-in-up" style="animation-delay: 0.4s;">
+                <h2 class="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-purple-300 to-indigo-300 pb-2">The Full-Stack Strategist</h2>
+            </div>
+
+            <!-- Skill Nodes -->
+            <div id="skill1" class="absolute top-0 left-16 glassmorphism p-6 rounded-2xl w-64 text-left cursor-pointer transition-all duration-300 hover:bg-gray-700/80 hover:border-purple-400 border border-transparent fade-in-up" style="animation-delay: 0.8s;" onclick="showModal('skill1')">
+                <h3 class="text-xl font-bold">Financial Acumen</h3>
+                <p class="text-sm text-gray-400 mt-1">Speaks the language of P&L and EBITDA impact.</p>
+            </div>
+            <div id="skill2" class="absolute top-0 right-16 glassmorphism p-6 rounded-2xl w-64 text-left cursor-pointer transition-all duration-300 hover:bg-gray-700/80 hover:border-purple-400 border border-transparent fade-in-up" style="animation-delay: 1.0s;" onclick="showModal('skill2')">
+                <h3 class="text-xl font-bold">Strategic Prioritization</h3>
+                <p class="text-sm text-gray-400 mt-1">Finds the high-impact 'Beachhead Project'.</p>
+            </div>
+            <div id="skill3" class="absolute bottom-0 left-16 glassmorphism p-6 rounded-2xl w-64 text-left cursor-pointer transition-all duration-300 hover:bg-gray-700/80 hover:border-purple-400 border border-transparent fade-in-up" style="animation-delay: 1.2s;" onclick="showModal('skill3')">
+                <h3 class="text-xl font-bold">Creative Application</h3>
+                <p class="text-sm text-gray-400 mt-1">Creates new value, not just optimization.</p>
+            </div>
+            <div id="skill4" class="absolute bottom-0 right-16 glassmorphism p-6 rounded-2xl w-64 text-left cursor-pointer transition-all duration-300 hover:bg-gray-700/80 hover:border-purple-400 border border-transparent fade-in-up" style="animation-delay: 1.4s;" onclick="showModal('skill4')">
+                <h3 class="text-xl font-bold">Compelling Communication</h3>
+                <p class="text-sm text-gray-400 mt-1">Builds consensus and psychological safety.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Slide 11: Call to Action (Interactive) -->
+<div class="slide" data-slide="11">
+    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2070&auto-format&fit=crop');" onerror="this.style.backgroundColor='#111827'"></div>
+    <div class="absolute inset-0 bg-gray-900/80 backdrop-blur-sm"></div>
+    
+    <div class="slide-content text-center relative z-10">
+        <div class="fade-in-up">
+            <h1 class="text-5xl md:text-6xl font-black text-gray-300">A Challenge and an Opportunity</h1>
+            <p class="mt-4 text-2xl text-gray-400 max-w-4xl mx-auto">How do we build this leader at MICA?</p>
+        </div>
+
+        <!-- Interactive Discussion Cards -->
+        <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            
+            <!-- Card 1: Integrate -->
+            <div class="fade-in-up glassmorphism p-8 rounded-2xl border border-transparent hover:border-teal-400 transition-all duration-300 cursor-pointer transform hover:-translate-y-2" style="animation-delay: 0.4s;" onclick="showModal('discussion1')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-teal-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>
+                <h3 class="text-2xl font-bold">How do we INTEGRATE our existing strengths?</h3>
+            </div>
+
+            <!-- Card 2: Build -->
+            <div class="fade-in-up glassmorphism p-8 rounded-2xl border border-transparent hover:border-indigo-400 transition-all duration-300 cursor-pointer transform hover:-translate-y-2" style="animation-delay: 0.6s;" onclick="showModal('discussion2')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 002.25-2.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v2.25A2.25 2.25 0 006 10.5zm0 9.75h2.25A2.25 2.25 0 0010.5 18v-2.25a2.25 2.25 0 00-2.25-2.25H6a2.25 2.25 0 00-2.25 2.25v2.25A2.25 2.25 0 006 20.25z" /></svg>
+                <h3 class="text-2xl font-bold">What new CAPABILITIES must we build?</h3>
+            </div>
+
+            <!-- Card 3: Measure -->
+            <div class="fade-in-up glassmorphism p-8 rounded-2xl border border-transparent hover:border-purple-400 transition-all duration-300 cursor-pointer transform hover:-translate-y-2" style="animation-delay: 0.8s;" onclick="showModal('discussion3')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" /><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" /></svg>
+                <h3 class="text-2xl font-bold">How do we MEASURE our success?</h3>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Slide 12: Final Thought & Q&A -->
+<div class="slide" data-slide="12">
+    <div class="absolute inset-0 bg-black"></div>
+    <div class="slide-content text-center relative z-10 flex flex-col justify-center h-full">
+
+        <!-- Title -->
+        <div class="fade-in-up">
+            <h1 class="text-5xl md:text-6xl font-black text-gray-300">The Great Bifurcation</h1>
+        </div>
+
+        <!-- Diagram Container -->
+        <div class="flex flex-col justify-center items-center mt-8">
+            <!-- SVG Lines -->
+            <div class="w-full max-w-2xl h-24">
+                <svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <!-- Red Dashed Line -->
+                    <line x1="50" y1="0" x2="20" y2="100" stroke="#b91c1c" stroke-width="0.5" stroke-dasharray="2, 2" />
+                    <!-- Blue Solid Line -->
+                    <line x1="50" y1="0" x2="80" y2="100" stroke="#2563eb" stroke-width="0.75" />
+                </svg>
+            </div>
+
+            <!-- Text Boxes -->
+            <div class="grid grid-cols-2 gap-8 max-w-5xl mx-auto text-left w-full">
+                <!-- Legacy Operator -->
+                <div class="fade-in-up glassmorphism p-8 rounded-2xl border border-red-500/30" style="animation-delay: 0.4s;">
+                    <h3 class="text-2xl font-bold text-red-400">The Legacy Operator</h3>
+                    <p class="mt-4 text-gray-400">Makes slow, intuitive decisions. Bogged down by disconnected pipelines and cultural inertia. This path leads to obsolescence.</p>
+                </div>
+                <!-- Intelligent Operator -->
+                <div class="fade-in-up glassmorphism p-8 rounded-2xl border border-blue-500/30" style="animation-delay: 0.6s;">
+                    <h3 class="text-2xl font-bold text-blue-300">The Intelligent Operator</h3>
+                    <p class="mt-4 text-gray-400">Operates at machine speed. Learns from every interaction and compounds their advantage daily. This path leads to market leadership.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Q&A and Contact Details -->
+        <div class="mt-8">
+            <div class="fade-in-up" style="animation-delay: 1s;">
+                <h2 class="text-6xl font-black">Q&A</h2>
+            </div>
+            <div class="fade-in-up mt-12 text-gray-400" style="animation-delay: 1.2s;">
+                <p class="text-xl text-gray-300">Sandeep Bose</p>
+                <p class="mt-1 text-base">sandeep.bose@axyo.ai  |  +1 (602) 228-9901  |  www.axyo.ai</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+    <!-- Modal for Interactive Elements -->
+    <div id="interactive-modal" class="modal-overlay" onclick="hideModal()">
+        <div class="modal-content glassmorphism rounded-3xl p-8 md:p-12 max-w-2xl w-full text-left border border-gray-600" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-start mb-6">
+                <h2 id="modal-title" class="text-3xl font-extrabold"></h2>
+                <button onclick="hideModal()" class="text-gray-400 hover:text-white text-4xl leading-none">&times;</button>
+            </div>
+            <div id="modal-body" class="text-lg text-gray-300 space-y-4"></div>
+        </div>
+    </div>
+
+<!-- Modal for Interactive Elements -->
+<div id="interactive-modal" class="modal-overlay" onclick="hideModal()">
+    <div class="modal-content glassmorphism rounded-3xl p-8 md:p-12 max-w-2xl w-full text-left border border-gray-600" onclick="event.stopPropagation()">
+        <div class="flex justify-between items-start mb-6">
+            <h2 id="modal-title" class="text-3xl font-extrabold"></h2>
+            <button onclick="hideModal()" class="text-gray-400 hover:text-white text-4xl leading-none">&times;</button>
+        </div>
+        <div id="modal-body" class="text-lg text-gray-300 space-y-4"></div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer id="slide-footer" class="fixed bottom-0 left-0 right-0 w-full p-4 text-sm z-20 flex justify-between items-center">
+    <!-- Left: Logo placeholder -->
+    <div class="w-1/3">
+         <img src="images/Axyo logo, no name, transparent.png" alt="Axyo Logo" class="h-10">
+    </div>
+    <!-- Center: Copyright -->
+    <div class="w-1/3 text-center">
+        <span class="text-gray-500">© 2025 Axyo Inc. All rights reserved</span>
+    </div>
+    <!-- Right: Slide Counter -->
+    <div id="footer-slide-counter" class="w-1/3 text-right font-medium text-gray-500">
+         <!-- Slide counter will be injected here -->
+    </div>
+</footer>
+
+    <!-- Navigation -->
+    <div class="nav-button prev" onclick="changeSlide(-1)">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+    </div>
+    <div class="nav-button next" onclick="changeSlide(1)">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        let slides;
+        let totalSlides;
+
+const modalData = {
+    // Your existing skill modals
+    'skill1': {
+        title: "Financial Acumen",
+        body: `<p>This is the ability to speak the language of the business. A Full-Stack Strategist doesn't just talk about 'model accuracy'; they talk about 'customer lifetime value,' 'churn reduction,' and 'EBITDA impact.' They can draw a straight line from a technical project to a number on the P&L.</p>`
+    },
+    'skill2': {
+        title: "Strategic Prioritization",
+        body: `<p>With AI, you can do anything, but you can't do everything. This skill is about rigorously applying the Outcome-First Mandate. It's the discipline to identify the highest-impact, lowest-complexity 'Beachhead Project' that will build momentum and fund future initiatives.</p>`
+    },
+    'skill3': {
+        title: "Creative Application",
+        body: `<p>This is MICA's core strength. It's the ability to see beyond the obvious use cases. It's about using AI not just for optimization, but for creating entirely new customer experiences, business models, and sources of value that competitors can't easily replicate.</p>`
+    },
+    'skill4': {
+        title: "Compelling Communication",
+        body: `<p>A brilliant AI strategy that isn't understood or adopted is worthless. This leader must be a storyteller who can demystify complex topics, build consensus across technical and business teams, and create the psychological safety needed for a culture of experimentation.</p>`
+    },
+
+    // Updated discussion modals with clean formatting
+    'discussion1': {
+        title: "How do we INTEGRATE?",
+        body: `<p>This is about auditing our current curriculum to find where the seeds of the 'Full-Stack Strategist' already exist.</p>
+               <div class="mt-4 space-y-3">
+                 <div class="flex items-start"><span class="text-teal-400 mr-3 mt-1">&#8226;</span><span>Which courses currently touch on strategic thinking or business context?</span></div>
+                 <div class="flex items-start"><span class="text-teal-400 mr-3 mt-1">&#8226;</span><span>Where are students already asked to connect creative work to a measurable outcome?</span></div>
+                 <div class="flex items-start"><span class="text-teal-400 mr-3 mt-1">&#8226;</span><span>How can we make the link between creative skills and financial acumen more explicit in existing projects?</span></div>
+               </div>`
+    },
+    'discussion2': {
+        title: "What must we BUILD?",
+        body: `<p>This is about identifying the gaps and creating new learning opportunities to fill them.</p>
+               <div class="mt-4 space-y-3">
+                 <div class="flex items-start"><span class="text-indigo-400 mr-3 mt-1">&#8226;</span><span>Do we need a dedicated 'Business for Creatives' or 'AI Strategy' module?</span></div>
+                 <div class="flex items-start"><span class="text-indigo-400 mr-3 mt-1">&#8226;</span><span>Should we forge partnerships with the business school, tech companies, or venture capital firms?</span></div>
+                 <div class="flex items-start"><span class="text-indigo-400 mr-3 mt-1">&#8226;</span><span>What new faculty expertise do we need to acquire?</span></div>
+               </div>`
+    },
+    'discussion3': {
+        title: "How do we MEASURE?",
+        body: `<p>This is about proving our success. If we claim to produce leaders who drive P&L impact, we must be able to measure it.</p>
+               <div class="mt-4 space-y-3">
+                 <div class="flex items-start"><span class="text-purple-400 mr-3 mt-1">&#8226;</span><span>Should capstone projects require a business case with projected ROI?</span></div>
+                 <div class="flex items-start"><span class="text-purple-400 mr-3 mt-1">&#8226;</span><span>How can we track the business and entrepreneurial success of our alumni as a key institutional metric?</span></div>
+                 <div class="flex items-start"><span class="text-purple-400 mr-3 mt-1">&#8226;</span><span>What defines a successful outcome for a MICA graduate in this new paradigm?</span></div>
+               </div>`
+    }
+};
+
+
+        function showModal(id) {
+            const data = modalData[id];
+            if (!data) return;
+            document.getElementById('modal-title').innerHTML = data.title;
+            document.getElementById('modal-body').innerHTML = data.body;
+            document.getElementById('interactive-modal').classList.add('visible');
+        }
+
+        function hideModal() {
+            document.getElementById('interactive-modal').classList.remove('visible');
+        }
+
+        function initSlides() {
+            slides = document.querySelectorAll('.slide');
+            totalSlides = slides.length;
+            updateSlides();
+        }
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                const slideEl = slide;
+                const slideIndex = index + 1;
+                slideEl.classList.remove('active', 'prev-slide', 'next-slide');
+
+                if (slideIndex === currentSlide) {
+                    slideEl.classList.add('active');
+                    // Re-trigger animations on active slide
+                    const animatedElements = slideEl.querySelectorAll('.fade-in-up');
+                    animatedElements.forEach(el => {
+                        el.style.animation = 'none';
+                        el.offsetHeight; // Trigger reflow
+                        el.style.animation = null; 
+                    });
+                } else if (slideIndex < currentSlide) {
+                    slideEl.classList.add('prev-slide');
+                } else {
+                    slideEl.classList.add('next-slide');
+                }
+            });
+            
+            document.getElementById('footer-slide-counter').innerText = `Slide ${currentSlide} / ${totalSlides}`;
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide > totalSlides) currentSlide = 1;
+            if (currentSlide < 1) currentSlide = totalSlides;
+            updateSlides();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') changeSlide(1);
+            else if (e.key === 'ArrowLeft') changeSlide(-1);
+            else if (e.key === 'Escape') hideModal();
+        });
+
+        window.onload = initSlides;
+        
+    </script>
+</body>
+</html>
